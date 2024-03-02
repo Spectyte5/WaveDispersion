@@ -1,0 +1,23 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.3.32825.248
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "WaveDispersion", "WaveDispersion.pyproj", "{E629E7E5-35D3-48C5-9598-C20C5C60B114}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{E629E7E5-35D3-48C5-9598-C20C5C60B114}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E629E7E5-35D3-48C5-9598-C20C5C60B114}.Release|Any CPU.ActiveCfg = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {C0151780-A9F3-4EE1-9838-3195E410A0AE}
+	EndGlobalSection
+EndGlobal
