@@ -24,39 +24,31 @@ class Plot:
         max_value_anti = max(max([point[index] for point in values]) for values in self.antisymmetric_data.values())
         return max(max_value_sym, max_value_anti)
 
-    # rework
+    def draw_arrow(self, arrow):
+        plt.axvline(x=arrow['x'], color='black', linestyle='--', linewidth=0.5)
+        plt.text(x=arrow['x'],y=arrow['y'], s=arrow['s'], va=arrow['dir'], ha='center', clip_on=True)
+
+    def get_arrow_x(self, mode, n):
+        if mode[0] == 'S':
+            arrow_x = n*self.horizontal_args['C_S'] 
+        else: 
+            arrow_x = n*self.horizontal_args['C_L']
+        return arrow_x
+
     def add_cutoff_frequencies(self, mode, max_value, plot_type : str):
         n = int(mode[2:]) + 1
+
         if plot_type == 'Phase':
-            if mode[0] == 'S':
-                arrow_x = n*self.horizontal_args['C_L']/2 
-            else: 
-                arrow_x = n*self.horizontal_args['C_S']/2
-            arrow_y = max_value
-            plt.axvline(x=arrow_x, color='black', linestyle='--', linewidth=0.5)
-            plt.text(x = arrow_x,y=arrow_y, s=r'$\downarrow$', va='top', ha='center', clip_on=True)
-            if n % 2 != 0:
-                if mode[0] == 'S':
-                    arrow_x = n*self.horizontal_args['C_S'] 
-                else: 
-                    arrow_x = n*self.horizontal_args['C_L']
-                plt.axvline(x=arrow_x, color='black', linestyle='--', linewidth=0.5)
-                plt.text(x=arrow_x,y=arrow_y, s=r'$\downarrow$', va='top', ha='center', clip_on=True)   
+            arrow_y, arrow_dir, arrow_s = max_value, 'top', r'$\downarrow$'
         elif plot_type == 'Group':
-            if mode[0] == 'S':
-                arrow_x = n*self.horizontal_args['C_L'] 
-            else: 
-                arrow_x = n*self.horizontal_args['C_S']
-            arrow_y = 0
-            plt.axvline(x=arrow_x, color='black', linestyle='--', linewidth=0.5)
-            plt.text(x = arrow_x,y=arrow_y, s=r'$\uparrow$', va='bottom', ha='center', clip_on=True)
-            if n % 2 != 0:
-                if mode[0] == 'S':
-                    arrow_x = n*self.horizontal_args['C_S']/2 
-                else: 
-                    arrow_x = n*self.horizontal_args['C_L']/2
-                plt.axvline(x=arrow_x, color='black', linestyle='--', linewidth=0.5)
-                plt.text(x = arrow_x,y=arrow_y, s=r'$\uparrow$', va='bottom', ha='center', clip_on=True)  
+            arrow_y, arrow_dir, arrow_s = 0, 'bottom', r'$\uparrow$'
+
+        arrow_x = self.get_arrow_x(mode, n)/2 if plot_type == 'Phase' else self.get_arrow_x(mode, n)
+        self.draw_arrow({'x' : arrow_x, 'y' : arrow_y, 'dir': arrow_dir, 's' : arrow_s})
+        
+        if n % 2 != 0:
+            arrow_x = self.get_arrow_x(mode, n)/2 if plot_type == 'Group' else self.get_arrow_x(mode, n)
+            self.draw_arrow({'x' : arrow_x, 'y' : arrow_y, 'dir': arrow_dir, 's' : arrow_s})  
 
     def add_plate_velocities(self, plot_type):
         if plot_type == 'Phase' and self.horizontal_args:
@@ -87,7 +79,8 @@ class Plot:
             for mode, values in data.items():
                 x = [point[0] for point in values]
                 y = [point[index_map.get(plot_type)] for point in values]
-                self.add_cutoff_frequencies(mode, max_value, plot_type)
+                if plot_type in ('Phase', 'Group'):
+                    self.add_cutoff_frequencies(mode, max_value, plot_type)
                 line_style = '-' if data == self.symmetric_data else '--'
                 line, = plt.plot(x, y, color=color, linestyle=line_style)
                 lines.append(line)
