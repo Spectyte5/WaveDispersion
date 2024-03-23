@@ -1,9 +1,13 @@
+from Material import Material
 from Plot import Plot
 from Wave import Lambwave, Shearwave
 
+# Initialize plate
+plate = Material(2700, 68.9e9, 0.33, 1e-2)
+
 ### Lambwave
 # Initialize wave
-lamb = Lambwave('A_0', [500, 1000, 1500, 2000, 2500, 3000], 3, 2)
+lamb = Lambwave(plate, 'A_0', [500, 1000, 1500, 2000, 2500, 3000], 3, 2)
 
 # Initialize Plot 
 lamb_plotter = Plot(lamb, 'both')
@@ -17,7 +21,7 @@ lamb_plotter.show_plots()
 
 ### Shearwave
 # Initialize wave
-shear = Shearwave('S_0', [2000, 3500, 5000, 7500, 9000, 10000], 3, 2)
+shear = Shearwave(plate, 'S_0', [2000, 3500, 5000, 7500, 9000, 10000], 3, 2)
 
 # Initialize Plot 
 shear_plotter = Plot(shear, 'both')

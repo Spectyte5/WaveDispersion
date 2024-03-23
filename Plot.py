@@ -38,30 +38,25 @@ class Plot:
         plt.axvline(x=arrow['x'], **self.dashed_line_style)
         plt.text(x=arrow['x'],y=arrow['y'], s=arrow['s'], va=arrow['dir'], ha='center', clip_on=True)
 
-    def get_arrow_x(self, mode, n):
-        if isinstance(self.wave, Shearwave):
-            arrow_x = n*self.wave.velocities_dict['C_S']
-        else:
-            if mode.startswith('S'):
-                arrow_x = n*self.wave.velocities_dict['C_S'] 
-            else: 
-                arrow_x = n*self.wave.velocities_dict['C_L']
-        return arrow_x
-
     def add_cutoff_frequencies(self, mode, max_value, plot_type : str):
-        n = int(mode[2:]) + 1
 
-        if plot_type == 'Phase':
-            arrow_y, arrow_dir, arrow_s = max_value, 'top', r'$\downarrow$'
-        elif plot_type == 'Group':
-            arrow_y, arrow_dir, arrow_s = 0, 'bottom', r'$\uparrow$'
+        arrow_y, arrow_dir, arrow_s = (max_value, 'top', r'$\downarrow$') \
+            if plot_type == 'Phase' else (0, 'bottom', r'$\uparrow$')
 
-        arrow_x = self.get_arrow_x(mode, n)/2 if plot_type == 'Phase' else self.get_arrow_x(mode, n)
-        self.draw_arrow({'x' : arrow_x, 'y' : arrow_y, 'dir': arrow_dir, 's' : arrow_s})
+        if isinstance(self.wave, Shearwave):
+            n = self.wave.get_converted_mode(mode)
+            arrow_x = n*self.wave.velocities_dict['C_S']/2          
+            self.draw_arrow({'x' : arrow_x, 'y' : arrow_y, 'dir': arrow_dir, 's' : arrow_s})
+
+        else: 
+            n = int(mode[2:]) + 1
+            arrow_x = n*self.wave.velocities_dict['C_S'] if mode.startswith('S') else n*self.wave.velocities_dict['C_L']
+            self.draw_arrow({'x' : arrow_x, 'y' : arrow_y, 'dir': arrow_dir, 's' : arrow_s})
         
-        if n % 2 != 0:
-            arrow_x = self.get_arrow_x(mode, n)/2 if plot_type == 'Group' else self.get_arrow_x(mode, n)
-            self.draw_arrow({'x' : arrow_x, 'y' : arrow_y, 'dir': arrow_dir, 's' : arrow_s})  
+            if n % 2 != 0:
+                arrow_x = n*self.wave.velocities_dict['C_L']/2 if mode.startswith('S') else n*self.wave.velocities_dict['C_S']/2
+                self.draw_arrow({'x' : arrow_x, 'y' : arrow_y, 'dir': arrow_dir, 's' : arrow_s})  
+
 
     def add_plate_velocities(self, plot_type):
         if plot_type == 'Phase' and self.wave.velocities_dict:
@@ -158,9 +153,9 @@ class Plot:
             ax.spines['bottom'].set_position(('data', 0))
 
             # Plot ticks
-            ax.set_yticks([-self.wave.plate.half_thickness, 0, self.wave.plate.half_thickness])
+            ax.set_yticks([-self.wave.material.half_thickness, 0, self.wave.material.half_thickness])
             ax.set_yticklabels(['-d/2', '0', 'd/2'])
-            ax.text(ax.get_xlim()[1] / 2, self.wave.plate.half_thickness / 5, 'u, w' 
+            ax.text(ax.get_xlim()[1] / 2, self.wave.material.half_thickness / 5, 'u, w' 
                     if isinstance(self.wave, Lambwave) else 'u', ha='center', va='center')
 
             # Set title

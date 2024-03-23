@@ -7,11 +7,11 @@ from Material import Material
 
 @dataclass
 class Wave: 
+    material : Material
     structure_mode : str 
     structure_freq : array
     rows : int 
     columns : int
-    plate = Material()
     freq_thickness_max = 10000 # Maximum value of frequency x thickness 
     freq_thickness_points = 100 # Number of frequency x thickness points 
     modes_functions : dict = field(init=False)
@@ -31,9 +31,9 @@ class Wave:
         self.modes_functions = {
         'symmetric': self.calculate_symmetric,
         'antisymmetric': self.calculate_antisymmetric }
-        self.velocities_dict = { 'C_R' : self.plate.rayleigh_wave_velocity,
-                                 'C_S' : self.plate.shear_wave_velocity, 
-                                 'C_L' : self.plate.longitudinal_wave_velocity } 
+        self.velocities_dict = { 'C_R' : self.material.rayleigh_wave_velocity,
+                                 'C_S' : self.material.shear_wave_velocity, 
+                                 'C_L' : self.material.longitudinal_wave_velocity } 
         
         # Solve for symmetric and antisymmetric modes
         self.velocites_symmetric = self.solve_freq_equations('symmetric')
@@ -43,10 +43,10 @@ class Wave:
         self.structure_result = self.calculate_wave_structure()
 
     def calculate_dispersion_components(self, phase_velocity, freq_thickness):
-        angular_freq = 2 * np.pi * (freq_thickness / self.plate.thickness) 
+        angular_freq = 2 * np.pi * (freq_thickness / self.material.thickness) 
         k = angular_freq / phase_velocity
-        p = np.sqrt((angular_freq / self.plate.longitudinal_wave_velocity)**2 - k**2, dtype=np.complex128)
-        q = np.sqrt((angular_freq / self.plate.shear_wave_velocity)**2 - k**2, dtype=np.complex128)
+        p = np.sqrt((angular_freq / self.material.longitudinal_wave_velocity)**2 - k**2, dtype=np.complex128)
+        q = np.sqrt((angular_freq / self.material.shear_wave_velocity)**2 - k**2, dtype=np.complex128)
         return k, p, q
 
     def interpolate_result(self, result, kind='cubic'):
@@ -83,7 +83,7 @@ class Wave:
             # Calculate cg using the estimated derivative
             for i in range(len(fd_val)):
                 cg = self.get_group_velocity_eq(cp_val[i], fd_val[i], cp_prime, key)
-                k = (fd_val[i]*2*np.pi/self.plate.thickness)/cp_val[i]
+                k = (fd_val[i]*2*np.pi/self.material.thickness)/cp_val[i]
                 cg_val.append(cg)
                 k_val.append(k)
             # Add cg_val as the third value in each tuple
@@ -103,7 +103,7 @@ class Wave:
                 cp_values.append(tuple_value[1])
 
         # Create array between -d/2 and d/2
-        x = np.linspace(-self.plate.half_thickness, self.plate.half_thickness, samples_x) 
+        x = np.linspace(-self.material.half_thickness, self.material.half_thickness, samples_x) 
 
         for fd in self.structure_freq:
             cp = self.structure_cp[self.structure_mode](fd)          
@@ -173,32 +173,32 @@ class Wave:
 @dataclass
 class Shearwave(Wave):
     
-    def __init__(self, structure_mode: str, structure_freq: array, rows: int, columns: int):
+    def __init__(self, material, structure_mode: str, structure_freq: array, rows: int, columns: int):
         self.increasing_mode = 'S_0'
-        super().__init__(structure_mode, structure_freq, rows, columns)
+        super().__init__(material, structure_mode, structure_freq, rows, columns)
 
     def calculate_symmetric(self, phase_velocity, freq_thickness):
         _,_,q = self.calculate_dispersion_components(phase_velocity, freq_thickness)
-        return np.real(np.sin(q*self.plate.half_thickness))
+        return np.real(np.sin(q*self.material.half_thickness))
 
     def calculate_antisymmetric(self, phase_velocity, freq_thickness):
         _,_,q = self.calculate_dispersion_components(phase_velocity, freq_thickness)
-        return  np.real(np.cos(q*self.plate.half_thickness))
+        return  np.real(np.cos(q*self.material.half_thickness))
 
     def get_group_velocity_eq(self, cp, fd, cp_prime, key):
         n = self.get_converted_mode(key)
-        cg = self.plate.shear_wave_velocity * np.sqrt(1 - ((n/2)**2) / ((fd/self.plate.shear_wave_velocity)**2))
+        cg = self.material.shear_wave_velocity * np.sqrt(1 - ((n/2)**2) / ((fd/self.material.shear_wave_velocity)**2))
         return cg
 
     def calculate_wavestructure_components(self, x, cp, fd):
         k,p,q = self.calculate_dispersion_components(cp, fd)
 
         if self.structure_mode.startswith('S'):
-            A, B = -2*k*q*np.cos(q*self.plate.half_thickness) / ((k**2 - q**2) * np.cos(p*self.plate.half_thickness)), 1   
+            A, B = -2*k*q*np.cos(q*self.material.half_thickness) / ((k**2 - q**2) * np.cos(p*self.material.half_thickness)), 1   
             u = 1j*(k*A*np.cos(p*x) + q*B*np.cos(q*x))
             w = None
         else:
-            A, B = 2*k*q*np.sin(q*self.plate.half_thickness) / ((k**2 - q**2) * np.sin(p*self.plate.half_thickness)), 1
+            A, B = 2*k*q*np.sin(q*self.material.half_thickness) / ((k**2 - q**2) * np.sin(p*self.material.half_thickness)), 1
             u = 1j*(k*A*np.sin(p*x) - q*B*np.sin(q*x))
             w = None
 
@@ -206,17 +206,17 @@ class Shearwave(Wave):
 
 @dataclass
 class Lambwave(Wave):
-    def __init__(self, structure_mode: str, structure_freq: array, rows: int, columns: int):
+    def __init__(self, material, structure_mode: str, structure_freq: array, rows: int, columns: int):
         self.increasing_mode = 'A_0'
-        super().__init__(structure_mode, structure_freq, rows, columns)
+        super().__init__(material, structure_mode, structure_freq, rows, columns)
     
     def calculate_symmetric(self, phase_velocity, freq_thickness):
         k,p,q = self.calculate_dispersion_components(phase_velocity, freq_thickness)
-        return np.real(np.tan(q*self.plate.half_thickness)/q + (4*(k**2)*p*np.tan(p*self.plate.half_thickness))/(q**2 - k**2)**2)
+        return np.real(np.tan(q*self.material.half_thickness)/q + (4*(k**2)*p*np.tan(p*self.material.half_thickness))/(q**2 - k**2)**2)
 
     def calculate_antisymmetric(self, phase_velocity, freq_thickness):
         k,p,q = self.calculate_dispersion_components(phase_velocity, freq_thickness)
-        return np.real(q * np.tan(q*self.plate.half_thickness) + (((q**2 - k**2)**2)*np.tan(p*self.plate.half_thickness))/(4*(k**2)*p))
+        return np.real(q * np.tan(q*self.material.half_thickness) + (((q**2 - k**2)**2)*np.tan(p*self.material.half_thickness))/(4*(k**2)*p))
 
     def get_group_velocity_eq(self, cp, fd, cp_prime, key):
         cg = cp**2 * (cp - fd * cp_prime(fd))**-1
@@ -226,11 +226,11 @@ class Lambwave(Wave):
         k,p,q = self.calculate_dispersion_components(cp, fd)
 
         if self.structure_mode.startswith('S'):
-            A, B = -2*k*q*np.cos(q*self.plate.half_thickness) / ((k**2 - q**2) * np.cos(p*self.plate.half_thickness)), 1   
+            A, B = -2*k*q*np.cos(q*self.material.half_thickness) / ((k**2 - q**2) * np.cos(p*self.material.half_thickness)), 1   
             u = 1j*(k*A*np.cos(p*x) + q*B*np.cos(q*x))
             w = -p*A*np.sin(p*x) + k*B*np.sin(q*x)
         else:
-            A, B = 2*k*q*np.sin(q*self.plate.half_thickness) / ((k**2 - q**2) * np.sin(p*self.plate.half_thickness)), 1
+            A, B = 2*k*q*np.sin(q*self.material.half_thickness) / ((k**2 - q**2) * np.sin(p*self.material.half_thickness)), 1
             u = 1j*(k*A*np.sin(p*x) - q*B*np.sin(q*x))
             w = p*A*np.cos(p*x) + k*B*np.cos(q*x)
 
