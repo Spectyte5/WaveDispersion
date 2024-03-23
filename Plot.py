@@ -1,8 +1,9 @@
-﻿from ast import Str
-from dataclasses import dataclass
+﻿from dataclasses import dataclass
 import matplotlib.pyplot as plt
 import numpy as np
 from Wave import Wave, Lambwave, Shearwave
+from io import StringIO
+
 
 @dataclass
 class Plot:
@@ -22,6 +23,15 @@ class Plot:
 
     def show_plots(self):
         plt.show()
+
+    def get_plots_as_data(self):
+        imgdata = StringIO()
+        figs = [plt.figure(n) for n in plt.get_fignums()]
+        for fig in figs:
+            fig.savefig(imgdata, format='svg', transparent=True)
+            imgdata.seek(0)
+            data = imgdata.getvalue()
+            return data
 
     def add_plot(self, plot_type):
         if plot_type == 'Wavestructure':
