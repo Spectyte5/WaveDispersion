@@ -2,8 +2,8 @@
 import matplotlib.pyplot as plt
 import numpy as np
 from Wave import Wave, Lambwave, Shearwave
-from io import StringIO
-
+from io import BytesIO
+import base64
 
 @dataclass
 class Plot:
@@ -25,13 +25,14 @@ class Plot:
         plt.show()
 
     def get_plots_as_data(self):
-        imgdata = StringIO()
         figs = [plt.figure(n) for n in plt.get_fignums()]
+        images = []
         for fig in figs:
+            imgdata = BytesIO()
             fig.savefig(imgdata, format='svg', transparent=True)
             imgdata.seek(0)
-            data = imgdata.getvalue()
-            return data
+            images.append(base64.b64encode(imgdata.getvalue()).decode('utf-8'))
+        return images
 
     def add_plot(self, plot_type):
         if plot_type == 'Wavestructure':
