@@ -32,6 +32,7 @@ class Plot:
             fig.savefig(imgdata, format='svg', transparent=True)
             imgdata.seek(0)
             images.append(base64.b64encode(imgdata.getvalue()).decode('utf-8'))
+            plt.clf()
         return images
 
     def add_plot(self, plot_type):

@@ -8,6 +8,10 @@ from Material import Material
 @dataclass
 class Wave: 
     material : Material
+    modes_nums = {
+        'symmetric': None,
+        'antisymmetric': None
+    }
     structure_mode : str 
     structure_freq : array
     rows : int 
@@ -115,66 +119,12 @@ class Wave:
             
         return u_w_array
 
-    def solve_freq_equations(self, mode_type):
-        fd_range = np.linspace(0, self.freq_thickness_max, self.freq_thickness_points)
-        result = {}
-        modes_func = self.modes_functions.get(mode_type)
-        prefix = mode_type[0].upper() + '_'
-        initial_fd = []
-
-        for fd in fd_range:
-            # Initial phase velocity estimation
-            mode = 0
-            init_cp = 0
-            init_cp2 = init_cp + self.cp_step
-
-            while init_cp2 < self.cp_max:
-                # Evaluate the function values
-                cp_0 = modes_func(init_cp, fd)
-                cp_1 = modes_func(init_cp2, fd)
-
-                # Check if sign changes
-                if not (np.isnan(cp_0) or np.isnan(cp_1)) and np.sign(cp_0) != np.sign(cp_1):
-                    # Using bisection method to find the root
-                    cp_root = bisect(f=modes_func, a=init_cp, b=init_cp2, args=(fd,))
-                    if np.abs(modes_func(cp_root, fd)) < self.tolerance:
-                        key = prefix + str(mode)
-
-                        # if key is not in result, create new list
-                        if key not in result:
-                            result[key] = []
-
-                        # check if value increased for modes different then increasing mode
-                        while key != self.increasing_mode and result[key] and cp_root > result[key][-1][1]:
-                            mode += 1
-                            key = prefix + str(mode)
-                            if key not in result:
-                                result[key] = []
-
-                        if not result[key]:
-                            if fd in initial_fd:
-                                continue  # Skip if fd exists in initial_fd
-                            initial_fd.append(fd)
-
-                        result[key].append([fd, cp_root])
-                        mode += 1
-
-                # Update init_cps for the next iteration
-                init_cp += self.cp_step
-                init_cp2 += self.cp_step
-        
-        # Interpolate for smoother plot
-        result = self.interpolate_result(result)
-
-        # Calculate group velocity and wave number
-        result = self.calculate_group_wavenumber(result)
-        return result
-
 @dataclass
 class Shearwave(Wave):
     
-    def __init__(self, material, structure_mode: str, structure_freq: array, rows: int, columns: int):
+    def __init__(self, material, modes_nums, structure_mode: str, structure_freq: array, rows: int, columns: int):
         self.increasing_mode = 'S_0'
+        self.modes_nums['symmetric'], self.modes_nums['antisymmetric'] = modes_nums
         super().__init__(material, structure_mode, structure_freq, rows, columns)
 
     def calculate_symmetric(self, phase_velocity, freq_thickness):
@@ -206,8 +156,9 @@ class Shearwave(Wave):
 
 @dataclass
 class Lambwave(Wave):
-    def __init__(self, material, structure_mode: str, structure_freq: array, rows: int, columns: int):
+    def __init__(self, material, modes_nums, structure_mode: str, structure_freq: array, rows: int, columns: int):
         self.increasing_mode = 'A_0'
+        self.modes_nums['symmetric'], self.modes_nums['antisymmetric'] = modes_nums
         super().__init__(material, structure_mode, structure_freq, rows, columns)
     
     def calculate_symmetric(self, phase_velocity, freq_thickness):
@@ -235,3 +186,60 @@ class Lambwave(Wave):
             w = p*A*np.cos(p*x) + k*B*np.cos(q*x)
 
         return u, w
+
+    def solve_freq_equations(self, mode_type):
+        fd_range = np.linspace(0, self.freq_thickness_max, self.freq_thickness_points)
+        result = {}
+        modes_func = self.modes_functions.get(mode_type)
+        prefix = mode_type[0].upper() + '_'
+        initial_fd = []
+
+        for fd in fd_range:
+            # Initial phase velocity estimation
+            mode = 0
+            init_cp = 0
+            init_cp2 = init_cp + self.cp_step
+
+            while init_cp2 < self.cp_max:
+                # Evaluate the function values
+                cp_0 = modes_func(init_cp, fd)
+                cp_1 = modes_func(init_cp2, fd)
+
+                # Check if in the num_of modes range:
+                if mode < self.modes_nums[mode_type]:
+                    # Check if sign changes
+                    if not (np.isnan(cp_0) or np.isnan(cp_1)) and np.sign(cp_0) != np.sign(cp_1):
+                        # Using bisection method to find the root
+                        cp_root = bisect(f=modes_func, a=init_cp, b=init_cp2, args=(fd,))
+                        if np.abs(modes_func(cp_root, fd)) < self.tolerance:
+                            key = prefix + str(mode)
+
+                            # if key is not in result, create new list
+                            if key not in result:
+                                result[key] = []
+
+                            # check if value increased for modes different then increasing mode
+                            while key != self.increasing_mode and result[key] and cp_root > result[key][-1][1]:
+                                mode += 1
+                                key = prefix + str(mode)
+                                if key not in result:
+                                    result[key] = []
+
+                            if not result[key]:
+                                if fd in initial_fd:
+                                    continue  # Skip if fd exists in initial_fd
+                                initial_fd.append(fd)
+
+                            result[key].append([fd, cp_root])
+                            mode += 1
+
+                # Update init_cps for the next iteration
+                init_cp += self.cp_step
+                init_cp2 += self.cp_step
+        
+        # Interpolate for smoother plot
+        result = self.interpolate_result(result)
+
+        # Calculate group velocity and wave number
+        result = self.calculate_group_wavenumber(result)
+        return result
