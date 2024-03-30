@@ -1,45 +1,29 @@
-﻿from dataclasses import dataclass
+﻿from dataclasses import dataclass, field
 import matplotlib.pyplot as plt
 import numpy as np
 from Wave import Wave, Lambwave, Shearwave
 from io import BytesIO
-import base64
+import base64, os
 
 @dataclass
 class Plot:
     wave : Wave
     mode_type : str
-    symmetric_style = {'color' : 'green', 'linestyle' : '-'}
-    antisymmetric_style = {'color' : 'purple', 'linestyle' : '--'}
-    dashed_line_style = {'color' :  'black', 'linestyle' : '--', 'linewidth' : 0.5}
-    continous_line_style = {'color' : 'black', 'linestyle' : '-', 'linewidth' : 0.75}
-    in_plane_style = {'color' : 'green', 'linestyle' : '-', 'label' : 'In plane'}
-    out_of_plane_style = {'color' : 'purple', 'linestyle' : '--', 'label' : 'Out of plane'}
-    velocity_style = {'color' : 'black', 'va' : 'center'}
-    padding_factor = {'x' : 1.00, 'y' : 1.05}
+    cutoff_frequencies : bool
+    add_velocities : bool
+    symmetric_style : dict = field(default_factory=lambda: {'color': 'green', 'linestyle': '-'})
+    antisymmetric_style : dict = field(default_factory=lambda: {'color': 'purple', 'linestyle': '--'})
+    dashed_line_style : dict = field(default_factory=lambda: {'color': 'black', 'linestyle': '--', 'linewidth': 0.5})
+    continuous_line_style : dict = field(default_factory=lambda: {'color': 'black', 'linestyle': '-', 'linewidth': 0.75})
+    in_plane_style : dict = field(default_factory=lambda: {'color': 'green', 'linestyle': '-', 'label': 'In plane'})
+    out_of_plane_style : dict = field(default_factory=lambda: {'color': 'purple', 'linestyle': '--', 'label': 'Out of plane'})
+    velocity_style : dict = field(default_factory=lambda: {'color': 'black', 'va': 'center'})
+    padding_factor : dict = field(default_factory=lambda: {'x' : 1.00, 'y' : 1.05})
+    path = "results"
+    get_figures = lambda _: [plt.figure(n) for n in plt.get_fignums()]
 
     def generate_latex(self, string):
         return r'$\mathregular{' + string + '}$'
-
-    def show_plots(self):
-        plt.show()
-
-    def get_plots_as_data(self):
-        figs = [plt.figure(n) for n in plt.get_fignums()]
-        images = []
-        for fig in figs:
-            imgdata = BytesIO()
-            fig.savefig(imgdata, format='svg', transparent=True)
-            imgdata.seek(0)
-            images.append(base64.b64encode(imgdata.getvalue()).decode('utf-8'))
-            plt.clf()
-        return images
-
-    def add_plot(self, plot_type):
-        if plot_type == 'Wavestructure':
-            self.plot_wave_structure(plot_type)
-        elif plot_type in ['Phase', 'Group', 'Wavenumber']:
-            self.plot_velocity(plot_type)
 
     def find_max_value(self, index):
         max_value_sym = max(max([point[index] for point in values]) for values in self.wave.velocites_symmetric.values())
@@ -71,7 +55,7 @@ class Plot:
 
 
     def add_plate_velocities(self, plot_type):
-        if plot_type == 'Phase' and self.wave.velocities_dict:
+        if plot_type == 'Phase' and self.add_velocities:
             for name, value in self.wave.velocities_dict.items():
                 plt.axhline(value, **self.dashed_line_style)
                 if name.endswith('R'):
@@ -104,13 +88,14 @@ class Plot:
             for mode, values in data.items():
                     x = [point[0] for point in values]
                     y = [point[index_map.get(plot_type)] for point in values]
-                    if plot_type in ('Phase', 'Group'):
+                    if plot_type in ('Phase', 'Group') and self.cutoff_frequencies:
                         self.add_cutoff_frequencies(mode, max_value, plot_type)
                     line, = plt.plot(x, y, **style)
                     if isinstance(self.wave, Shearwave):
                         mode = 'SH_' + str(self.wave.get_converted_mode(mode))
                     plt.text(x[0], y[0], self.generate_latex(mode), ha='right', va='bottom', color=style['color']) 
                     lines.append(line) 
+        
 
         self.add_plate_velocities(plot_type)
         
@@ -159,8 +144,8 @@ class Plot:
             ax.set(frame_on=False) 
 
             # Moving x and y axis to 0,0
-            ax.axhline(0, **self.continous_line_style)  # Horizontal line at y=0
-            ax.axvline(0, **self.continous_line_style, ymin=0 + 0.05, ymax=1 - 0.05)  # Vertical line at x=0       
+            ax.axhline(0, **self.continuous_line_style)  # Horizontal line at y=0
+            ax.axvline(0, **self.continuous_line_style, ymin=0 + 0.05, ymax=1 - 0.05)  # Vertical line at x=0       
             ax.spines['left'].set_position(('data', 0))
             ax.spines['bottom'].set_position(('data', 0))
 
@@ -180,3 +165,68 @@ class Plot:
         # Get handles and labels for the first two legend entries
         handles, labels = ax.get_legend_handles_labels()
         fig.legend(handles, labels, loc='lower center', ncol=2)
+
+    def add_plot(self, plot_type):
+        if plot_type == 'Wavestructure':
+            self.plot_wave_structure(plot_type)
+        elif plot_type in ['Phase', 'Group', 'Wavenumber']:
+            self.plot_velocity(plot_type)
+  
+    def get_plots_as_data(self):
+        images = []
+        for fig in self.get_figures():
+            imgdata = BytesIO()
+            fig.savefig(imgdata, format='svg', transparent=True)
+            imgdata.seek(0)
+            images.append(base64.b64encode(imgdata.getvalue()).decode('utf-8'))
+            plt.clf()
+        return images
+
+    def save_plots(self, format='png', transparent=False, **kwargs):
+        """
+        Save plots in specified format.
+
+        Parameters:
+            format (str): Format to save the plots (e.g., 'png', 'pdf', 'svg', etc.).
+            transparent (bool): Whether to save the plots with a transparent background.
+            **kwargs: Additional keyword arguments to pass to the `savefig` method.
+
+        Returns:
+            None
+        """
+        if not os.path.exists(self.path):
+            os.makedirs(self.path)
+
+        for i, fig in enumerate(self.get_figures()):
+            fig.savefig(f"{self.path}/figure_{i+1}.{format}", format=format, transparent=transparent, **kwargs)
+
+    def save_txt_results(self):
+        if not os.path.exists(self.path):
+            os.makedirs(self.path)
+        
+        wave_type = "Lambwaves" if isinstance(self.wave, Lambwave) else "Shearwaves"
+
+        filename = f"{self.path}/{wave_type}_in_{self.wave.material.thickness}_mm_{self.wave.material.name}_plate.txt" 
+
+        mode_mapping = {
+        'symmetric': [self.wave.velocites_symmetric],
+        'antisymmetric': [self.wave.velocites_antisymmetric],
+        'both': [self.wave.velocites_symmetric,self.wave.velocites_antisymmetric]
+        }
+
+        selected_modes = mode_mapping[self.mode_type] 
+
+        with open(filename, 'w') as file:
+            for data in selected_modes:
+                for mode, values in data.items():
+                    header = "\t\t".join(["fd", "cp", "cg", "k"])
+                    file.write(f"{mode}:\n")
+                    file.write(f"\t{header}\t\n")
+                    for set_values in values:
+                        file.write("\t")
+                        file.write("\t\t".join(f"{value:.2f}" for value in set_values))
+                        file.write("\n")
+                    file.write("\n")
+
+    def show_plots(self):
+        plt.show()

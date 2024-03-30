@@ -29,6 +29,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="requirements.txt" />
+    <Content Include="pyproject.toml" />
   </ItemGroup>
   <ItemGroup>
     <Interpreter Include="env\">
