@@ -183,13 +183,19 @@ class Plot:
             **kwargs: Additional keyword arguments to pass to the `savefig` method.
 
         Returns:
-            None
+            plots (list[str])
         """
         if not os.path.exists(self.path):
             os.makedirs(self.path)
 
+        plots = []
+
         for i, fig in enumerate(self.get_figures()):
-            fig.savefig(f"{self.path}/figure_{i+1}.{format}", format=format, transparent=transparent, **kwargs)
+            img_path = f"{self.path}/figure_{i+1}.{format}"
+            fig.savefig(img_path, format=format, transparent=transparent, **kwargs)
+            plots.append(img_path)
+
+        return plots
 
     def save_txt_results(self):
         if not os.path.exists(self.path):
