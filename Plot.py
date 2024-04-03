@@ -197,7 +197,9 @@ class Plot:
         
         wave_type = "Lambwaves" if isinstance(self.wave, Lambwave) else "Shearwaves"
 
-        filename = f"{self.path}/{wave_type}_in_{self.wave.material.thickness}_mm_{self.wave.material.name}_plate.txt" 
+        filename = f"{wave_type}_in_{self.wave.material.thickness}_mm_{self.wave.material.name}_plate.txt" 
+
+        filepath = os.path.join(self.path, filename)
 
         mode_mapping = {
         'symmetric': [self.wave.velocites_symmetric],
@@ -207,7 +209,7 @@ class Plot:
 
         selected_modes = mode_mapping[self.mode_type] 
 
-        with open(filename, 'w') as file:
+        with open(filepath, 'w') as file:
             for data in selected_modes:
                 for mode, values in data.items():
                     header = "\t\t".join(["fd", "cp", "cg", "k"])
@@ -218,6 +220,8 @@ class Plot:
                         file.write("\t\t".join(f"{value:.2f}" for value in set_values))
                         file.write("\n")
                     file.write("\n")
+
+        return filepath
 
     def show_plots(self):
         plt.show()
