@@ -191,9 +191,10 @@ class Plot:
         plots = []
 
         for i, fig in enumerate(self.get_figures()):
-            img_path = f"{self.path}/figure_{i+1}.{format}"
+            img = f"figure_{i+1}.{format}"
+            img_path = os.path.join(self.path, img)
             fig.savefig(img_path, format=format, transparent=transparent, **kwargs)
-            plots.append(img_path)
+            plots.append(img)
 
         return plots
 
