@@ -42,8 +42,9 @@ class Wave:
         self.velocites_symmetric = self.solve_freq_equations('symmetric')
         self.velocites_antisymmetric = self.solve_freq_equations('antisymmetric')
 
-        # Calculate wave structure
-        self.structure_result = self.calculate_wave_structure()
+        if self.structure_freq and self.structure_mode:
+            # Calculate wave structure
+            self.structure_result = self.calculate_wave_structure()
 
     def calculate_dispersion_components(self, phase_velocity, freq_thickness):
         angular_freq = 2 * np.pi * (freq_thickness / self.material.thickness) 
@@ -216,7 +217,6 @@ class Lambwave(Wave):
         result = {}
         modes_func = self.modes_functions.get(mode_type)
         prefix = mode_type[0].upper() + '_'
-        initial_fd = []
 
         for fd in fd_range:
             # Initial phase velocity estimation
@@ -248,11 +248,6 @@ class Lambwave(Wave):
                                 key = prefix + str(mode)
                                 if key not in result:
                                     result[key] = []
-
-                            if not result[key]:
-                                if fd in initial_fd:
-                                    continue  # Skip if fd exists in initial_fd
-                                initial_fd.append(fd)
 
                             result[key].append([fd, cp_root])
                             mode += 1

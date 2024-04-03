@@ -9,8 +9,9 @@ import base64, os
 class Plot:
     wave : Wave
     mode_type : str
-    cutoff_frequencies : bool
-    add_velocities : bool
+    cutoff_frequencies : bool = field(default=True)
+    add_velocities : bool = field(default=True)
+    path : str = field(default= "results")
     symmetric_style : dict = field(default_factory=lambda: {'color': 'green', 'linestyle': '-'})
     antisymmetric_style : dict = field(default_factory=lambda: {'color': 'purple', 'linestyle': '--'})
     dashed_line_style : dict = field(default_factory=lambda: {'color': 'black', 'linestyle': '--', 'linewidth': 0.5})
@@ -19,7 +20,6 @@ class Plot:
     out_of_plane_style : dict = field(default_factory=lambda: {'color': 'purple', 'linestyle': '--', 'label': 'Out of plane'})
     velocity_style : dict = field(default_factory=lambda: {'color': 'black', 'va': 'center'})
     padding_factor : dict = field(default_factory=lambda: {'x' : 1.00, 'y' : 1.05})
-    path = "results"
     get_figures = lambda _: [plt.figure(n) for n in plt.get_fignums()]
 
     def generate_latex(self, string):
@@ -111,76 +111,67 @@ class Plot:
         
     def plot_wave_structure(self, title):
         # Create a figure and an array of subplots
-        fig, axes = plt.subplots(self.wave.rows, self.wave.columns, figsize=(10, 6),num=f"{title[:4] + ' ' + title[4:]}")
+        if self.wave.structure_result:
+            fig, axes = plt.subplots(self.wave.rows, self.wave.columns, figsize=(10, 6),num=f"{title[:4] + ' ' + title[4:]}")
 
-        # Flatten the axes array to easily access individual subplots
-        axes = axes.flatten()
+            # Flatten the axes array to easily access individual subplots
+            axes = axes.flatten()
 
-        # Loop through each key in the dictionary
-        for i, key in enumerate(self.wave.structure_result.keys()):
-            # Get the data associated with the current key
-            data_list = self.wave.structure_result[key]
+            # Loop through each key in the dictionary
+            for i, key in enumerate(self.wave.structure_result.keys()):
+                # Get the data associated with the current key
+                data_list = self.wave.structure_result[key]
 
-            # Determine which subplot to plot on
-            ax = axes[i]
+                # Determine which subplot to plot on
+                ax = axes[i]
 
-            # Loop through each element in the data list
-            for entry in data_list:
-                u, w, x = entry  # Extracting the individual components from each element
+                # Loop through each element in the data list
+                for entry in data_list:
+                    u, w, x = entry  # Extracting the individual components from each element
 
-                # Plot the data on the current subplot
-                if np.all(np.iscomplex(u)):
-                    ax.plot(np.imag(u), x, **self.in_plane_style)
-                else:
-                    ax.plot(np.real(u), x, **self.in_plane_style)
-
-                if isinstance(self.wave, Lambwave):
-                    if np.all(np.isreal(w)):
-                        ax.plot(np.real(w), x, **self.out_of_plane_style)
+                    # Plot the data on the current subplot
+                    if np.all(np.iscomplex(u)):
+                        ax.plot(np.imag(u), x, **self.in_plane_style)
                     else:
-                        ax.plot(np.imag(w), x, **self.out_of_plane_style)
+                        ax.plot(np.real(u), x, **self.in_plane_style)
 
-            # Disable the frame
-            ax.set(frame_on=False) 
+                    if isinstance(self.wave, Lambwave):
+                        if np.all(np.isreal(w)):
+                            ax.plot(np.real(w), x, **self.out_of_plane_style)
+                        else:
+                            ax.plot(np.imag(w), x, **self.out_of_plane_style)
 
-            # Moving x and y axis to 0,0
-            ax.axhline(0, **self.continuous_line_style)  # Horizontal line at y=0
-            ax.axvline(0, **self.continuous_line_style, ymin=0 + 0.05, ymax=1 - 0.05)  # Vertical line at x=0       
-            ax.spines['left'].set_position(('data', 0))
-            ax.spines['bottom'].set_position(('data', 0))
+                # Disable the frame
+                ax.set(frame_on=False) 
 
-            # Plot ticks
-            ax.set_yticks([-self.wave.material.half_thickness, 0, self.wave.material.half_thickness])
-            ax.set_yticklabels(['-d/2', '0', 'd/2'])
-            ax.text(ax.get_xlim()[1] / 2, self.wave.material.half_thickness / 5, 'u, w' 
-                    if isinstance(self.wave, Lambwave) else 'u', ha='center', va='center')
+                # Moving x and y axis to 0,0
+                ax.axhline(0, **self.continuous_line_style)  # Horizontal line at y=0
+                ax.axvline(0, **self.continuous_line_style, ymin=0 + 0.05, ymax=1 - 0.05)  # Vertical line at x=0       
+                ax.spines['left'].set_position(('data', 0))
+                ax.spines['bottom'].set_position(('data', 0))
 
-            # Set title
-            ax.set_title('$\mathregular{f_d}$' + f'={key} (kHz x mm)')
+                # Plot ticks
+                ax.set_yticks([-self.wave.material.half_thickness, 0, self.wave.material.half_thickness])
+                ax.set_yticklabels(['-d/2', '0', 'd/2'])
+                ax.text(ax.get_xlim()[1] / 2, self.wave.material.half_thickness / 5, 'u, w' 
+                        if isinstance(self.wave, Lambwave) else 'u', ha='center', va='center')
 
-        # Adjust layout to prevent overlap of subplots add title
-        plt.tight_layout
-        fig.suptitle('Wave structure for mode ' + self.generate_latex(self.wave.structure_mode))
+                # Set title
+                ax.set_title('$\mathregular{f_d}$' + f'={key} (kHz x mm)')
 
-        # Get handles and labels for the first two legend entries
-        handles, labels = ax.get_legend_handles_labels()
-        fig.legend(handles, labels, loc='lower center', ncol=2)
+            # Adjust layout to prevent overlap of subplots add title
+            plt.tight_layout
+            fig.suptitle('Wave structure for mode ' + self.generate_latex(self.wave.structure_mode))
+
+            # Get handles and labels for the first two legend entries
+            handles, labels = ax.get_legend_handles_labels()
+            fig.legend(handles, labels, loc='lower center', ncol=2)
 
     def add_plot(self, plot_type):
         if plot_type == 'Wavestructure':
             self.plot_wave_structure(plot_type)
         elif plot_type in ['Phase', 'Group', 'Wavenumber']:
             self.plot_velocity(plot_type)
-  
-    def get_plots_as_data(self):
-        images = []
-        for fig in self.get_figures():
-            imgdata = BytesIO()
-            fig.savefig(imgdata, format='svg', transparent=True)
-            imgdata.seek(0)
-            images.append(base64.b64encode(imgdata.getvalue()).decode('utf-8'))
-            plt.clf()
-        return images
 
     def save_plots(self, format='png', transparent=False, **kwargs):
         """

@@ -14,3 +14,5 @@ class Material:
 
     def __post_init__(self):
         self.half_thickness = self.thickness / 2
+        if not self.rayleigh_wave_velocity:
+            self.rayleigh_wave_velocity = self.shear_wave_velocity * ((0.862 + 1.14 * self.poissons_ratio) / (1 + self.poissons_ratio))
