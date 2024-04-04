@@ -26,7 +26,10 @@ class Plot:
         return r'$\mathregular{' + string + '}$'
 
     def switch_backend(self):
-        plt.use('Agg')
+        plt.switch_backend('agg')
+
+    def close_all_plots(self):
+        plt.close('all')
 
     def find_max_value(self, index):
         max_value_sym = max(max([point[index] for point in values]) for values in self.wave.velocites_symmetric.values())
