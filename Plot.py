@@ -25,6 +25,9 @@ class Plot:
     def generate_latex(self, string):
         return r'$\mathregular{' + string + '}$'
 
+    def switch_backend(self):
+        plt.use('Agg')
+
     def find_max_value(self, index):
         max_value_sym = max(max([point[index] for point in values]) for values in self.wave.velocites_symmetric.values())
         max_value_anti = max(max([point[index] for point in values]) for values in self.wave.velocites_antisymmetric.values())
@@ -52,7 +55,6 @@ class Plot:
             if n % 2 != 0:
                 arrow_x = n*self.wave.velocities_dict['C_L']/2 if mode.startswith('S') else n*self.wave.velocities_dict['C_S']/2
                 self.draw_arrow({'x' : arrow_x, 'y' : arrow_y, 'dir': arrow_dir, 's' : arrow_s})  
-
 
     def add_plate_velocities(self, plot_type):
         if plot_type == 'Phase' and self.add_velocities:
