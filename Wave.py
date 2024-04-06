@@ -2,7 +2,7 @@ from array import array
 import numpy as np
 from dataclasses import dataclass, field
 from scipy.optimize import bisect
-from scipy.interpolate import interp1d, InterpolatedUnivariateSpline
+from scipy.interpolate import UnivariateSpline, InterpolatedUnivariateSpline
 from Material import Material
 
 @dataclass
@@ -23,6 +23,8 @@ class Wave:
     modes_functions : dict = field(init=False)
     velocities_dict : dict = field(init=False)
     increasing_mode : str = field(init=False)
+    kind = 3
+    smoothen = 0
     tolerance = 1e-3
     structure_cp = {}
     velocites_symmetric = None 
@@ -53,7 +55,7 @@ class Wave:
         q = np.sqrt((angular_freq / self.material.shear_wave_velocity)**2 - k**2, dtype=np.complex128)
         return k, p, q
 
-    def interpolate_result(self, result, kind='cubic'):
+    def interpolate_result(self, result):
         # Function to interpolate result and update the dictionary
         interp_result = {}
         for key, values in result.items():
@@ -61,7 +63,7 @@ class Wave:
             if len(values) > 3:
                 fd, cp = np.array(values).T
                 # Perform interpolation using cubic spline
-                interp_func = interp1d(fd, cp, kind=kind)
+                interp_func = UnivariateSpline(fd, cp, k=self.kind, s=self.smoothen)
 
                 # Generating finer fd values for smoother plot
                 fd_finer = np.linspace(min(fd), max(fd), 2000)
@@ -217,6 +219,7 @@ class Lambwave(Wave):
         result = {}
         modes_func = self.modes_functions.get(mode_type)
         prefix = mode_type[0].upper() + '_'
+        initial_fd = []
 
         for fd in fd_range:
             # Initial phase velocity estimation
@@ -246,16 +249,25 @@ class Lambwave(Wave):
                             while key != self.increasing_mode and result[key] and cp_root > result[key][-1][1]:
                                 mode += 1
                                 key = prefix + str(mode)
-                                if key not in result:
+                                if key not in result and mode:
                                     result[key] = []
+                            
+                            if not result[key]:
+                                if fd in initial_fd:
+                                    break  # Skip if fd exists in initial_fd
+                                initial_fd.append(fd)
 
-                            result[key].append([fd, cp_root])
-                            mode += 1
+                            # Append only if mode is lower than max mode
+                            if mode < self.modes_nums[mode_type]:
+                                result[key].append([fd, cp_root])
+                                mode += 1
+                            else:
+                                result.pop(key, None)
 
                 # Update init_cps for the next iteration
                 init_cp += self.cp_step
                 init_cp2 += self.cp_step
-        
+
         # Interpolate for smoother plot
         result = self.interpolate_result(result)
 

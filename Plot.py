@@ -23,7 +23,11 @@ class Plot:
     get_figures = lambda _: [plt.figure(n) for n in plt.get_fignums()]
 
     def generate_latex(self, string):
-        return r'$\mathregular{' + string + '}$'
+        if "_" in string:
+            base, sub = string.split("_")
+            return r'$\mathregular{' + base + '_{' + sub + '}}$'
+        else:
+            return r'$\mathregular{' + string + '}$'
 
     def switch_backend(self):
         plt.switch_backend('agg')
@@ -107,7 +111,7 @@ class Plot:
         # Create custom legend entries
         values, labels = ([mode_mapping[self.mode_type][0][1][0], mode_mapping[self.mode_type][1][1][0]], ['Symmetric', 'Antisymmetric']) \
             if self.mode_type == 'both' else ([mode_mapping[self.mode_type][0][1][0]], [self.mode_type])
-        plt.legend(values, labels, loc='lower right')
+        plt.legend(values, labels, loc='upper left')
 
         plt.xlim(0, self.wave.freq_thickness_max * self.padding_factor['x'])
         plt.ylim(0, max_value * self.padding_factor['y'])
