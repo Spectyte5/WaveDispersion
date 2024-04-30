@@ -12,20 +12,20 @@ class Wave:
         'symmetric': None,
         'antisymmetric': None
     }
-    freq_thickness_max : int # Maximum value of frequency x thickness 
-    freq_thickness_points : int # Number of frequency x thickness points 
-    cp_step : int 
+    freq_thickness_max : int # Maximum value of frequency x thickness  
     cp_max : int 
     structure_mode : str 
     structure_freq : array
     rows : int 
     columns : int
-    modes_functions : dict = field(init=False)
-    velocities_dict : dict = field(init=False)
-    increasing_mode : str = field(init=False)
+    freq_thickness_points : int # Number of frequency x thickness points 
+    cp_step : int
     kind = 3
     smoothen = 0
     tolerance = 1e-3
+    modes_functions : dict = field(init=False)
+    velocities_dict : dict = field(init=False)
+    increasing_mode : str = field(init=False)
     structure_cp = {}
     velocites_symmetric = None 
     velocites_antisymmetric = None
@@ -40,6 +40,12 @@ class Wave:
                                  'C_S' : self.material.shear_wave_velocity, 
                                  'C_L' : self.material.longitudinal_wave_velocity } 
         
+        # Set default step values
+        if not self.cp_step:
+            self.cp_step = self.cp_max // 100
+        if not self.freq_thickness_points:
+            self.freq_thickness_points = self.freq_thickness_max // 100
+
         # Solve for symmetric and antisymmetric modes
         self.velocites_symmetric = self.solve_freq_equations('symmetric')
         self.velocites_antisymmetric = self.solve_freq_equations('antisymmetric')
@@ -123,10 +129,10 @@ class Wave:
 
 @dataclass
 class Shearwave(Wave):
-    def __init__(self, material, modes_nums, freq_thickness_max, freq_thickness_points, cp_step, cp_max, structure_mode: str, structure_freq: array, rows: int, columns: int):
+    def __init__(self, material, modes_nums, freq_thickness_max, cp_max, structure_mode, structure_freq, rows, columns, freq_thickness_points=None, cp_step=None):
         self.increasing_mode = 'S_0'
         self.modes_nums['symmetric'], self.modes_nums['antisymmetric'] = modes_nums
-        super().__init__(material, freq_thickness_max, freq_thickness_points, cp_step, cp_max, structure_mode, structure_freq, rows, columns)
+        super().__init__(material, freq_thickness_max, cp_max, structure_mode, structure_freq, rows, columns, freq_thickness_points, cp_step)
 
     def calculate_symmetric(self, phase_velocity, freq_thickness):
         _,_,q = self.calculate_dispersion_components(phase_velocity, freq_thickness)
@@ -183,10 +189,10 @@ class Shearwave(Wave):
 
 @dataclass
 class Lambwave(Wave):
-    def __init__(self, material, modes_nums, freq_thickness_max, freq_thickness_points, cp_step, cp_max, structure_mode: str, structure_freq: array, rows: int, columns: int):
+    def __init__(self, material, modes_nums, freq_thickness_max, cp_max, structure_mode, structure_freq, rows, columns, freq_thickness_points=None, cp_step=None):
         self.increasing_mode = 'A_0'
         self.modes_nums['symmetric'], self.modes_nums['antisymmetric'] = modes_nums
-        super().__init__(material, freq_thickness_max, freq_thickness_points, cp_step, cp_max, structure_mode, structure_freq, rows, columns)
+        super().__init__(material, freq_thickness_max, cp_max, structure_mode, structure_freq, rows, columns, freq_thickness_points, cp_step)
     
     def calculate_symmetric(self, phase_velocity, freq_thickness):
         k,p,q = self.calculate_dispersion_components(phase_velocity, freq_thickness)
