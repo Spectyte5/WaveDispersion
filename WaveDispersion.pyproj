@@ -4,7 +4,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>e629e7e5-35d3-48c5-9598-c20c5c60b114</ProjectGuid>
     <ProjectHome>.</ProjectHome>
-    <StartupFile>Main.py</StartupFile>
+    <StartupFile>Tests.py</StartupFile>
     <SearchPath>
     </SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
@@ -12,6 +12,7 @@
     <Name>WaveDispersion</Name>
     <RootNamespace>WaveDispersion</RootNamespace>
     <InterpreterId>MSBuild|env|$(MSBuildProjectFullPath)</InterpreterId>
+    <TestFramework>Pytest</TestFramework>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <DebugSymbols>true</DebugSymbols>
@@ -25,6 +26,7 @@
     <Compile Include="Main.py" />
     <Compile Include="Material.py" />
     <Compile Include="Plot.py" />
+    <Compile Include="Tests.py" />
     <Compile Include="Wave.py" />
   </ItemGroup>
   <ItemGroup>

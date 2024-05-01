@@ -373,3 +373,4 @@ venv.bak/
 
 # Results
 results/
+validation/*.png
