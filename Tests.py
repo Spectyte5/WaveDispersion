@@ -22,7 +22,7 @@ class TestWaveVisualization(unittest.TestCase):
     def setupLambWave():
         thickness = 1
         # Initialize LambWave data and model
-        TestWaveVisualization.data_lamb = TestWaveVisualization.load_data('validation/Titanium_Lamb.txt', thickness)
+        TestWaveVisualization.data_lamb = TestWaveVisualization.load_data('validation/Magnesium_Lamb.txt', thickness)
         TestWaveVisualization.plate_lamb = Material(1700, 42e9, 0.28, thickness/1000, 5770, 3050, None, "Magnesium")
         TestWaveVisualization.lamb = Lambwave(TestWaveVisualization.plate_lamb, (5, 5), 10000, 11000, 'S_0', [2000, 3500, 5000, 7500, 9000, 10000], 3, 2)
 
@@ -54,7 +54,7 @@ class TestWaveVisualization(unittest.TestCase):
         self.plot_data(self.data_shear, self.shear, 'Shear Wave Test', save_path)
 
     def test_lamb_wave_visual_overlap(self):
-        save_path = "validation/Titanium_Lamb.png"
+        save_path = "validation/Magnesium_Lamb.png"
         self.plot_data(self.data_lamb, self.lamb, 'Lamb Wave Test', save_path)
 
     def plot_data(self, data, wave_model, title, save_path):
