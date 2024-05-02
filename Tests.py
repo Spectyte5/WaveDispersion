@@ -21,7 +21,8 @@ def load_data(file_path, thickness):
                 frequency, velocity = map(float, line.split(', '))
                 frequencies.append(frequency * 1000 * thickness)  # Convert MHz to kHz
                 velocities.append(velocity * 1000)  # Convert m/ms to m/s
-        data[current_mode] = (frequencies, velocities)  # Store mode's data
+        if current_mode:
+            data[current_mode] = (frequencies, velocities)  # Ensure last mode's data is stored
     return data
 
 def setup_shear_wave(file_path):
@@ -35,19 +36,38 @@ def setup_lamb_wave(file_path):
     thickness = 1
     data_lamb = load_data(file_path, thickness)
     plate_lamb = Material(1700, 42e9, 0.28, thickness/1000, 5770, 3050, None, "Magnesium")
-    lamb = Lambwave(plate_lamb, (5, 5), 10000, 11000, 'S_0', [2000, 3500, 5000, 7500, 9000, 10000], 3, 2)
+    lamb = Lambwave(plate_lamb, (5, 5), 10000, 10200, 'S_0', [2000, 3500, 5000, 7500, 9000, 10000], 3, 2)
     return data_lamb, lamb
 
 def plot_data(data, wave_model, title, save_path):
     plt.figure(figsize=(10, 8))
+    color_my_software = 'purple'
+    color_wave_dispersion_software = 'green'
+    legend_added = {'wave_dispersion_software': False, 'disperse_software': False}
+
     for mode, (freqs, vels) in data.items():
-        plt.plot(freqs, vels, label=f'Experimental {mode}')
+        if not legend_added['disperse_software']:
+            plt.plot(freqs, vels, label='Disperse Software', color=color_wave_dispersion_software)
+            legend_added['disperse_software'] = True
+        else:
+            plt.plot(freqs, vels, color=color_wave_dispersion_software)
+
         if mode in wave_model.velocites_symmetric:
             sim_freqs, sim_vels = zip(*[(fd, cp) for fd, cp, *_ in wave_model.velocites_symmetric[mode]])
-            plt.plot(sim_freqs, sim_vels, label=f'Simulated {mode} (Symmetric)')
+            if not legend_added['wave_dispersion_software']:
+                plt.plot(sim_freqs, sim_vels, label='WaveDispersion Software', color=color_my_software)
+                legend_added['wave_dispersion_software'] = True
+            else:
+                plt.plot(sim_freqs, sim_vels, color=color_my_software)
+
         if mode in wave_model.velocites_antisymmetric:
             sim_freqs, sim_vels = zip(*[(fd, cp) for fd, cp, *_ in wave_model.velocites_antisymmetric[mode]])
-            plt.plot(sim_freqs, sim_vels, label=f'Simulated {mode} (Antisymmetric)')
+            if not legend_added['wave_dispersion_software']:
+                plt.plot(sim_freqs, sim_vels, label='WaveDispersion Software', color=color_my_software)
+                legend_added['wave_dispersion_software'] = True
+            else:
+                plt.plot(sim_freqs, sim_vels, color=color_my_software)
+
     plt.xlabel('Frequency x Thickness (KHz x mm)')
     plt.ylabel('Velocity (m/s)')
     plt.title(title)
