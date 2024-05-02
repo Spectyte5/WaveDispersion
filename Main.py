@@ -3,7 +3,7 @@ from Plot import Plot
 from Wave import Lambwave, Shearwave
 
 # Initialize plate
-plate = Material(2700, 68.9e9, 0.33, 1e-2, 6130, 3130, 2881.6, "Aluminium")
+plate = Material(2700, 68.9e9, 0.33, 10, 6130, 3130, 2881.6, "Aluminium")
 
 ### Lambwave
 # Initialize wave

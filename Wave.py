@@ -129,7 +129,7 @@ class Wave:
 
 @dataclass
 class Shearwave(Wave):
-    def __init__(self, material, modes_nums, freq_thickness_max, cp_max, structure_mode, structure_freq, rows, columns, freq_thickness_points=None, cp_step=None):
+    def __init__(self, material, modes_nums, freq_thickness_max, cp_max, structure_mode=None, structure_freq=None, rows=None, columns=None, freq_thickness_points=None, cp_step=None):
         self.increasing_mode = 'S_0'
         self.modes_nums['symmetric'], self.modes_nums['antisymmetric'] = modes_nums
         super().__init__(material, freq_thickness_max, cp_max, structure_mode, structure_freq, rows, columns, freq_thickness_points, cp_step)
@@ -189,7 +189,7 @@ class Shearwave(Wave):
 
 @dataclass
 class Lambwave(Wave):
-    def __init__(self, material, modes_nums, freq_thickness_max, cp_max, structure_mode, structure_freq, rows, columns, freq_thickness_points=None, cp_step=None):
+    def __init__(self, material, modes_nums, freq_thickness_max, cp_max, structure_mode=None, structure_freq=None, rows=None, columns=None, freq_thickness_points=None, cp_step=None):
         self.increasing_mode = 'A_0'
         self.modes_nums['symmetric'], self.modes_nums['antisymmetric'] = modes_nums
         super().__init__(material, freq_thickness_max, cp_max, structure_mode, structure_freq, rows, columns, freq_thickness_points, cp_step)

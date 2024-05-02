@@ -170,8 +170,10 @@ class Plot:
 
             # Adjust layout to prevent overlap of subplots add title
             plt.tight_layout
-            fig.suptitle('Wave structure for mode ' + self.generate_latex(self.wave.structure_mode))
-
+            mode = 'SH_' + str(self.wave.get_converted_mode(self.wave.structure_mode)) if isinstance(self.wave, Shearwave) \
+               else self.wave.structure_mode
+            fig.suptitle('Wave structure for mode ' + self.generate_latex(mode))
+           
             # Get handles and labels for the first two legend entries
             handles, labels = ax.get_legend_handles_labels()
             fig.legend(handles, labels, loc='lower center', ncol=2)

@@ -28,15 +28,15 @@ def load_data(file_path, thickness):
 def setup_shear_wave(file_path):
     thickness = 10
     data_shear = load_data(file_path, thickness)
-    plate_shear = Material(4460, 121e9, 0.3, thickness/1000, 6060, 3230, None, "Titanium")
-    shear = Shearwave(plate_shear, (3, 3), 10000, 10000, 'S_0', [2000, 3500, 5000, 7500, 9000, 10000], 3, 2)
+    plate_shear = Material(4460, 121e9, 0.3, thickness, 6060, 3230, None, "Titanium")
+    shear = Shearwave(plate_shear, (3, 3), 10000, 10000, cp_step=50)
     return data_shear, shear
 
 def setup_lamb_wave(file_path):
     thickness = 1
     data_lamb = load_data(file_path, thickness)
-    plate_lamb = Material(1700, 42e9, 0.28, thickness/1000, 5770, 3050, None, "Magnesium")
-    lamb = Lambwave(plate_lamb, (5, 5), 10000, 10200, 'S_0', [2000, 3500, 5000, 7500, 9000, 10000], 3, 2)
+    plate_lamb = Material(1700, 42e9, 0.28, thickness, 5770, 3050, None, "Magnesium")
+    lamb = Lambwave(plate_lamb, (5, 5), 10000, 10000, cp_step=50)
     return data_lamb, lamb
 
 def plot_data(data, wave_model, title, save_path):
