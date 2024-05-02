@@ -39,8 +39,10 @@ def setup_lamb_wave(file_path):
     lamb = Lambwave(plate_lamb, (5, 5), 10000, 10000, cp_step=50)
     return data_lamb, lamb
 
-def plot_data(data, wave_model, title, save_path):
+def plot_data(data, wave_model, title, save_path, background=False):
     plt.figure(figsize=(10, 8))
+    if background:
+        plt.switch_backend('agg') 
     color_my_software = 'purple'
     color_wave_dispersion_software = 'green'
     legend_added = {'wave_dispersion_software': False, 'disperse_software': False}
@@ -77,6 +79,9 @@ def plot_data(data, wave_model, title, save_path):
 
 def plot_show():
     plt.show()
+
+def plot_close_all():
+    plt.close('all')
 
 if __name__ == "__main__":
     data_shear, shear_wave = setup_shear_wave('validation/Titanium_Shear.txt')
