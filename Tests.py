@@ -58,10 +58,11 @@ def plot_data(data, wave_model, title, save_path):
 def plot_show():
     plt.show()
 
-data_shear, shear_wave = setup_shear_wave('validation/Titanium_Shear.txt')
-plot_data(data_shear, shear_wave, 'Shear Wave Test', 'validation/Titanium_Shear.png')
-plot_show()
+if __name__ == "__main__":
+    data_shear, shear_wave = setup_shear_wave('validation/Titanium_Shear.txt')
+    plot_data(data_shear, shear_wave, 'Shear Wave Test', 'validation/Titanium_Shear.png')
+    plot_show()
 
-data_lamb, lamb_wave = setup_lamb_wave('validation/Magnesium_Lamb.txt')
-plot_data(data_lamb, lamb_wave, 'Lamb Wave Test', 'validation/Magnesium_Lamb.png')
-plot_show()
+    data_lamb, lamb_wave = setup_lamb_wave('validation/Magnesium_Lamb.txt')
+    plot_data(data_lamb, lamb_wave, 'Lamb Wave Test', 'validation/Magnesium_Lamb.png')
+    plot_show()
