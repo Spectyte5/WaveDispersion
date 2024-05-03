@@ -66,6 +66,8 @@ class Plot:
     def add_plate_velocities(self, plot_type):
         if plot_type == 'Phase' and self.add_velocities:
             for name, value in self.wave.velocities_dict.items():
+                if not value:
+                    continue
                 plt.axhline(value, **self.dashed_line_style)
                 if name.endswith('R'):
                     ha = 'right'
