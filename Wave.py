@@ -154,11 +154,11 @@ class Shearwave(Wave):
 
         if self.structure_mode.startswith('S'):
             B = 1  
-            u = B * np.cos(n * np.pi * x / self.material.half_thickness) * np.exp(-1j * k * x)
+            u = B * np.cos(n * np.pi * x / self.material.thickness) * np.exp(-1j * k * x)
             w = None
         else:
             A = 1
-            u = A * np.cos(n * np.pi * x / self.material.half_thickness) * np.exp(-1j * k * x)
+            u = A * np.cos(n * np.pi * x / self.material.thickness) * np.exp(-1j * k * x)
             w = None
 
         return u, w

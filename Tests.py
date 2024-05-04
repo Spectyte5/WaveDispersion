@@ -19,7 +19,7 @@ def load_data(file_path, thickness):
                 velocities = []
             else:
                 frequency, velocity = map(float, line.split(', '))
-                frequencies.append(frequency * 1000 * thickness)  # Convert MHz to kHz
+                frequencies.append(frequency * 1000 * thickness)  # Convert MHz to kHz * mm
                 velocities.append(velocity * 1000)  # Convert m/ms to m/s
         if current_mode:
             data[current_mode] = (frequencies, velocities)  # Ensure last mode's data is stored
@@ -39,7 +39,7 @@ def setup_lamb_wave(file_path):
     lamb = Lambwave(plate_lamb, (5, 5), 10000, 10000, cp_step=50)
     return data_lamb, lamb
 
-def plot_data(data, wave_model, title, save_path, background=False):
+def plot_data(data, wave_model, type, title, save_path, background=False):
     plt.figure(figsize=(10, 8))
     if background:
         plt.switch_backend('agg') 
@@ -55,7 +55,9 @@ def plot_data(data, wave_model, title, save_path, background=False):
             plt.plot(freqs, vels, color=color_wave_dispersion_software)
 
         if mode in wave_model.velocites_symmetric:
-            sim_freqs, sim_vels = zip(*[(fd, cp) for fd, cp, *_ in wave_model.velocites_symmetric[mode]])
+            sim_freqs, sim_vels = zip(*[(fd, vel) for fd, vel, *_ in wave_model.velocites_symmetric[mode]]) if type == 'Phase' \
+                else zip(*[(fd, vel) for fd, _, vel, *_ in wave_model.velocites_symmetric[mode]])
+
             if not legend_added['wave_dispersion_software']:
                 plt.plot(sim_freqs, sim_vels, label='WaveDispersion Software', color=color_my_software)
                 legend_added['wave_dispersion_software'] = True
@@ -63,7 +65,8 @@ def plot_data(data, wave_model, title, save_path, background=False):
                 plt.plot(sim_freqs, sim_vels, color=color_my_software)
 
         if mode in wave_model.velocites_antisymmetric:
-            sim_freqs, sim_vels = zip(*[(fd, cp) for fd, cp, *_ in wave_model.velocites_antisymmetric[mode]])
+            sim_freqs, sim_vels = zip(*[(fd, vel) for fd, vel, *_ in wave_model.velocites_antisymmetric[mode]]) if type == 'Phase' \
+                else zip(*[(fd, vel) for fd, _, vel, *_ in wave_model.velocites_antisymmetric[mode]])
             if not legend_added['wave_dispersion_software']:
                 plt.plot(sim_freqs, sim_vels, label='WaveDispersion Software', color=color_my_software)
                 legend_added['wave_dispersion_software'] = True
@@ -84,10 +87,20 @@ def plot_close_all():
     plt.close('all')
 
 if __name__ == "__main__":
-    data_shear, shear_wave = setup_shear_wave('validation/Titanium_Shear.txt')
-    plot_data(data_shear, shear_wave, 'Shear Wave Test', 'validation/Titanium_Shear.png')
+    # Phase velocity
+    data_shear, shear_wave = setup_shear_wave('validation/Titanium_Shear_Phase.txt')
+    plot_data(data_shear, shear_wave, 'Phase', 'Shear Wave Phase Velocity Test', 'validation/Titanium_Shear_Phase.png')
     plot_show()
 
-    data_lamb, lamb_wave = setup_lamb_wave('validation/Magnesium_Lamb.txt')
-    plot_data(data_lamb, lamb_wave, 'Lamb Wave Test', 'validation/Magnesium_Lamb.png')
+    data_lamb, lamb_wave = setup_lamb_wave('validation/Magnesium_Lamb_Phase.txt')
+    plot_data(data_lamb, lamb_wave, 'Phase', 'Lamb Wave Phase Velocity Test', 'validation/Magnesium_Lamb_Phase.png')
+    plot_show()
+
+    # Group velocity
+    data_shear, shear_wave = setup_shear_wave('validation/Titanium_Shear_Group.txt')
+    plot_data(data_shear, shear_wave, 'Group', 'Shear Wave Group Velocity Test', 'validation/Titanium_Shear_Group.png')
+    plot_show()
+
+    data_lamb, lamb_wave = setup_lamb_wave('validation/Magnesium_Lamb_Group.txt')
+    plot_data(data_lamb, lamb_wave, 'Group', 'Lamb Wave Group Velocity Test', 'validation/Magnesium_Lamb_Group.png')
     plot_show()

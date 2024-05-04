@@ -123,10 +123,12 @@ class Plot:
     def plot_wave_structure(self, title):
         # Create a figure and an array of subplots
         if self.wave.structure_result:
-            fig, axes = plt.subplots(self.wave.rows, self.wave.columns, figsize=(10, 6),num=f"{title[:4] + ' ' + title[4:]}")
-
-            # Flatten the axes array to easily access individual subplots
-            axes = axes.flatten()
+            if self.wave.rows == 1 and self.wave.columns == 1:
+                fig, axes = plt.subplots(1, 1, figsize=(10, 6), num=f"{title[:4] + ' ' + title[4:]}")
+                axes = [axes]  # Convert to a list to handle single subplot case
+            else:
+                fig, axes = plt.subplots(self.wave.rows, self.wave.columns, figsize=(10, 6), num=f"{title[:4] + ' ' + title[4:]}")
+                axes = axes.flatten()
 
             # Loop through each key in the dictionary
             for i, key in enumerate(self.wave.structure_result.keys()):
