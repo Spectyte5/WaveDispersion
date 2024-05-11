@@ -148,17 +148,15 @@ class Shearwave(Wave):
         return cg
 
     def calculate_wavestructure_components(self, x, cp, fd):
-        k,_,_ = self.calculate_dispersion_components(cp, fd)
-
         n = self.get_converted_mode(self.structure_mode)
 
         if self.structure_mode.startswith('S'):
             B = 1  
-            u = B * np.cos(n * np.pi * x / self.material.thickness) * np.exp(-1j * k * x)
+            u = B * np.cos(n * np.pi * x / self.material.thickness) * np.exp(1j)
             w = None
         else:
             A = 1
-            u = A * np.cos(n * np.pi * x / self.material.thickness) * np.exp(-1j * k * x)
+            u = A * np.sin(n * np.pi * x / self.material.thickness) * np.exp(1j)
             w = None
 
         return u, w
