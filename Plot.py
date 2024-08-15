@@ -1,9 +1,8 @@
 ﻿from dataclasses import dataclass, field
 import matplotlib.pyplot as plt
 import numpy as np
-from Wave import Wave, Lambwave, Shearwave
-from io import BytesIO
-import base64, os
+from Wave import Wave, Lambwave, Shearwave, AxialWave
+import os
 
 @dataclass
 class Plot:
@@ -14,12 +13,16 @@ class Plot:
     path : str = field(default= "results")
     symmetric_style : dict = field(default_factory=lambda: {'color': 'green', 'linestyle': '-'})
     antisymmetric_style : dict = field(default_factory=lambda: {'color': 'purple', 'linestyle': '--'})
+    torsional_style : dict = field(default_factory=lambda: {'color': 'green', 'linestyle': '-'})
+    longitudinal_style : dict = field(default_factory=lambda: {'color': 'purple', 'linestyle': '--'})
+    flexural_style : dict = field(default_factory=lambda: {'color': 'orange', 'linestyle': '-'})
     dashed_line_style : dict = field(default_factory=lambda: {'color': 'black', 'linestyle': '--', 'linewidth': 0.5})
     continuous_line_style : dict = field(default_factory=lambda: {'color': 'black', 'linestyle': '-', 'linewidth': 0.75})
     in_plane_style : dict = field(default_factory=lambda: {'color': 'green', 'linestyle': '-', 'label': 'In plane'})
     out_of_plane_style : dict = field(default_factory=lambda: {'color': 'purple', 'linestyle': '--', 'label': 'Out of plane'})
     velocity_style : dict = field(default_factory=lambda: {'color': 'black', 'va': 'center'})
     padding_factor : dict = field(default_factory=lambda: {'x' : 1.00, 'y' : 1.05})
+    axial_factor : float = field(default=300)
     get_figures = lambda _: [plt.figure(n) for n in plt.get_fignums()]
 
     def generate_latex(self, string):
@@ -36,6 +39,13 @@ class Plot:
         plt.close('all')
 
     def find_max_value(self, index):
+        if isinstance(self.wave, AxialWave):
+            max_value_tors = max(max([point[index] for point in values]) for values in self.wave.velocites_torsional.values())
+            #max_value_long = max(max([point[index] for point in values]) for values in self.wave.velocites_longitudinal.values())
+            #max_value_flex = max(max([point[index] for point in values]) for values in self.wave.velocites_flexural.values())
+            #return max(max_value_tors, max_value_long, max_value_flex)
+            return max_value_tors
+
         max_value_sym = max(max([point[index] for point in values]) for values in self.wave.velocites_symmetric.values())
         max_value_anti = max(max([point[index] for point in values]) for values in self.wave.velocites_antisymmetric.values())
         return max(max_value_sym, max_value_anti)
@@ -45,7 +55,6 @@ class Plot:
         plt.text(x=arrow['x'],y=arrow['y'], s=arrow['s'], va=arrow['dir'], ha='center', clip_on=True)
 
     def add_cutoff_frequencies(self, mode, max_value, plot_type : str):
-
         arrow_y, arrow_dir, arrow_s = (max_value, 'top', r'$\downarrow$') \
             if plot_type == 'Phase' else (0, 'bottom', r'$\uparrow$')
 
@@ -83,15 +92,23 @@ class Plot:
         plt.title(title)
 
         symmetric_lines, antisymmetric_lines = [], []
+        torsional_lines, longitudinal_lines, flexural_lines = [], [], []
         index_map = {'Phase': 1,'Group': 2,'Wavenumber': 3 }
         max_value = self.find_max_value(index_map.get(plot_type))
 
         mode_mapping = {
+            'torsional': [(self.wave.velocites_torsional, torsional_lines, self.torsional_style)],
+            'longitudinal': [(self.wave.velocites_longitudinal, longitudinal_lines, self.longitudinal_style)],
+            'flexural': [(self.wave.velocites_flexural, flexural_lines, self.flexural_style)],
+            'all': [(self.wave.velocites_torsional, torsional_lines, self.torsional_style),
+                    (self.wave.velocites_longitudinal, longitudinal_lines, self.longitudinal_style),
+                    (self.wave.velocites_flexural, flexural_lines, self.flexural_style)]
+            } if isinstance(self.wave, AxialWave) else {
             'symmetric': [(self.wave.velocites_symmetric, symmetric_lines, self.symmetric_style)],
             'antisymmetric': [(self.wave.velocites_antisymmetric, antisymmetric_lines, self.antisymmetric_style)],
             'both': [(self.wave.velocites_symmetric, symmetric_lines, self.symmetric_style),
                      (self.wave.velocites_antisymmetric, antisymmetric_lines, self.antisymmetric_style)]
-            }
+            } 
 
         selected_modes = mode_mapping[self.mode_type] 
 
@@ -111,12 +128,18 @@ class Plot:
         self.add_plate_velocities(plot_type)
         
         # Create custom legend entries
-        values, labels = ([mode_mapping[self.mode_type][0][1][0], mode_mapping[self.mode_type][1][1][0]], ['Symmetric', 'Antisymmetric']) \
-            if self.mode_type == 'both' else ([mode_mapping[self.mode_type][0][1][0]], [self.mode_type])
-        plt.legend(values, labels, loc='upper left')
+        if isinstance(self.wave, AxialWave):
+            do = 'later'
+            #values, labels = ([mode_mapping[self.mode_type][0][1][0], mode_mapping[self.mode_type][1][1][0]], ['Symmetric', 'Antisymmetric']) \
+             #   if self.mode_type == 'both' else ([mode_mapping[self.mode_type][0][1][0]], [self.mode_type])
+        else:
+            values, labels = ([mode_mapping[self.mode_type][0][1][0], mode_mapping[self.mode_type][1][1][0]], ['Symmetric', 'Antisymmetric']) \
+                if self.mode_type == 'both' else ([mode_mapping[self.mode_type][0][1][0]], [self.mode_type])
+            plt.legend(values, labels, loc='upper left')
 
         plt.xlim(0, self.wave.freq_thickness_max * self.padding_factor['x'])
-        plt.ylim(0, max_value * self.padding_factor['y'])
+        plt.ylim(self.wave.material.shear_wave_velocity - self.axial_factor, max_value * self.padding_factor['y']) \
+            if isinstance(self.wave, AxialWave) and plot_type=='Phase' else plt.ylim(0, max_value * self.padding_factor['y'])
         plt.xlabel('$\mathregular{f_d}$ (KHz x mm)')
         plt.ylabel('$\mathregular{c_p}$ (m/sec)') if plot_type != 'Wavenumber' else plt.ylabel('Wavenumber (1/m)') 
         
