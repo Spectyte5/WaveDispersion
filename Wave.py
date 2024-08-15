@@ -8,18 +8,60 @@ from scipy.special import jv, iv, kv, yv
 
 @dataclass
 class Wave: 
+    """
+    A class representing a base wave type.
+
+    Dataclass storing parameters connected to general dispersion of the waves,
+    like max value of phase velocity and frequency times thickness,step between the values and
+    mode amount for symmetric and antisymmetric modes. It also has all the dictionaries for
+    storing the results, for velocity and wave structure.
+
+
+    Attributes:
+    material (Material) : Material class object providing the material information.
+    modes_nums (dict) : Number of symmetric and antisymmetric modes to find.
+    freq_thickness_max (int) : Max value of Frequency x Thickness [kHz x mm].
+    cp_max (int) : Max value of Frequency x Thickness [m/s].
+    structure_mode (str) : Which mode should be used for wavestructure plot for simplicity S_0, A_0 ... S_n, A_n for all Wavetypes.
+    structure_freq (array) : Frequencies at which to check Wavestructure.
+    rows (int) : Number of rows for Wavestructure plot.
+    colsumns (int) : Number of columns for Wavestructure plot.
+    freq_thickness_points (int) : Number of frequency x thickness points to find.
+    cp_step (int) : Step between phase velocity points checked.
+    kind (int) : Kind of interpolation, 3 is used for cubic.
+    smoothen (int) : Order of smoothening used for interpolation.
+    tolerance (float) : Tolerance for the root-finding.
+    modes_functions (dict) : Maps mode_type with functions calculating symmetric and antisymmetric modes.
+    velocities_dict (dict) : Maps material bulk velocities.
+    increasing_mode (str) : Unique mode that increases instead of decreasing with frequency x thickness.
+    structure_cp (dict) : Phase velocity used for wavestructure calculation.
+    structure_result (dict) : Result obtained for wavestructure.
+    get_converted_mode (lambda) : generates key for Shearwave from Lambwave style one.
+
+    Methods:
+        __post_init__():
+            Post-initialization method that sets default step values and plate velocites values.
+        calculate_dispersion_components(phase_velocity, freq_thickness):
+            Calculates dispersion componetns k, p and q.
+        interpolate_result(result):
+            Interpolate result and update the dictionary
+        calculate_group_wavenumber(result):
+            Calculates group velocity and wave number and updates the dictionary
+        calculate_wave_structure(samples_x):
+            Calculates wavestructure components u and w.
+    """
     material : Material
     modes_nums = {
         'symmetric': None,
         'antisymmetric': None
     }
-    freq_thickness_max : int # Maximum value of frequency x thickness  
+    freq_thickness_max : int 
     cp_max : int 
     structure_mode : str 
     structure_freq : array
     rows : int 
     columns : int
-    freq_thickness_points : int # Number of frequency x thickness points 
+    freq_thickness_points : int
     cp_step : int
     kind = 3
     smoothen = 0
@@ -32,67 +74,110 @@ class Wave:
     get_converted_mode = lambda _, key: int(key[2:]) * 2 if key.startswith('S') else int(key[2:]) * 2 + 1
 
     def __post_init__(self):
+        """
+        Post-initialization method that sets default step values and plate velocites values.
+
+        This method is automatically called after the dataclass instance is initialized. 
+        It sets default step values and plate velocites values.
+        """
         self.velocities_dict = { 'C_R' : self.material.rayleigh_wave_velocity,
                                  'C_S' : self.material.shear_wave_velocity, 
                                  'C_L' : self.material.longitudinal_wave_velocity } 
         
-        # Set default step values
         if not self.cp_step:
             self.cp_step = self.cp_max // 100
         if not self.freq_thickness_points:
             self.freq_thickness_points = self.freq_thickness_max // 100
 
-    def calculate_dispersion_components(self, phase_velocity, freq_thickness):
+    def calculate_dispersion_components(self, phase_velocity: float, freq_thickness: float) -> float | float | float:
+        """
+        Calculates dispersion componetns k, p and q.
+
+        Parameters:
+            phase_velocity (float): Current phase velocity value.
+            freq_thickness (float): Current frequency and thickness product value.
+
+        Returns:
+            k (float): wavenumber
+            p (float): p-component
+            q (float): q-component
+        """
         angular_freq = 2 * np.pi * (freq_thickness / self.material.thickness) 
         k = angular_freq / phase_velocity
         p = np.sqrt((angular_freq / self.material.longitudinal_wave_velocity)**2 - k**2, dtype=np.complex128)
         q = np.sqrt((angular_freq / self.material.shear_wave_velocity)**2 - k**2, dtype=np.complex128)
         return k, p, q
 
-    def interpolate_result(self, result):
-        # Function to interpolate result and update the dictionary
+    def interpolate_result(self, result: dict) -> dict :
+        """
+        Interpolate result and update the dictionary
+
+        Performs interpolation using cubic spline, generates finer fd values for smoother plot 
+        and stores interpolated data in the new dictionary. Additionaly cp is also stored
+        as function of frequency and thickness product for wave structure.
+
+        Parameters:
+            result (dict) : Dictionary with results to interpolate.
+
+        Returns:
+            interp_result (dict)
+        """
         interp_result = {}
         for key, values in result.items():
 
             if len(values) > 3:
                 fd, cp = np.array(values).T
-                # Perform interpolation using cubic spline
                 interp_func = UnivariateSpline(fd, cp, k=self.kind, s=self.smoothen)
-
-                # Generating finer fd values for smoother plot
                 fd_finer = np.linspace(min(fd), max(fd), 2000)
                 cp_interp = interp_func(fd_finer)
-
-                # Store interpolated data in the new dictionary
                 interp_result[key] = list(zip(fd_finer, cp_interp))
-
-                # Store cp as function of fd for wave structure
                 self.structure_cp[key] = interp_func
 
         return interp_result
 
-    def calculate_group_wavenumber(self, result):
-        # Function to calculate group velocity and wave number and update the dictionary
+    def calculate_group_wavenumber(self, result: dict) -> dict:
+        """
+        Calculates group velocity and wave number and updates the dictionary
+
+        Estimates the derivative of phase velocity with respect to fd using interpolation,
+        then calculates group_velocity using the estimated derivative.
+        Adds cg_val as the third value in each tuple and returns updated dict.
+
+        Parameters:
+            result (dict) : Dictionary with results to interpolate.
+
+        Returns:
+            result (dict)
+        """
         for key, values in result.items():
             fd_val = [point[0] for point in values]
             cp_val = [point[1] for point in values]
             k_val, cg_val = [], []
-            # Estimating the derivative of cp_val with respect to fd_val using interpolation
             univ_s = InterpolatedUnivariateSpline(fd_val, cp_val)
             cp_prime = univ_s.derivative()
-            # Calculate cg using the estimated derivative
             for i in range(len(fd_val)):
                 cg = self.get_group_velocity_eq(cp_val[i], fd_val[i], cp_prime, key)
                 k = (fd_val[i]*2*np.pi/self.material.thickness)/cp_val[i]
                 cg_val.append(cg)
                 k_val.append(k)
-            # Add cg_val as the third value in each tuple
             result[key] = [(fd_val[i], cp_val[i], cg_val[i], k_val[i]) for i in range(len(fd_val))]
-        # return updated dict
+
         return result
 
-    def calculate_wave_structure(self, samples_x=100):
+    def calculate_wave_structure(self, samples_x: int=100) -> dict:
+        """
+        Calculates group velocity and wave number and updates the dictionary
 
+        Creates array between -thickness/2 and thickness/2. 
+        Uses the formula for wave structure to calculate u and w compontents.
+        Depending on the cases appends results to array.
+
+        Parameters:
+            samples_x (int, optional) : Number of samples for the thickness array.
+
+        Returns:
+            u_w_array (list)
+        """
         fd_values, cp_values,  u_w_array = [], [], {}
 
         result = self.velocites_symmetric if self.structure_mode.startswith('S') else self.velocites_antisymmetric
@@ -102,7 +187,6 @@ class Wave:
                 fd_values.append(tuple_value[0])
                 cp_values.append(tuple_value[1])
 
-        # Create array between -d/2 and d/2
         x = np.linspace(-self.material.half_thickness, self.material.half_thickness, samples_x) 
 
         for fd in self.structure_freq:
@@ -110,46 +194,126 @@ class Wave:
             u, w = self.calculate_wavestructure_components(x, cp, fd)
             if fd not in u_w_array:
                 u_w_array[fd] = []
-            # Append result to array
             u_w_array[fd].append([u, w, x])
             
         return u_w_array
 
 @dataclass
 class Shearwave(Wave):
+    """
+    A class representing a Shearwave type.
+
+    Dataclass inheriting Wave class, providing results and parameters specific to Shearwaves.
+    Class has different methods for calculation of dispersion and wavestructure for Shearwaves.
+
+    Methods:
+    __init__(material, modes_nums, freq_thickness_max, cp_max, structure_mode, structure_freq, rows, columns, freq_thickness_points, cp_step):
+        Initialization method that calls function calculating results.
+    __post_init__():
+        Post-initialization method that calls function calculating results.
+    calculate_symmetric(phase_velocity, freq_thickness):
+        Calcultes symmetric modes dispersion equation.
+    calculate_antisymmetric(phase_velocity, freq_thickness):
+        Calcultes antisymmetric modes dispersion equation.
+    get_group_velocity_eq(cp, fd, cp_prime, key):
+        Calculates group velocity from current phase velocity and fd.
+    calculate_wavestructure_components(x, cp, fd):
+        Calculates wavestructure components u and w.
+    solve_freq_equations(mode_type):
+        Solves frequency equations and returns function of cp with respect to fd.
+    """
     def __init__(self, material, modes_nums, freq_thickness_max, cp_max, structure_mode=None, structure_freq=None, rows=None, columns=None, freq_thickness_points=None, cp_step=None):
+        """
+        Initialization method that calls function calculating results.
+
+        This method is automatically called when the dataclass instance is initialized. 
+        It calls init method of the base class Wave and sets additional parameters.
+        """
         self.increasing_mode = 'S_0'
         self.modes_nums['symmetric'], self.modes_nums['antisymmetric'] = modes_nums
         super().__init__(material, freq_thickness_max, cp_max, structure_mode, structure_freq, rows, columns, freq_thickness_points, cp_step)
 
     def __post_init__(self):
+        """
+        Post-initialization method that calls function calculating results.
+
+        This method is automatically called after the dataclass instance is initialized. 
+        It solves dispersion equation for symmetric and antisymmetric modes and calculates wavestructure.
+        """
         self.modes_functions = {
             'symmetric': self.calculate_symmetric,
             'antisymmetric': self.calculate_antisymmetric }
 
         super().__post_init__()
-        # Solve for symmetric and antisymmetric modes
         self.velocites_symmetric = self.solve_freq_equations('symmetric')
         self.velocites_antisymmetric = self.solve_freq_equations('antisymmetric')
-
         if self.structure_freq and self.structure_mode:
-            # Calculate wave structure
             self.structure_result = self.calculate_wave_structure()
 
-    def calculate_symmetric(self, phase_velocity, freq_thickness):
+    def calculate_symmetric(self, phase_velocity, freq_thickness) -> float:
+        """
+        Calcultes symmetric modes dispersion equation.
+
+        Uses formula for symmetric modes dispersion equation and returns its real component.
+
+        Parameters:
+            phase_velocity (float): Current phase velocity value.
+            freq_thickness (float): Current frequency and thickness product value.
+
+        Returns:
+            dispersion (float)
+        """
         _,_,q = self.calculate_dispersion_components(phase_velocity, freq_thickness)
         return np.real(np.sin(q*self.material.half_thickness))
 
     def calculate_antisymmetric(self, phase_velocity, freq_thickness):
+        """
+        Calcultes antisymmetric modes dispersion equation.
+
+        Uses formula for antisymmetric modes dispersion equation and returns its real component.
+
+        Parameters:
+            phase_velocity (float): Current phase velocity value.
+            freq_thickness (float): Current frequency and thickness product value.
+
+        Returns:
+            dispersion (float)
+        """
         _,_,q = self.calculate_dispersion_components(phase_velocity, freq_thickness)
         return  np.real(np.cos(q*self.material.half_thickness))
 
-    def get_group_velocity_eq(self, cp, fd, cp_prime, key):
+    def get_group_velocity_eq(self, cp: float, fd: float, cp_prime: float, key: str) -> float:
+        """
+        Calculates group velocity from current phase velocity and fd.
+
+        Parameters:
+            phase_velocity (float): Current phase velocity value.
+            freq_thickness (float): Current frequency and thickness product value.
+            cp_prime (float): Current phase velocity derivative.
+            key (str, not used): Full mode name
+
+        Returns:
+            cg (float): group velocity
+        """
         n = self.get_converted_mode(key)
         cg = self.material.shear_wave_velocity * np.sqrt(1 - ((n/2)**2) / ((fd/self.material.shear_wave_velocity)**2))
         return cg
 
-    def calculate_wavestructure_components(self, x, cp, fd):
+    def calculate_wavestructure_components(self, x: np.ndarray, cp: float, fd: float) -> float | float:
+        """
+        Calculates wavestructure components u and w.
+
+        Uses formula for wavestructure to obtain in-plane and out-of-plane components.
+
+        Parameters:
+            x (np.ndarray) : Array of points between -thickness/2 and thickness/2.
+            phase_velocity (float): Current phase velocity value.
+            freq_thickness (float): Current frequency and thickness product value.
+
+        Returns:
+            u (float)
+            w (float)
+        """
         n = self.get_converted_mode(self.structure_mode)
 
         if self.structure_mode.startswith('S'):
@@ -163,7 +327,18 @@ class Shearwave(Wave):
 
         return u, w
 
-    def solve_freq_equations(self, mode_type):
+    def solve_freq_equations(self, mode_type: str) -> dict: 
+        """
+        Solves frequency equations and returns function of cp with respect to fd.
+        The algorithm is based on the one presented in J.L.Roses Ultrasonic Guided Waves in Solid Media - chapter 12. 
+        Use relation between material's shear_wave_velocity and frequency x thickness to obtain the phase velocity 
+
+        Parameters:
+            mode_type (str) : Types of the modes shown on the plot: sym, anti or both.
+
+        Returns:
+            result (dict)
+        """
         fd_range = np.linspace(0, self.freq_thickness_max, self.freq_thickness_points)
         result = {}
         prefix = mode_type[0].upper() + '_'
@@ -173,54 +348,131 @@ class Shearwave(Wave):
             for fd in fd_range:                       
                 key = prefix + str(mode)
                 n = self.get_converted_mode(key)
-                # calculate phase velocity [m/s]
                 cp = 2 * self.material.shear_wave_velocity * fd / np.sqrt(4 * fd**2 - (n * self.material.shear_wave_velocity)**2)
                 if not np.isnan(cp) and cp < self.cp_max:
                     if key not in result:
                         result[key] = []
                     result[key].append([fd, cp])
         
-        # Interpolate for smoother plot
         result = self.interpolate_result(result)
 
-        # Calculate group velocity and wave number
         result = self.calculate_group_wavenumber(result)
         return result
 
 @dataclass
 class Lambwave(Wave):
+    """
+    A class representing a Lambwave type.
+
+    Dataclass inheriting Wave class, providing results and parameters specific to Lambwaves.
+    Class has different methods for calculation of dispersion and wavestructure for Lambwaves.
+
+    Methods:
+    __init__(material, modes_nums, freq_thickness_max, cp_max, structure_mode, structure_freq, rows, columns, freq_thickness_points, cp_step):
+        Initialization method that calls function calculating results.
+    __post_init__():
+        Post-initialization method that calls function calculating results.
+    calculate_symmetric(phase_velocity, freq_thickness):
+        Calcultes symmetric modes dispersion equation.
+    calculate_antisymmetric(phase_velocity, freq_thickness):
+        Calcultes antisymmetric modes dispersion equation.
+    get_group_velocity_eq(cp, fd, cp_prime, key):
+        Calculates group velocity from current phase velocity and fd.
+    calculate_wavestructure_components(x, cp, fd):
+        Calculates wavestructure components u and w.
+    solve_freq_equations(mode_type):
+        Solves frequency equations and returns function of cp with respect to fd.
+    """
     def __init__(self, material, modes_nums, freq_thickness_max, cp_max, structure_mode=None, structure_freq=None, rows=None, columns=None, freq_thickness_points=None, cp_step=None):
+        """
+        Initialization method that calls function calculating results.
+
+        This method is automatically called when the dataclass instance is initialized. 
+        It calls init method of the base class Wave and sets additional parameters.
+        """
         self.increasing_mode = 'A_0'
         self.modes_nums['symmetric'], self.modes_nums['antisymmetric'] = modes_nums
         super().__init__(material, freq_thickness_max, cp_max, structure_mode, structure_freq, rows, columns, freq_thickness_points, cp_step)
     
     def __post_init__(self):
+        """
+        Post-initialization method that calls function calculating results.
+
+        This method is automatically called after the dataclass instance is initialized. 
+        It solves dispersion equation for symmetric and antisymmetric modes and calculates wavestructure.
+        """
         super().__post_init__()
         self.modes_functions = {
             'symmetric': self.calculate_symmetric,
             'antisymmetric': self.calculate_antisymmetric }
-
-        # Solve for symmetric and antisymmetric modes
         self.velocites_symmetric = self.solve_freq_equations('symmetric')
         self.velocites_antisymmetric = self.solve_freq_equations('antisymmetric')
-
         if self.structure_freq and self.structure_mode:
-            # Calculate wave structure
             self.structure_result = self.calculate_wave_structure()
 
-    def calculate_symmetric(self, phase_velocity, freq_thickness):
+    def calculate_symmetric(self, phase_velocity: float, freq_thickness: float) -> float:
+        """
+        Calcultes symmetric modes dispersion equation.
+
+        Uses formula for symmetric modes dispersion equation and returns its real component.
+
+        Parameters:
+            phase_velocity (float): Current phase velocity value.
+            freq_thickness (float): Current frequency and thickness product value.
+
+        Returns:
+            dispersion (float)
+        """
         k,p,q = self.calculate_dispersion_components(phase_velocity, freq_thickness)
         return np.real(np.tan(q*self.material.half_thickness)/q + (4*(k**2)*p*np.tan(p*self.material.half_thickness))/(q**2 - k**2)**2)
 
-    def calculate_antisymmetric(self, phase_velocity, freq_thickness):
+    def calculate_antisymmetric(self, phase_velocity: float, freq_thickness: float) -> float:
+        """
+        Calcultes antisymmetric modes dispersion equation.
+
+        Uses formula for antisymmetric modes dispersion equation and returns its real component.
+
+        Parameters:
+            phase_velocity (float): Current phase velocity value.
+            freq_thickness (float): Current frequency and thickness product value.
+
+        Returns:
+            dispersion (float)
+        """
         k,p,q = self.calculate_dispersion_components(phase_velocity, freq_thickness)
         return np.real(q * np.tan(q*self.material.half_thickness) + (((q**2 - k**2)**2)*np.tan(p*self.material.half_thickness))/(4*(k**2)*p))
 
-    def get_group_velocity_eq(self, cp, fd, cp_prime, key):
+    def get_group_velocity_eq(self, cp: float, fd: float, cp_prime: float, key: str) -> float:
+        """
+        Calculates group velocity from current phase velocity and fd.
+
+        Parameters:
+            phase_velocity (float): Current phase velocity value.
+            freq_thickness (float): Current frequency and thickness product value.
+            cp_prime (float): Current phase velocity derivative.
+            key (str, not used): Full mode name
+
+        Returns:
+            cg (float): group velocity
+        """
         cg = cp**2 * (cp - fd * cp_prime(fd))**-1
         return cg
 
-    def calculate_wavestructure_components(self, x, cp, fd):
+    def calculate_wavestructure_components(self, x: np.ndarray, cp: float, fd: float) -> float | float:
+        """
+        Calculates wavestructure components u and w.
+
+        Uses formula for wavestructure to obtain in-plane and out-of-plane components.
+
+        Parameters:
+            x (np.ndarray) : Array of points between -thickness/2 and thickness/2.
+            phase_velocity (float): Current phase velocity value.
+            freq_thickness (float): Current frequency and thickness product value.
+
+        Returns:
+            u (float)
+            w (float)
+        """
         k,p,q = self.calculate_dispersion_components(cp, fd)
 
         if self.structure_mode.startswith('S'):
@@ -234,7 +486,27 @@ class Lambwave(Wave):
 
         return u, w
 
-    def solve_freq_equations(self, mode_type):
+    def solve_freq_equations(self, mode_type: str) -> dict:
+        """
+        Solves frequency equations and returns function of cp with respect to fd.
+        
+        The algorithm is based on the one presented in J.L.Roses Ultrasonic Guided Waves in Solid Media - chapter 6. 
+        The algorithm goes as follows:
+        (1) Choose a frequency–thickness product fd_0.
+        (2) Make an initial estimate of the phase velocity cp_0. 
+        (3) Evaluate the signs of each of the left-hand sides of frequency equations. 
+        (4) Choose another phase velocity cp_1 > cp_0 and re-evaluate the signs of frequency equations. 
+        (5) Repeat steps (3) and (4) until the sign changes, assumming this happens between cp_n and cp_n+1.
+        (6) Use bisection to locate precisely the phase velocity in the interval cp_n < cp < cp_n+1 where the LHS of the required equation is close enough to zero. 
+        (7) After finding the root, continue searching at this fd for other roots according to steps (2) through (6).
+        (8) Choose another fd product and repeat steps (2) through (7).
+
+        Parameters:
+            mode_type (str) : Types of the modes shown on the plot: sym, anti or both.
+
+        Returns:
+            result (dict)
+        """
         fd_range = np.linspace(0, self.freq_thickness_max, self.freq_thickness_points)
         result = {}
         modes_func = self.modes_functions.get(mode_type)
@@ -242,30 +514,22 @@ class Lambwave(Wave):
         initial_fd = []
 
         for fd in fd_range:
-            # Initial phase velocity estimation
             mode = 0
             init_cp = 0
             init_cp2 = init_cp + self.cp_step
 
             while init_cp2 < self.cp_max:
-                # Evaluate the function values
                 cp_0 = modes_func(init_cp, fd)
                 cp_1 = modes_func(init_cp2, fd)
 
-                # Check if in the num_of modes range:
                 if mode < self.modes_nums[mode_type]:
-                    # Check if sign changes
                     if not (np.isnan(cp_0) or np.isnan(cp_1)) and np.sign(cp_0) != np.sign(cp_1):
-                        # Using bisection method to find the root
                         cp_root = bisect(f=modes_func, a=init_cp, b=init_cp2, args=(fd,))
                         if np.abs(modes_func(cp_root, fd)) < self.tolerance:
                             key = prefix + str(mode)
-
-                            # if key is not in result, create new list
                             if key not in result:
                                 result[key] = []
 
-                            # check if value increased for modes different then increasing mode
                             while key != self.increasing_mode and result[key] and cp_root > result[key][-1][1]:
                                 mode += 1
                                 key = prefix + str(mode)
@@ -274,58 +538,124 @@ class Lambwave(Wave):
                             
                             if not result[key]:
                                 if fd in initial_fd:
-                                    break  # Skip if fd exists in initial_fd
+                                    break
                                 initial_fd.append(fd)
 
-                            # Append only if mode is lower than max mode
                             if mode < self.modes_nums[mode_type]:
                                 result[key].append([fd, cp_root])
                                 mode += 1
                             else:
                                 result.pop(key, None)
 
-                # Update init_cps for the next iteration
                 init_cp += self.cp_step
                 init_cp2 += self.cp_step
 
-        # Interpolate for smoother plot
         result = self.interpolate_result(result)
 
-        # Calculate group velocity and wave number
         result = self.calculate_group_wavenumber(result)
         return result
 
 @dataclass
-class AxialWave(Wave):
+class Axialwave(Wave):
+    """
+    A class representing a Axialwave type.
+
+    Dataclass inheriting Wave class, providing results and parameters specific to Axialwaves.
+    Class has different methods for calculation of dispersion and wavestructure for Axialwaves.
+
+    Methods:
+    __init__(material, modes_nums, freq_thickness_max, cp_max, structure_mode, structure_freq, rows, columns, freq_thickness_points, cp_step):
+        Initialization method that calls function calculating results.
+    __post_init__():
+        Post-initialization method that calls function calculating results.
+    calculate_dispersion_components(phase_velocity, freq_thickness):
+        Calculates dispersion components k, alpha_sq and beta_sq.
+    calculate_bessel_functions(n, r, alpha_sq, beta_sq):
+        Calculates bessel or modified bessel functions depending on the input.
+    calculate_characteristic_equation(phase_velocity, freq_thickness, n):
+        Calculates bessel or modified bessel functions depending on the input.
+    get_group_velocity_eq(cp, fd, cp_prime, key):
+        Calculates group velocity from current phase velocity and fd.
+    solve_freq_equations(mode_type):
+        Solves frequency equations and returns function of cp with respect to fd.
+    """
     modes_nums = {
         'wavenumber': None,
         'circumfential_order': None,
     }
 
     def __init__(self, material, modes_nums, freq_thickness_max, cp_max, structure_mode=None, structure_freq=None, rows=None, columns=None, freq_thickness_points=None, cp_step=None):
+        """
+        Initialization method that calls function calculating results.
+
+        This method is automatically called when the dataclass instance is initialized. 
+        It calls init method of the base class Wave and sets additional parameters.
+        """
         self.increasing_mode = 'T_(0,1)'
         self.modes_nums['wavenumber'], self.modes_nums['circumfential_order'] = modes_nums
         super().__init__(material, freq_thickness_max, cp_max, structure_mode, structure_freq, rows, columns, freq_thickness_points, cp_step)
 
     def __post_init__(self):
+        """
+        Post-initialization method that calls function calculating results.
+
+        This method is automatically called after the dataclass instance is initialized. 
+        It solves dispersion equation for torsional, longitudinal and flexural modes and 
+        calculates wavestructure.
+        """
         super().__post_init__()
-        # Solve for torsional modes
         self.velocites_torsional = self.solve_freq_equations('torsional')
         self.velocites_longitudinal = None
         self.velocites_flexural = None
 
-    def calculate_dispersion_components(self, phase_velocity, freq_thickness):
+    def calculate_dispersion_components(self, phase_velocity: float, freq_thickness: float) -> float | float | float:
+        """
+        Calculates dispersion componetns k, alpha_sq and beta_sq.
+
+        Parameters:
+            phase_velocity (float): Current phase velocity value.
+            freq_thickness (float): Current frequency and thickness product value.
+
+        Returns:
+            k (float): wavenumber
+            alpha_sq (float): alpha_sq component
+            beta_sq (float): beta_sq component
+        """
         omega = 2 * np.pi * (freq_thickness / self.material.thickness) 
         k = omega / phase_velocity
         alpha_sq = omega**2/self.material.longitudinal_wave_velocity**2 - k**2
         beta_sq = omega**2/self.material.shear_wave_velocity**2 - k**2
         return k, alpha_sq, beta_sq
 
-    def get_group_velocity_eq(self, cp, fd, cp_prime, key):
+    def get_group_velocity_eq(self, cp: float, fd: float, cp_prime: float, key: str) -> float:
+        """
+        Calculates group velocity from current phase velocity and fd.
+
+        Parameters:
+            phase_velocity (float): Current phase velocity value.
+            freq_thickness (float): Current frequency and thickness product value.
+            cp_prime (float): Current phase velocity derivative.
+            key (str, not used): Full mode name
+
+        Returns:
+            cg (float): group velocity
+        """
         cg = cp**2 * (cp - fd * cp_prime(fd))**-1
         return cg
 
-    def calculate_bessel_functions(self, n, r, alpha_sq, beta_sq):  
+    def calculate_bessel_functions(self, n: int, r: float, alpha_sq: float, beta_sq: float) -> dict:
+        """
+        Calculates bessel or modified bessel functions depending on the input.
+
+        Parameters:
+            n (int) : Current circumfential order
+            r (float) : Radius of the cylinder
+            alpha_sq (float) : Dispersion alpha_sq component
+            beta_sq (float) : Dispersion beta_sq component
+
+        Returns:
+            bessel_functions (dict)
+        """
         alpha_r = np.sqrt(np.abs(alpha_sq)) * r
         beta_r = np.sqrt(np.abs(beta_sq)) * r
 
@@ -338,8 +668,22 @@ class AxialWave(Wave):
         else: 
             return {'alpha': (np.nan, np.nan, np.nan), 'beta': (np.nan, np.nan, np.nan)}
 
-      # Define the characteristic equation
-    def calculate_characteristic_equation(self, phase_velocity, freq_thickness, n):
+    def calculate_characteristic_equation(self, phase_velocity: float, freq_thickness: float, n: int) -> np.ndarray:
+        """
+        Calculates bessel or modified bessel functions depending on the input.
+
+        Defines the characteristic equation matrix C and solves it.
+        D matrix is extracted from C depending on the type of wave.
+        Finally determinant is calculated and returned.
+
+        Parameters:
+            phase_velocity (float): Current phase velocity value.
+            freq_thickness (float): Current frequency and thickness product value.
+            n (int) : Current circumfential order
+
+        Returns:
+            np.linalg.det(D) (np.ndarray)
+        """
         k, alpha_sq, beta_sq = self.calculate_dispersion_components(phase_velocity, freq_thickness)
 
         alpha = np.sqrt(alpha_sq)
@@ -366,7 +710,27 @@ class AxialWave(Wave):
 
         return np.linalg.det(D)
 
-    def solve_freq_equations(self, mode_type):
+    def solve_freq_equations(self, mode_type: str) -> dict:
+        """
+        Solves frequency equations and returns function of cp with respect to fd.
+        
+        The algorithm is based on the one presented in J.L.Roses Ultrasonic Guided Waves in Solid Media - chapter 6. 
+        The algorithm goes as follows:
+        (1) Choose a frequency–thickness product fd_0.
+        (2) Make an initial estimate of the phase velocity cp_0. 
+        (3) Evaluate the signs of each of the left-hand sides of frequency equations. 
+        (4) Choose another phase velocity cp_1 > cp_0 and re-evaluate the signs of frequency equations. 
+        (5) Repeat steps (3) and (4) until the sign changes, assumming this happens between cp_n and cp_n+1.
+        (6) Use bisection to locate precisely the phase velocity in the interval cp_n < cp < cp_n+1 where the LHS of the required equation is close enough to zero. 
+        (7) After finding the root, continue searching at this fd for other roots according to steps (2) through (6).
+        (8) Choose another fd product and repeat steps (2) through (7).
+
+        Parameters:
+            mode_type (str) : Types of the modes shown on the plot: sym, anti or both.
+
+        Returns:
+            result (dict)
+        """
         fd_range = np.linspace(0, self.freq_thickness_max, self.freq_thickness_points)
         result = {}
         prefix = 'T_'
@@ -375,30 +739,23 @@ class AxialWave(Wave):
 
         for n in range(0, self.modes_nums['circumfential_order']):
             for fd in fd_range:
-                # Initial phase velocity estimation
                 mode = 2
                 init_cp = 0
                 init_cp2 = init_cp + self.cp_step
 
                 while init_cp2 < self.cp_max:
-                    # Evaluate the function values
                     cp_0 = self.calculate_characteristic_equation(init_cp, fd, n)
                     cp_1 = self.calculate_characteristic_equation(init_cp2, fd, n)
 
-                    # Check if in the num of modes range:
                     if mode < self.modes_nums['wavenumber']:
-                        # Check if sign changes
                         if not (np.isnan(cp_0) or np.isnan(cp_1)) and np.sign(cp_0) != np.sign(cp_1):
-                            # Using bisection method to find the root
                             cp_root = bisect(f=self.calculate_characteristic_equation, a=init_cp, b=init_cp2, args=(fd, n))
                             if np.abs(self.calculate_characteristic_equation(cp_root, fd, n)) < self.tolerance:
                                 key = f'{prefix}({n},{mode})'
 
-                                # if key is not in result, create new list
                                 if key not in result:
                                     result[key] = []                       
 
-                                # check if value increased for modes different then increasing mode
                                 while result[key] and cp_root > result[key][-1][1]:
                                     mode += 1
                                     key = f'{prefix}({n},{mode})'
@@ -407,26 +764,20 @@ class AxialWave(Wave):
                             
                                 if not result[key]:
                                     if fd in initial_fd:
-                                        break  # Skip if fd exists in initial_fd
+                                        break
                                     initial_fd.append(fd)
 
-                                # Append only if mode is lower than max mode
                                 if mode < self.modes_nums['wavenumber']:
                                     result[key].append([fd, cp_root])
                                     mode += 1
                                 else:
                                     result.pop(key, None)
 
-                    # Update init_cps for the next iteration
                     init_cp += self.cp_step
                     init_cp2 += self.cp_step
 
-        result[self.increasing_mode] = [[freq, self.material.shear_wave_velocity] for freq in fd_range]
-        
-        # Interpolate for smoother plot
+        result[self.increasing_mode] = [[freq, self.material.shear_wave_velocity] for freq in fd_range]      
         result = self.interpolate_result(result)
-
-        # Calculate group velocity and wave number
         result = self.calculate_group_wavenumber(result)
 
         return result

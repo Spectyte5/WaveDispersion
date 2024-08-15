@@ -1,11 +1,69 @@
 ﻿from dataclasses import dataclass, field
 import matplotlib.pyplot as plt
 import numpy as np
-from Wave import Wave, Lambwave, Shearwave, AxialWave
+from Wave import Wave, Lambwave, Shearwave, Axialwave
 import os
+from datetime import datetime
 
 @dataclass
 class Plot:
+    """
+    A class to manage and manipulate Matplotlib plots.
+
+    This class is used for managing result display in both text and plot forms. 
+    Supports creating, displaying, and managing plots in a variety of scenarios.
+    Provides methods for generating LaTeX formatted strings for mathematical
+    expressions, switching the Matplotlib backend to a non-interactive mode and saving, 
+    showing and closing all open plot windows.
+
+    Attributes:
+        wave (Wave) : Wave class object providing the results to be plotted.
+        mode_type (str) : Types of the modes shown on the plot: sym, anti or both.
+        cutoff_frequencies (bool, optional) : Show cutoff frequencies on the plot.
+        add_velocities (bool, optional) : Show plate velocities on the plot.
+        path (str, optional) : Path to save the result files.
+        symmetric_style (dict, optional) : Dict with style kwargs for symmetric modes.
+        antisymmetric_style (dict, optional) : Dict with style kwargs for antisymmetric modes.
+        torsional_style (dict, optional) : Dict with style kwargs for torsional modes.
+        longitudinal_style (dict, optional) : Dict with style kwargs for longitudinal modes.
+        flexural_style (dict, optional) : Dict with style kwargs for flexural modes.
+        dashed_line_style (dict, optional) : Dict with style kwargs for all dashed lines on plots.
+        continuous_line_style (dict, optional) : Dict with style kwargs for all continous lines on plots.
+        in_plane_style (dict, optional) : Dict with style kwargs for the in_plane component on wavestructure plots.
+        out_of_plane_style (dict, optional) : Dict with style kwargs for the out_of_plane component on wavestructure plots.
+        velocity_style (dict, optional) : Dict with style kwargs for plate velocity option.
+        padding_factor (float, optional) : Padding thickness for plots.
+        axial_factor (float, optional) : Axial wave factor for scaling the distance from y-axis.
+        get_figures (lambda) : Gets all plots in an array
+
+    Methods:
+        generate_latex(string):
+            Converts a string into LaTeX format for displaying mathematical expressions.
+        switch_backend():
+            Switches Matplotlib's backend to 'agg' for non-interactive use.
+        close_all_plots():
+            Closes all open Matplotlib plot windows.
+        find_max_value(index): 
+            Find max value for the given wave parameter.
+        draw_arrow(arrow): 
+            Draws the arrow on the plot.
+        add_cutoff_frequencies(mode, max_value, plot_type): 
+            Add cutoff frequencies to the plot.
+        add_plate_velocities(plot_type): 
+            Add plate velocities to the plot. 
+        plot_velocity(plot_type):
+            Plot the given velocity or wavenumber.
+        plot_wave_structure(title): 
+            Plot the given velocity or wavenumber.
+        add_plot(plot_type): 
+            Add plot velocity.
+        save_plots(format, transparent, **kwargs):
+            Save plots in specified format.
+        save_txt_results(date):
+            Save results in text file.
+        show_plots(): 
+            Displays all currently active Matplotlib plots.
+    """
     wave : Wave
     mode_type : str
     cutoff_frequencies : bool = field(default=True)
@@ -25,7 +83,25 @@ class Plot:
     axial_factor : float = field(default=300)
     get_figures = lambda _: [plt.figure(n) for n in plt.get_fignums()]
 
-    def generate_latex(self, string):
+    def generate_latex(self, string: str) -> str:
+        """
+        Converts a string into LaTeX format for displaying mathematical expressions.
+
+        This method handles strings with and without subscripts. If the input string
+        contains an underscore ('_'), it is interpreted as a subscript, and the string
+        is formatted accordingly. If there is no underscore, the string is formatted 
+        as a regular mathematical expression.
+
+        Example:
+            'x_2' -> r'$\mathregular{x_{2}}$'
+            'y' -> r'$\mathregular{y}$'
+
+        Parameters:
+            string (str): The input string to be converted into LaTeX format.
+
+        Returns:
+            str: The LaTeX formatted string.
+        """
         if "_" in string:
             base, sub = string.split("_")
             return r'$\mathregular{' + base + '_{' + sub + '}}$'
@@ -33,13 +109,53 @@ class Plot:
             return r'$\mathregular{' + string + '}$'
 
     def switch_backend(self):
+        """
+        Switches Matplotlib's backend to 'agg'.
+
+        The 'agg' backend is a non-interactive backend that can be used for 
+        generating plot images without displaying them. This is useful for 
+        saving plots to files in a script or when working in environments where 
+        graphical display is not available.
+
+        Parameters:
+            None
+
+        Returns:
+            None
+        """
         plt.switch_backend('agg')
 
     def close_all_plots(self):
+        """
+        Closes all open Matplotlib plots.
+
+        This method calls `plt.close('all')` to close all figure windows. It is useful 
+        for cleaning up after generating plots to free up resources or to start a new 
+        plotting session without interference from previous figures.
+
+        Parameters:
+            None
+
+        Returns:
+            None
+        """
         plt.close('all')
 
-    def find_max_value(self, index):
-        if isinstance(self.wave, AxialWave):
+    def find_max_value(self, index: int) -> float:
+        """
+        Find max value for the given wave parameter.
+
+        This method find the max value for the given wave parameter.
+        The parameter can be phase, group velocity or wavenumber. 
+        It returns single highest value found in both symmetric and antisymmetric modes.
+
+        Parameters:
+            None
+
+        Returns:
+            max_value (float)
+        """
+        if isinstance(self.wave, Axialwave):
             max_value_tors = max(max([point[index] for point in values]) for values in self.wave.velocites_torsional.values())
             #max_value_long = max(max([point[index] for point in values]) for values in self.wave.velocites_longitudinal.values())
             #max_value_flex = max(max([point[index] for point in values]) for values in self.wave.velocites_flexural.values())
@@ -50,11 +166,39 @@ class Plot:
         max_value_anti = max(max([point[index] for point in values]) for values in self.wave.velocites_antisymmetric.values())
         return max(max_value_sym, max_value_anti)
 
-    def draw_arrow(self, arrow):
+    def draw_arrow(self, arrow: dict):
+        """
+        Closes all open Matplotlib plots.
+
+        This method draws arrow dictionary using combination of plt.axvline 
+        for the arrow and text for the arrow sign. This function is used 
+        mainly for marking cutoff frequencies using arrows.
+
+
+        Parameters:
+            arrow (dict): Arrow to be drown with given parameters.
+
+        Returns:
+            None
+        """
         plt.axvline(x=arrow['x'], **self.dashed_line_style)
         plt.text(x=arrow['x'],y=arrow['y'], s=arrow['s'], va=arrow['dir'], ha='center', clip_on=True)
 
-    def add_cutoff_frequencies(self, mode, max_value, plot_type : str):
+    def add_cutoff_frequencies(self, mode: str, max_value: float, plot_type : str):
+        """
+        Add cutoff frequencies to the plot.
+
+        This method is used for marking cutoff frequencies on the plot.
+        Calculates cutoff frequencies from the wave class parameters.
+
+        Parameters:
+            mode (str): Which mode the cutoff frequency is calcuated for.
+            max_value (float): Max value, used for positioning of the arrow.
+            plot_type (str): Type of the plot, ex. Phase velocity plot.
+
+        Returns:
+            None
+        """
         arrow_y, arrow_dir, arrow_s = (max_value, 'top', r'$\downarrow$') \
             if plot_type == 'Phase' else (0, 'bottom', r'$\uparrow$')
 
@@ -72,7 +216,19 @@ class Plot:
                 arrow_x = n*self.wave.velocities_dict['C_L']/2 if mode.startswith('S') else n*self.wave.velocities_dict['C_S']/2
                 self.draw_arrow({'x' : arrow_x, 'y' : arrow_y, 'dir': arrow_dir, 's' : arrow_s})  
 
-    def add_plate_velocities(self, plot_type):
+    def add_plate_velocities(self, plot_type: str):
+        """
+        Add plate velocities to the plot.
+
+        This method is used for marking bulk plate velocities on the plot.
+        It marks the velocities when the user toggles the option on.
+
+        Parameters:
+            plot_type (str): Type of the plot, ex. Phase velocity plot.
+
+        Returns:
+            None
+        """
         if plot_type == 'Phase' and self.add_velocities:
             for name, value in self.wave.velocities_dict.items():
                 if not value:
@@ -87,6 +243,19 @@ class Plot:
                 plt.text(cord, value, self.generate_latex(name), ha=ha, **self.velocity_style)  
 
     def plot_velocity(self, plot_type : str):
+        """
+        Plot the given velocity or wavenumber.
+
+        This method is used for generation of the velocity plots.
+        It gets parameters from the self.wave plots them and adds legend, 
+        labels, plot limits and the format specified by user in kwargs.
+
+        Parameters:
+            plot_type (str): Type of the plot, ex. Phase velocity plot.
+
+        Returns:
+            None
+        """
         title = f'{plot_type} Velocity' if plot_type != 'Wavenumber' else f'{plot_type[:4] + " " + plot_type[4:]}'
         plt.figure(num=title, figsize=(10, 6))
         plt.title(title)
@@ -103,7 +272,7 @@ class Plot:
             'all': [(self.wave.velocites_torsional, torsional_lines, self.torsional_style),
                     (self.wave.velocites_longitudinal, longitudinal_lines, self.longitudinal_style),
                     (self.wave.velocites_flexural, flexural_lines, self.flexural_style)]
-            } if isinstance(self.wave, AxialWave) else {
+            } if isinstance(self.wave, Axialwave) else {
             'symmetric': [(self.wave.velocites_symmetric, symmetric_lines, self.symmetric_style)],
             'antisymmetric': [(self.wave.velocites_antisymmetric, antisymmetric_lines, self.antisymmetric_style)],
             'both': [(self.wave.velocites_symmetric, symmetric_lines, self.symmetric_style),
@@ -128,7 +297,7 @@ class Plot:
         self.add_plate_velocities(plot_type)
         
         # Create custom legend entries
-        if isinstance(self.wave, AxialWave):
+        if isinstance(self.wave, Axialwave):
             do = 'later'
             #values, labels = ([mode_mapping[self.mode_type][0][1][0], mode_mapping[self.mode_type][1][1][0]], ['Symmetric', 'Antisymmetric']) \
              #   if self.mode_type == 'both' else ([mode_mapping[self.mode_type][0][1][0]], [self.mode_type])
@@ -139,33 +308,39 @@ class Plot:
 
         plt.xlim(0, self.wave.freq_thickness_max * self.padding_factor['x'])
         plt.ylim(self.wave.material.shear_wave_velocity - self.axial_factor, max_value * self.padding_factor['y']) \
-            if isinstance(self.wave, AxialWave) and plot_type=='Phase' else plt.ylim(0, max_value * self.padding_factor['y'])
+            if isinstance(self.wave, Axialwave) and plot_type=='Phase' else plt.ylim(0, max_value * self.padding_factor['y'])
         plt.xlabel('$\mathregular{f_d}$ (KHz x mm)')
         plt.ylabel('$\mathregular{c_p}$ (m/sec)') if plot_type != 'Wavenumber' else plt.ylabel('Wavenumber (1/m)') 
         
-    def plot_wave_structure(self, title):
-        # Create a figure and an array of subplots
+    def plot_wave_structure(self, title : str):
+        """
+        Plot the given velocity or wavenumber.
+
+        This method is used for generation of the wave structure plots.
+        It gets parameters from the self.wave, plots them and adds legend, 
+        labels, plot limits and the format specified by user in kwargs.
+
+        Parameters:
+            title (str): Type of the plot, ex. Phase velocity plot.
+
+        Returns:
+            None
+        """
         if self.wave.structure_result:
             if self.wave.rows == 1 and self.wave.columns == 1:
                 fig, axes = plt.subplots(1, 1, figsize=(10, 6), num=f"{title[:4] + ' ' + title[4:]}")
-                axes = [axes]  # Convert to a list to handle single subplot case
+                axes = [axes]
             else:
                 fig, axes = plt.subplots(self.wave.rows, self.wave.columns, figsize=(10, 6), num=f"{title[:4] + ' ' + title[4:]}")
                 axes = axes.flatten()
 
-            # Loop through each key in the dictionary
             for i, key in enumerate(self.wave.structure_result.keys()):
-                # Get the data associated with the current key
                 data_list = self.wave.structure_result[key]
 
-                # Determine which subplot to plot on
                 ax = axes[i]
 
-                # Loop through each element in the data list
                 for entry in data_list:
-                    u, w, x = entry  # Extracting the individual components from each element
-
-                    # Plot the data on the current subplot
+                    u, w, x = entry  
                     if np.all(np.iscomplex(u)):
                         ax.plot(np.imag(u), x, **self.in_plane_style)
                     else:
@@ -177,41 +352,47 @@ class Plot:
                         else:
                             ax.plot(np.imag(w), x, **self.out_of_plane_style)
 
-                # Disable the frame
                 ax.set(frame_on=False) 
-
-                # Moving x and y axis to 0,0
-                ax.axhline(0, **self.continuous_line_style)  # Horizontal line at y=0
-                ax.axvline(0, **self.continuous_line_style, ymin=0 + 0.05, ymax=1 - 0.05)  # Vertical line at x=0       
+                ax.axhline(0, **self.continuous_line_style)
+                ax.axvline(0, **self.continuous_line_style, ymin=0 + 0.05, ymax=1 - 0.05)      
                 ax.spines['left'].set_position(('data', 0))
                 ax.spines['bottom'].set_position(('data', 0))
 
-                # Plot ticks
                 ax.set_yticks([-self.wave.material.half_thickness, 0, self.wave.material.half_thickness])
                 ax.set_yticklabels(['-d/2', '0', 'd/2'])
                 ax.text(ax.get_xlim()[1] / 2, self.wave.material.half_thickness / 5, 'u, w' 
                         if isinstance(self.wave, Lambwave) else 'u', ha='center', va='center')
 
-                # Set title
                 ax.set_title('$\mathregular{f_d}$' + f'={key} (kHz x mm)')
 
-            # Adjust layout to prevent overlap of subplots add title
             plt.tight_layout
             mode = 'SH_' + str(self.wave.get_converted_mode(self.wave.structure_mode)) if isinstance(self.wave, Shearwave) \
                else self.wave.structure_mode
             fig.suptitle('Wave structure for mode ' + self.generate_latex(mode))
-           
-            # Get handles and labels for the first two legend entries
+
             handles, labels = ax.get_legend_handles_labels()
             fig.legend(handles, labels, loc='lower center', ncol=2)
 
-    def add_plot(self, plot_type):
+    def add_plot(self, plot_type: str):
+        """
+        Add plot velocity.
+
+        This method is used for adding desired plots to simulation.
+        It checks the plot_type parameter and calls the appropriate method that 
+        generates the plot.
+
+        Parameters:
+            plot_type (str): Type of the plot, ex. Phase velocity plot.
+
+        Returns:
+            None
+        """
         if plot_type == 'Wavestructure':
             self.plot_wave_structure(plot_type)
         elif plot_type in ['Phase', 'Group', 'Wavenumber']:
             self.plot_velocity(plot_type)
 
-    def save_plots(self, format='png', transparent=False, **kwargs):
+    def save_plots(self, format: str='png', transparent: bool=False, **kwargs) -> list[str]:
         """
         Save plots in specified format.
 
@@ -236,13 +417,33 @@ class Plot:
 
         return plots
 
-    def save_txt_results(self):
+    def save_txt_results(self, date=False) -> str:
+        """
+        Save results in text file.
+
+        The name of the file is generated automatically.
+        
+        Example:
+             filename = f"Shear_in_10_mm_Aluminium_plate.txt" 
+
+        Parameters:
+            date (bool): Whether to save the plots with a date to prevent overriding.
+
+        Returns:
+            filepath (str)
+        """
         if not os.path.exists(self.path):
             os.makedirs(self.path)
         
         wave_type = "Lambwaves" if isinstance(self.wave, Lambwave) else "Shearwaves"
 
-        filename = f"{wave_type}_in_{self.wave.material.thickness}_mm_{self.wave.material.name}_plate.txt" 
+        filename = f"{wave_type}_in_{self.wave.material.thickness}_mm_{self.wave.material.name}_plate"
+        
+        if date:
+            now = datetime.now()
+            file_name += f"_{now}"
+        
+        filename += ".txt"
 
         filepath = os.path.join(self.path, filename)
 
@@ -269,4 +470,16 @@ class Plot:
         return filepath
 
     def show_plots(self):
+        """
+        Displays all currently active Matplotlib plots.
+
+        This method calls the `plt.show()` function to render and display
+        any plots that have been created.
+
+        Parameters:
+            None
+
+        Returns:
+            None
+        """
         plt.show()

@@ -1,8 +1,20 @@
 import matplotlib.pyplot as plt
 from Material import Plate, Cylinder
-from Wave import AxialWave, Lambwave, Shearwave
+from Wave import Axialwave, Lambwave, Shearwave
 
-def load_data(file_path, thickness):
+def load_data(file_path: str, thickness: float) -> dict:
+    """
+    Load validation results from text file.
+
+    Loads data obtained from disperse software, which can then be used for comparison.
+
+    Parameters:
+        file_path (str) = Path to the disperse software results file
+        thickness (float) : Plate thickness used for simulations
+
+    Returns:
+        data (dict)
+    """
     data = {}
     current_mode = None
     frequencies = []
@@ -19,34 +31,88 @@ def load_data(file_path, thickness):
                 velocities = []
             else:
                 frequency, velocity = map(float, line.split(', '))
-                frequencies.append(frequency * 1000 * thickness)  # Convert MHz to kHz * mm
-                velocities.append(velocity * 1000)  # Convert m/ms to m/s
+                frequencies.append(frequency * 1000 * thickness)
+                velocities.append(velocity * 1000)
         if current_mode:
-            data[current_mode] = (frequencies, velocities)  # Ensure last mode's data is stored
+            data[current_mode] = (frequencies, velocities)
     return data
 
-def setup_shear_wave(file_path):
+def setup_shear_wave(file_path: str) -> dict | Shearwave:
+    """
+    Setups shear wave with parameters for testing.
+
+    This function is used for quick setup for the shear wave with parameters 
+    for testing and validation.
+
+    Parameters:
+        file_path (str) = Path to the disperse software results file
+
+    Returns:
+        data_shear (dict)
+        shear (Shearwave)
+    """
     thickness = 10
     data_shear = load_data(file_path, thickness)
     plate_shear = Plate(thickness, 6060, 3230, rayleigh_wave_velocity=None, name="Titanium")
     shear = Shearwave(plate_shear, (3, 3), 10000, 10000, cp_step=50)
     return data_shear, shear
 
-def setup_lamb_wave(file_path):
+def setup_lamb_wave(file_path) -> dict | Lambwave:
+    """
+    Setups lamb wave with parameters for testing.
+
+    This function is used for quick setup for the lamb wave with parameters 
+    for testing and validation.
+
+    Parameters:
+        file_path (str) = Path to the disperse software results file
+
+    Returns:
+        data_lamb (dict)
+        lamb (Lambwave)
+    """
     thickness = 1
     data_lamb = load_data(file_path, thickness)
     plate_lamb = Plate(thickness, 5770, 3050, rayleigh_wave_velocity=None, name="Magnesium")
     lamb = Lambwave(plate_lamb, (5, 5), 10000, 10000, cp_step=50)
     return data_lamb, lamb
 
-def setup_axial_wave(file_path):
+def setup_axial_wave(file_path) -> dict | Axialwave:
+    """
+    Setups axial wave with parameters for testing.
+
+    This function is used for quick setup for the axial wave with parameters 
+    for testing and validation.
+
+    Parameters:
+        file_path (str) = Path to the disperse software results file
+
+    Returns:
+        data_axial (dict)
+        axial (Axialwave)
+    """
     thickness = 1
     data_axial = load_data(file_path, thickness)
     cylinder = Cylinder(thickness, 6060, 3230, 10, rayleigh_wave_velocity=None, name="Titanium")
-    axial = AxialWave(cylinder, (7, 1), 10000, 10000, cp_step=50)
+    axial = Axialwave(cylinder, (7, 1), 10000, 10000, cp_step=50)
     return data_axial, axial
 
 def plot_data(data, wave_model, type, title, save_path, background=False):
+    """
+    Plot validation results from both softwares.
+
+    Plots data obtained from disperse software and overlaps it with result from this library.
+
+    Parameters:
+        wave_model (Wave) = Wave class object compared.
+        type (str) : Type of the plot: group or phase velocity.
+        title (str) : Title for the plot.
+        save_path (str) : Path where validation result should be stored.
+        background (bool) : Use non-interactive backend for plots.
+
+    Returns:
+        None
+    """
     plt.figure(figsize=(10, 8))
     if background:
         plt.switch_backend('agg') 
@@ -83,9 +149,34 @@ def plot_data(data, wave_model, type, title, save_path, background=False):
     plt.savefig(save_path)
 
 def plot_show():
+    """
+    Displays all currently active Matplotlib plots.
+
+    This method calls the `plt.show()` function to render and display
+    any plots that have been created.
+
+    Parameters:
+        None
+
+    Returns:
+        None
+    """
     plt.show()
 
 def plot_close_all():
+    """
+    Closes all open Matplotlib plots.
+
+    This method calls `plt.close('all')` to close all figure windows. It is useful 
+    for cleaning up after generating plots to free up resources or to start a new 
+    plotting session without interference from previous figures.
+
+    Parameters:
+        None
+
+    Returns:
+        None
+    """
     plt.close('all')
 
 if __name__ == "__main__":
