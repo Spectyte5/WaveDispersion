@@ -156,7 +156,8 @@ class Wave:
             univ_s = InterpolatedUnivariateSpline(fd_val, cp_val)
             cp_prime = univ_s.derivative()
             for i in range(len(fd_val)):
-                cg = self.get_group_velocity_eq(cp_val[i], fd_val[i], cp_prime, key)
+                cg = self.get_group_velocity_eq(fd_val[i], key) if isinstance(self, Shearwave) \
+                   else self.get_group_velocity_eq(cp_val[i], fd_val[i], cp_prime)
                 k = (fd_val[i]*2*np.pi/self.material.thickness)/cp_val[i]
                 cg_val.append(cg)
                 k_val.append(k)
@@ -191,7 +192,8 @@ class Wave:
 
         for fd in self.structure_freq:
             cp = self.structure_cp[self.structure_mode](fd)          
-            u, w = self.calculate_wavestructure_components(x, cp, fd)
+            u, w = self.calculate_wavestructure_components(x) if isinstance(self, Shearwave) else \
+                self.calculate_wavestructure_components(x, cp, fd)
             if fd not in u_w_array:
                 u_w_array[fd] = []
             u_w_array[fd].append([u, w, x])
@@ -282,14 +284,12 @@ class Shearwave(Wave):
         _,_,q = self.calculate_dispersion_components(phase_velocity, freq_thickness)
         return  np.real(np.cos(q*self.material.half_thickness))
 
-    def get_group_velocity_eq(self, cp: float, fd: float, cp_prime: float, key: str) -> float:
+    def get_group_velocity_eq(self, fd: float, key: str) -> float:
         """
         Calculates group velocity from current phase velocity and fd.
 
         Parameters:
-            phase_velocity (float): Current phase velocity value.
             freq_thickness (float): Current frequency and thickness product value.
-            cp_prime (float): Current phase velocity derivative.
             key (str, not used): Full mode name
 
         Returns:
@@ -299,7 +299,7 @@ class Shearwave(Wave):
         cg = self.material.shear_wave_velocity * np.sqrt(1 - ((n/2)**2) / ((fd/self.material.shear_wave_velocity)**2))
         return cg
 
-    def calculate_wavestructure_components(self, x: np.ndarray, cp: float, fd: float) -> float | float:
+    def calculate_wavestructure_components(self, x: np.ndarray) -> float | float:
         """
         Calculates wavestructure components u and w.
 
@@ -307,8 +307,6 @@ class Shearwave(Wave):
 
         Parameters:
             x (np.ndarray) : Array of points between -thickness/2 and thickness/2.
-            phase_velocity (float): Current phase velocity value.
-            freq_thickness (float): Current frequency and thickness product value.
 
         Returns:
             u (float)
@@ -442,7 +440,7 @@ class Lambwave(Wave):
         k,p,q = self.calculate_dispersion_components(phase_velocity, freq_thickness)
         return np.real(q * np.tan(q*self.material.half_thickness) + (((q**2 - k**2)**2)*np.tan(p*self.material.half_thickness))/(4*(k**2)*p))
 
-    def get_group_velocity_eq(self, cp: float, fd: float, cp_prime: float, key: str) -> float:
+    def get_group_velocity_eq(self, cp: float, fd: float, cp_prime: float) -> float:
         """
         Calculates group velocity from current phase velocity and fd.
 
@@ -450,7 +448,6 @@ class Lambwave(Wave):
             phase_velocity (float): Current phase velocity value.
             freq_thickness (float): Current frequency and thickness product value.
             cp_prime (float): Current phase velocity derivative.
-            key (str, not used): Full mode name
 
         Returns:
             cg (float): group velocity
@@ -488,24 +485,26 @@ class Lambwave(Wave):
 
     def solve_freq_equations(self, mode_type: str) -> dict:
         """
-        Solves frequency equations and returns function of cp with respect to fd.
+        Solves frequency equations and returns a function of cp with respect to fd.
+
+        The algorithm is based on the one presented in J.L. Rose's "Ultrasonic Guided Waves in Solid Media," 
+        Chapter 6. The algorithm proceeds as follows:
         
-        The algorithm is based on the one presented in J.L.Roses Ultrasonic Guided Waves in Solid Media - chapter 6. 
-        The algorithm goes as follows:
-        (1) Choose a frequency–thickness product fd_0.
-        (2) Make an initial estimate of the phase velocity cp_0. 
-        (3) Evaluate the signs of each of the left-hand sides of frequency equations. 
-        (4) Choose another phase velocity cp_1 > cp_0 and re-evaluate the signs of frequency equations. 
-        (5) Repeat steps (3) and (4) until the sign changes, assumming this happens between cp_n and cp_n+1.
-        (6) Use bisection to locate precisely the phase velocity in the interval cp_n < cp < cp_n+1 where the LHS of the required equation is close enough to zero. 
-        (7) After finding the root, continue searching at this fd for other roots according to steps (2) through (6).
-        (8) Choose another fd product and repeat steps (2) through (7).
+        1. Choose a frequency-thickness product fd_0.
+        2. Make an initial estimate of the phase velocity cp_0.
+        3. Evaluate the signs of the left-hand sides of the frequency equations.
+        4. Choose another phase velocity cp_1 > cp_0 and re-evaluate the signs of the frequency equations.
+        5. Repeat steps (3) and (4) until a sign change occurs, assuming this happens between cp_n and cp_n+1.
+        6. Use bisection to precisely locate the phase velocity in the interval cp_n < cp < cp_n+1 
+           where the left-hand side of the equation is close enough to zero.
+        7. After finding the root, continue searching at this fd for other roots according to steps (2) through (6).
+        8. Choose another fd product and repeat steps (2) through (7).
 
         Parameters:
-            mode_type (str) : Types of the modes shown on the plot: sym, anti or both.
+            mode_type (str): The type of modes shown on the plot: 'sym', 'anti', or 'both'.
 
         Returns:
-            result (dict)
+            result (dict): The results of the frequency equation solutions, indexed by mode type.
         """
         fd_range = np.linspace(0, self.freq_thickness_max, self.freq_thickness_points)
         result = {}
@@ -627,7 +626,7 @@ class Axialwave(Wave):
         beta_sq = omega**2/self.material.shear_wave_velocity**2 - k**2
         return k, alpha_sq, beta_sq
 
-    def get_group_velocity_eq(self, cp: float, fd: float, cp_prime: float, key: str) -> float:
+    def get_group_velocity_eq(self, cp: float, fd: float, cp_prime: float) -> float:
         """
         Calculates group velocity from current phase velocity and fd.
 
@@ -635,7 +634,6 @@ class Axialwave(Wave):
             phase_velocity (float): Current phase velocity value.
             freq_thickness (float): Current frequency and thickness product value.
             cp_prime (float): Current phase velocity derivative.
-            key (str, not used): Full mode name
 
         Returns:
             cg (float): group velocity
@@ -712,24 +710,26 @@ class Axialwave(Wave):
 
     def solve_freq_equations(self, mode_type: str) -> dict:
         """
-        Solves frequency equations and returns function of cp with respect to fd.
+        Solves frequency equations and returns a function of cp with respect to fd.
+
+        The algorithm is based on the one presented in J.L. Rose's "Ultrasonic Guided Waves in Solid Media," 
+        Chapter 6. The algorithm proceeds as follows:
         
-        The algorithm is based on the one presented in J.L.Roses Ultrasonic Guided Waves in Solid Media - chapter 6. 
-        The algorithm goes as follows:
-        (1) Choose a frequency–thickness product fd_0.
-        (2) Make an initial estimate of the phase velocity cp_0. 
-        (3) Evaluate the signs of each of the left-hand sides of frequency equations. 
-        (4) Choose another phase velocity cp_1 > cp_0 and re-evaluate the signs of frequency equations. 
-        (5) Repeat steps (3) and (4) until the sign changes, assumming this happens between cp_n and cp_n+1.
-        (6) Use bisection to locate precisely the phase velocity in the interval cp_n < cp < cp_n+1 where the LHS of the required equation is close enough to zero. 
-        (7) After finding the root, continue searching at this fd for other roots according to steps (2) through (6).
-        (8) Choose another fd product and repeat steps (2) through (7).
+        1. Choose a frequency-thickness product fd_0.
+        2. Make an initial estimate of the phase velocity cp_0.
+        3. Evaluate the signs of the left-hand sides of the frequency equations.
+        4. Choose another phase velocity cp_1 > cp_0 and re-evaluate the signs of the frequency equations.
+        5. Repeat steps (3) and (4) until a sign change occurs, assuming this happens between cp_n and cp_n+1.
+        6. Use bisection to precisely locate the phase velocity in the interval cp_n < cp < cp_n+1 
+           where the left-hand side of the equation is close enough to zero.
+        7. After finding the root, continue searching at this fd for other roots according to steps (2) through (6).
+        8. Choose another fd product and repeat steps (2) through (7).
 
         Parameters:
-            mode_type (str) : Types of the modes shown on the plot: sym, anti or both.
+            mode_type (str): The type of modes shown on the plot: 'sym', 'anti', or 'both'.
 
         Returns:
-            result (dict)
+            result (dict): The results of the frequency equation solutions, indexed by mode type.
         """
         fd_range = np.linspace(0, self.freq_thickness_max, self.freq_thickness_points)
         result = {}

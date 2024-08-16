@@ -121,7 +121,7 @@ def plot_data(data, wave_model, type, title, save_path, background=False):
     legend_added = {'wave_dispersion_software': False, 'disperse_software': False}
     #(wave_model.velocites_torsional, wave_model.velocites_longitudinal, wave_model.velocites_flexural)
     velocites = [wave_model.velocites_torsional] \
-       if isinstance(wave_model, AxialWave) else (wave_model.velocites_symmetric, wave_model.velocites_antisymmetric) 
+       if isinstance(wave_model, Axialwave) else (wave_model.velocites_symmetric, wave_model.velocites_antisymmetric) 
 
     for mode, (freqs, vels) in data.items():
         if not legend_added['disperse_software']:

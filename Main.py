@@ -1,6 +1,6 @@
 from Material import Plate, Cylinder
 from Plot import Plot
-from Wave import Lambwave, Shearwave, AxialWave
+from Wave import Lambwave, Shearwave, Axialwave
 
 # Initialize plate
 plate = Plate(10, 6130, 3130, rayleigh_wave_velocity = 2881.6, name="Aluminium")
@@ -41,7 +41,7 @@ shear_plotter.show_plots()
 cylinder = Cylinder(1.22, 6290, 3230, 15.24, name="Steel")
 
 # Initialize wave
-axial = AxialWave(cylinder, (8, 1), 15000, 10000)
+axial = Axialwave(cylinder, (8, 1), 15000, 10000)
 
 # Initialize Plot 
 axial_plotter = Plot(axial, 'torsional', False, False)
