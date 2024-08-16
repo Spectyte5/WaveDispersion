@@ -435,7 +435,13 @@ class Plot:
         if not os.path.exists(self.path):
             os.makedirs(self.path)
         
-        wave_type = "Lambwaves" if isinstance(self.wave, Lambwave) else "Shearwaves"
+        wave_type_map = {
+            Lambwave: "Lambwaves",
+            Shearwave: "Shearwaves",
+            Axialwave: "Axialwaves"
+        }
+
+        wave_type = wave_type_map.get(type(self.wave), "Unknown wave type")
 
         filename = f"{wave_type}_in_{self.wave.material.thickness}_mm_{self.wave.material.name}_plate"
         
@@ -448,9 +454,11 @@ class Plot:
         filepath = os.path.join(self.path, filename)
 
         mode_mapping = {
-        'symmetric': [self.wave.velocites_symmetric],
-        'antisymmetric': [self.wave.velocites_antisymmetric],
-        'both': [self.wave.velocites_symmetric,self.wave.velocites_antisymmetric]
+            'torsional': [self.wave.velocites_torsional],
+        }   if isinstance(self.wave, Axialwave) else { 
+            'symmetric': [self.wave.velocites_symmetric],
+            'antisymmetric': [self.wave.velocites_antisymmetric],
+            'both': [self.wave.velocites_symmetric,self.wave.velocites_antisymmetric],
         }
 
         selected_modes = mode_mapping[self.mode_type] 
