@@ -1,0 +1,786 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Python: module Wave</title>
+</head><body>
+
+<table class="heading">
+<tr class="heading-text decor">
+<td class="title">&nbsp;<br><strong class="title">Wave</strong></td>
+<td class="extra"><a href=".">index</a><br><a href="file:c%3A%5Cusers%5Crafal%5Csource%5Crepos%5Cwavedispersion%5Cwave.py">c:\users\rafal\source\repos\wavedispersion\wave.py</a></td></tr></table>
+    <p></p>
+<p>
+<table class="section">
+<tr class="decor pkg-content-decor heading-text">
+<td class="section-title" colspan=3>&nbsp;<br><strong class="bigsection">Modules</strong></td></tr>
+    
+<tr><td class="decor pkg-content-decor"><span class="code">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></td><td>&nbsp;</td>
+<td class="singlecolumn"><table><tr><td class="multicolumn"><a href="numpy.html">numpy</a><br>
+</td><td class="multicolumn"></td><td class="multicolumn"></td><td class="multicolumn"></td></tr></table></td></tr></table><p>
+<table class="section">
+<tr class="decor index-decor heading-text">
+<td class="section-title" colspan=3>&nbsp;<br><strong class="bigsection">Classes</strong></td></tr>
+    
+<tr><td class="decor index-decor"><span class="code">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></td><td>&nbsp;</td>
+<td class="singlecolumn"><dl>
+<dt class="heading-text"><a href="builtins.html#object">builtins.object</a>
+</dt><dd>
+<dl>
+<dt class="heading-text"><a href="Wave.html#Wave">Wave</a>
+</dt><dd>
+<dl>
+<dt class="heading-text"><a href="Wave.html#Axialwave">Axialwave</a>
+</dt><dt class="heading-text"><a href="Wave.html#Lambwave">Lambwave</a>
+</dt><dt class="heading-text"><a href="Wave.html#Shearwave">Shearwave</a>
+</dt></dl>
+</dd>
+</dl>
+</dd>
+</dl>
+ <p>
+<table class="section">
+<tr class="decor title-decor heading-text">
+<td class="section-title" colspan=3>&nbsp;<br><a name="Axialwave">class <strong>Axialwave</strong></a>(<a href="Wave.html#Wave">Wave</a>)</td></tr>
+    
+<tr><td class="decor title-decor" rowspan=2><span class="code">&nbsp;&nbsp;&nbsp;</span></td>
+<td class="decor title-decor" colspan=2><span class="code"><a href="#Axialwave">Axialwave</a>(material,&nbsp;modes_nums,&nbsp;freq_thickness_max,&nbsp;cp_max,&nbsp;structure_mode=None,&nbsp;structure_freq=None,&nbsp;rows=None,&nbsp;columns=None,&nbsp;freq_thickness_points=None,&nbsp;cp_step=None)<br>
+&nbsp;<br>
+A&nbsp;class&nbsp;representing&nbsp;a&nbsp;<a href="#Axialwave">Axialwave</a>&nbsp;type.<br>
+&nbsp;<br>
+Dataclass&nbsp;inheriting&nbsp;<a href="#Wave">Wave</a>&nbsp;class,&nbsp;providing&nbsp;results&nbsp;and&nbsp;parameters&nbsp;specific&nbsp;to&nbsp;Axialwaves.<br>
+Class&nbsp;has&nbsp;different&nbsp;methods&nbsp;for&nbsp;calculation&nbsp;of&nbsp;dispersion&nbsp;and&nbsp;wavestructure&nbsp;for&nbsp;Axialwaves.<br>
+&nbsp;<br>
+Methods:<br>
+<a href="#Axialwave-__init__">__init__</a>(material,&nbsp;modes_nums,&nbsp;freq_thickness_max,&nbsp;cp_max,&nbsp;structure_mode,&nbsp;structure_freq,&nbsp;rows,&nbsp;columns,&nbsp;freq_thickness_points,&nbsp;cp_step):<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Initialization&nbsp;method&nbsp;that&nbsp;calls&nbsp;function&nbsp;calculating&nbsp;results.<br>
+<a href="#Axialwave-__post_init__">__post_init__</a>():<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Post-initialization&nbsp;method&nbsp;that&nbsp;calls&nbsp;function&nbsp;calculating&nbsp;results.<br>
+<a href="#Axialwave-calculate_dispersion_components">calculate_dispersion_components</a>(phase_velocity,&nbsp;freq_thickness):<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Calculates&nbsp;dispersion&nbsp;components&nbsp;k,&nbsp;alpha_sq&nbsp;and&nbsp;beta_sq.<br>
+<a href="#Axialwave-calculate_bessel_functions">calculate_bessel_functions</a>(n,&nbsp;r,&nbsp;alpha_sq,&nbsp;beta_sq):<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Calculates&nbsp;bessel&nbsp;or&nbsp;modified&nbsp;bessel&nbsp;functions&nbsp;depending&nbsp;on&nbsp;the&nbsp;input.<br>
+<a href="#Axialwave-calculate_characteristic_equation">calculate_characteristic_equation</a>(phase_velocity,&nbsp;freq_thickness,&nbsp;n):<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Calculates&nbsp;bessel&nbsp;or&nbsp;modified&nbsp;bessel&nbsp;functions&nbsp;depending&nbsp;on&nbsp;the&nbsp;input.<br>
+<a href="#Axialwave-get_group_velocity_eq">get_group_velocity_eq</a>(cp,&nbsp;fd,&nbsp;cp_prime,&nbsp;key):<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Calculates&nbsp;group&nbsp;velocity&nbsp;from&nbsp;current&nbsp;phase&nbsp;velocity&nbsp;and&nbsp;fd.<br>
+<a href="#Axialwave-solve_freq_equations">solve_freq_equations</a>(mode_type):<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Solves&nbsp;frequency&nbsp;equations&nbsp;and&nbsp;returns&nbsp;function&nbsp;of&nbsp;cp&nbsp;with&nbsp;respect&nbsp;to&nbsp;fd.<br>&nbsp;</span></td></tr>
+<tr><td>&nbsp;</td>
+<td class="singlecolumn"><dl><dt>Method resolution order:</dt>
+<dd><a href="Wave.html#Axialwave">Axialwave</a></dd>
+<dd><a href="Wave.html#Wave">Wave</a></dd>
+<dd><a href="builtins.html#object">builtins.object</a></dd>
+</dl>
+<hr>
+Methods defined here:<br>
+<dl><dt><a name="Axialwave-__eq__"><strong>__eq__</strong></a>(self, other)</dt><dd><span class="code">Return&nbsp;self==value.</span></dd></dl>
+
+<dl><dt><a name="Axialwave-__init__"><strong>__init__</strong></a>(self, material, modes_nums, freq_thickness_max, cp_max, structure_mode=None, structure_freq=None, rows=None, columns=None, freq_thickness_points=None, cp_step=None)</dt><dd><span class="code">Initialization&nbsp;method&nbsp;that&nbsp;calls&nbsp;function&nbsp;calculating&nbsp;results.<br>
+&nbsp;<br>
+This&nbsp;method&nbsp;is&nbsp;automatically&nbsp;called&nbsp;when&nbsp;the&nbsp;dataclass&nbsp;instance&nbsp;is&nbsp;initialized.&nbsp;<br>
+It&nbsp;calls&nbsp;init&nbsp;method&nbsp;of&nbsp;the&nbsp;base&nbsp;class&nbsp;<a href="#Wave">Wave</a>&nbsp;and&nbsp;sets&nbsp;additional&nbsp;parameters.</span></dd></dl>
+
+<dl><dt><a name="Axialwave-__post_init__"><strong>__post_init__</strong></a>(self)</dt><dd><span class="code">Post-initialization&nbsp;method&nbsp;that&nbsp;calls&nbsp;function&nbsp;calculating&nbsp;results.<br>
+&nbsp;<br>
+This&nbsp;method&nbsp;is&nbsp;automatically&nbsp;called&nbsp;after&nbsp;the&nbsp;dataclass&nbsp;instance&nbsp;is&nbsp;initialized.&nbsp;<br>
+It&nbsp;solves&nbsp;dispersion&nbsp;equation&nbsp;for&nbsp;torsional,&nbsp;longitudinal&nbsp;and&nbsp;flexural&nbsp;modes&nbsp;and&nbsp;<br>
+calculates&nbsp;wavestructure.</span></dd></dl>
+
+<dl><dt><a name="Axialwave-__repr__"><strong>__repr__</strong></a>(self)</dt><dd><span class="code">Return&nbsp;repr(self).</span></dd></dl>
+
+<dl><dt><a name="Axialwave-calculate_bessel_functions"><strong>calculate_bessel_functions</strong></a>(self, n: int, r: float, alpha_sq: float, beta_sq: float) -&gt; dict</dt><dd><span class="code">Calculates&nbsp;bessel&nbsp;or&nbsp;modified&nbsp;bessel&nbsp;functions&nbsp;depending&nbsp;on&nbsp;the&nbsp;input.<br>
+&nbsp;<br>
+Parameters:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;n&nbsp;(int)&nbsp;:&nbsp;Current&nbsp;circumfential&nbsp;order<br>
+&nbsp;&nbsp;&nbsp;&nbsp;r&nbsp;(float)&nbsp;:&nbsp;Radius&nbsp;of&nbsp;the&nbsp;cylinder<br>
+&nbsp;&nbsp;&nbsp;&nbsp;alpha_sq&nbsp;(float)&nbsp;:&nbsp;Dispersion&nbsp;alpha_sq&nbsp;component<br>
+&nbsp;&nbsp;&nbsp;&nbsp;beta_sq&nbsp;(float)&nbsp;:&nbsp;Dispersion&nbsp;beta_sq&nbsp;component<br>
+&nbsp;<br>
+Returns:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;bessel_functions&nbsp;(dict)</span></dd></dl>
+
+<dl><dt><a name="Axialwave-calculate_characteristic_equation"><strong>calculate_characteristic_equation</strong></a>(self, phase_velocity: float, freq_thickness: float, n: int) -&gt; numpy.ndarray</dt><dd><span class="code">Calculates&nbsp;bessel&nbsp;or&nbsp;modified&nbsp;bessel&nbsp;functions&nbsp;depending&nbsp;on&nbsp;the&nbsp;input.<br>
+&nbsp;<br>
+Defines&nbsp;the&nbsp;characteristic&nbsp;equation&nbsp;matrix&nbsp;C&nbsp;and&nbsp;solves&nbsp;it.<br>
+D&nbsp;matrix&nbsp;is&nbsp;extracted&nbsp;from&nbsp;C&nbsp;depending&nbsp;on&nbsp;the&nbsp;type&nbsp;of&nbsp;wave.<br>
+Finally&nbsp;determinant&nbsp;is&nbsp;calculated&nbsp;and&nbsp;returned.<br>
+&nbsp;<br>
+Parameters:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;phase_velocity&nbsp;(float):&nbsp;Current&nbsp;phase&nbsp;velocity&nbsp;value.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;freq_thickness&nbsp;(float):&nbsp;Current&nbsp;frequency&nbsp;and&nbsp;thickness&nbsp;product&nbsp;value.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;n&nbsp;(int)&nbsp;:&nbsp;Current&nbsp;circumfential&nbsp;order<br>
+&nbsp;<br>
+Returns:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;np.linalg.det(D)&nbsp;(np.ndarray)</span></dd></dl>
+
+<dl><dt><a name="Axialwave-calculate_dispersion_components"><strong>calculate_dispersion_components</strong></a>(self, phase_velocity: float, freq_thickness: float) -&gt; float</dt><dd><span class="code">Calculates&nbsp;dispersion&nbsp;componetns&nbsp;k,&nbsp;alpha_sq&nbsp;and&nbsp;beta_sq.<br>
+&nbsp;<br>
+Parameters:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;phase_velocity&nbsp;(float):&nbsp;Current&nbsp;phase&nbsp;velocity&nbsp;value.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;freq_thickness&nbsp;(float):&nbsp;Current&nbsp;frequency&nbsp;and&nbsp;thickness&nbsp;product&nbsp;value.<br>
+&nbsp;<br>
+Returns:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;k&nbsp;(float):&nbsp;wavenumber<br>
+&nbsp;&nbsp;&nbsp;&nbsp;alpha_sq&nbsp;(float):&nbsp;alpha_sq&nbsp;component<br>
+&nbsp;&nbsp;&nbsp;&nbsp;beta_sq&nbsp;(float):&nbsp;beta_sq&nbsp;component</span></dd></dl>
+
+<dl><dt><a name="Axialwave-get_group_velocity_eq"><strong>get_group_velocity_eq</strong></a>(self, cp: float, fd: float, cp_prime: float) -&gt; float</dt><dd><span class="code">Calculates&nbsp;group&nbsp;velocity&nbsp;from&nbsp;current&nbsp;phase&nbsp;velocity&nbsp;and&nbsp;fd.<br>
+&nbsp;<br>
+Parameters:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;phase_velocity&nbsp;(float):&nbsp;Current&nbsp;phase&nbsp;velocity&nbsp;value.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;freq_thickness&nbsp;(float):&nbsp;Current&nbsp;frequency&nbsp;and&nbsp;thickness&nbsp;product&nbsp;value.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;cp_prime&nbsp;(float):&nbsp;Current&nbsp;phase&nbsp;velocity&nbsp;derivative.<br>
+&nbsp;<br>
+Returns:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;cg&nbsp;(float):&nbsp;group&nbsp;velocity</span></dd></dl>
+
+<dl><dt><a name="Axialwave-solve_freq_equations"><strong>solve_freq_equations</strong></a>(self, mode_type: str) -&gt; dict</dt><dd><span class="code">Solves&nbsp;frequency&nbsp;equations&nbsp;and&nbsp;returns&nbsp;a&nbsp;function&nbsp;of&nbsp;cp&nbsp;with&nbsp;respect&nbsp;to&nbsp;fd.<br>
+&nbsp;<br>
+The&nbsp;algorithm&nbsp;is&nbsp;based&nbsp;on&nbsp;the&nbsp;one&nbsp;presented&nbsp;in&nbsp;J.L.&nbsp;Rose's&nbsp;"Ultrasonic&nbsp;Guided&nbsp;Waves&nbsp;in&nbsp;Solid&nbsp;Media,"&nbsp;<br>
+Chapter&nbsp;6.&nbsp;The&nbsp;algorithm&nbsp;proceeds&nbsp;as&nbsp;follows:<br>
+&nbsp;<br>
+1.&nbsp;Choose&nbsp;a&nbsp;frequency-thickness&nbsp;product&nbsp;fd_0.<br>
+2.&nbsp;Make&nbsp;an&nbsp;initial&nbsp;estimate&nbsp;of&nbsp;the&nbsp;phase&nbsp;velocity&nbsp;cp_0.<br>
+3.&nbsp;Evaluate&nbsp;the&nbsp;signs&nbsp;of&nbsp;the&nbsp;left-hand&nbsp;sides&nbsp;of&nbsp;the&nbsp;frequency&nbsp;equations.<br>
+4.&nbsp;Choose&nbsp;another&nbsp;phase&nbsp;velocity&nbsp;cp_1&nbsp;&gt;&nbsp;cp_0&nbsp;and&nbsp;re-evaluate&nbsp;the&nbsp;signs&nbsp;of&nbsp;the&nbsp;frequency&nbsp;equations.<br>
+5.&nbsp;Repeat&nbsp;steps&nbsp;(3)&nbsp;and&nbsp;(4)&nbsp;until&nbsp;a&nbsp;sign&nbsp;change&nbsp;occurs,&nbsp;assuming&nbsp;this&nbsp;happens&nbsp;between&nbsp;cp_n&nbsp;and&nbsp;cp_n+1.<br>
+6.&nbsp;Use&nbsp;bisection&nbsp;to&nbsp;precisely&nbsp;locate&nbsp;the&nbsp;phase&nbsp;velocity&nbsp;in&nbsp;the&nbsp;interval&nbsp;cp_n&nbsp;&lt;&nbsp;cp&nbsp;&lt;&nbsp;cp_n+1&nbsp;<br>
+&nbsp;&nbsp;&nbsp;where&nbsp;the&nbsp;left-hand&nbsp;side&nbsp;of&nbsp;the&nbsp;equation&nbsp;is&nbsp;close&nbsp;enough&nbsp;to&nbsp;zero.<br>
+7.&nbsp;After&nbsp;finding&nbsp;the&nbsp;root,&nbsp;continue&nbsp;searching&nbsp;at&nbsp;this&nbsp;fd&nbsp;for&nbsp;other&nbsp;roots&nbsp;according&nbsp;to&nbsp;steps&nbsp;(2)&nbsp;through&nbsp;(6).<br>
+8.&nbsp;Choose&nbsp;another&nbsp;fd&nbsp;product&nbsp;and&nbsp;repeat&nbsp;steps&nbsp;(2)&nbsp;through&nbsp;(7).<br>
+&nbsp;<br>
+Parameters:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;mode_type&nbsp;(str):&nbsp;The&nbsp;type&nbsp;of&nbsp;modes&nbsp;shown&nbsp;on&nbsp;the&nbsp;plot:&nbsp;'sym',&nbsp;'anti',&nbsp;or&nbsp;'both'.<br>
+&nbsp;<br>
+Returns:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;result&nbsp;(dict):&nbsp;The&nbsp;results&nbsp;of&nbsp;the&nbsp;frequency&nbsp;equation&nbsp;solutions,&nbsp;indexed&nbsp;by&nbsp;mode&nbsp;type.</span></dd></dl>
+
+<hr>
+Data and other attributes defined here:<br>
+<dl><dt><strong>__annotations__</strong> = {}</dl>
+
+<dl><dt><strong>__dataclass_fields__</strong> = {'columns': Field(name='columns',type=&lt;class 'int'&gt;,default=...appingproxy({}),kw_only=False,_field_type=_FIELD), 'cp_max': Field(name='cp_max',type=&lt;class 'int'&gt;,default=&lt;...appingproxy({}),kw_only=False,_field_type=_FIELD), 'cp_step': Field(name='cp_step',type=&lt;class 'int'&gt;,default=...appingproxy({}),kw_only=False,_field_type=_FIELD), 'freq_thickness_max': Field(name='freq_thickness_max',type=&lt;class 'int...appingproxy({}),kw_only=False,_field_type=_FIELD), 'freq_thickness_points': Field(name='freq_thickness_points',type=&lt;class '...appingproxy({}),kw_only=False,_field_type=_FIELD), 'increasing_mode': Field(name='increasing_mode',type=&lt;class 'str'&gt;,...appingproxy({}),kw_only=False,_field_type=_FIELD), 'material': Field(name='material',type=&lt;class 'Material.Mate...appingproxy({}),kw_only=False,_field_type=_FIELD), 'modes_functions': Field(name='modes_functions',type=&lt;class 'dict'&gt;...appingproxy({}),kw_only=False,_field_type=_FIELD), 'rows': Field(name='rows',type=&lt;class 'int'&gt;,default=&lt;da...appingproxy({}),kw_only=False,_field_type=_FIELD), 'structure_freq': Field(name='structure_freq',type=&lt;class 'array.a...appingproxy({}),kw_only=False,_field_type=_FIELD), ...}</dl>
+
+<dl><dt><strong>__dataclass_params__</strong> = _DataclassParams(init=True,repr=True,eq=True,order=False,unsafe_hash=False,frozen=False)</dl>
+
+<dl><dt><strong>__hash__</strong> = None</dl>
+
+<dl><dt><strong>__match_args__</strong> = ('material', 'freq_thickness_max', 'cp_max', 'structure_mode', 'structure_freq', 'rows', 'columns', 'freq_thickness_points', 'cp_step')</dl>
+
+<dl><dt><strong>modes_nums</strong> = {'circumfential_order': None, 'wavenumber': None}</dl>
+
+<hr>
+Methods inherited from <a href="Wave.html#Wave">Wave</a>:<br>
+<dl><dt><a name="Axialwave-calculate_group_wavenumber"><strong>calculate_group_wavenumber</strong></a>(self, result: dict) -&gt; dict</dt><dd><span class="code">Calculates&nbsp;group&nbsp;velocity&nbsp;and&nbsp;wave&nbsp;number&nbsp;and&nbsp;updates&nbsp;the&nbsp;dictionary<br>
+&nbsp;<br>
+Estimates&nbsp;the&nbsp;derivative&nbsp;of&nbsp;phase&nbsp;velocity&nbsp;with&nbsp;respect&nbsp;to&nbsp;fd&nbsp;using&nbsp;interpolation,<br>
+then&nbsp;calculates&nbsp;group_velocity&nbsp;using&nbsp;the&nbsp;estimated&nbsp;derivative.<br>
+Adds&nbsp;cg_val&nbsp;as&nbsp;the&nbsp;third&nbsp;value&nbsp;in&nbsp;each&nbsp;tuple&nbsp;and&nbsp;returns&nbsp;updated&nbsp;dict.<br>
+&nbsp;<br>
+Parameters:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;result&nbsp;(dict)&nbsp;:&nbsp;Dictionary&nbsp;with&nbsp;results&nbsp;to&nbsp;interpolate.<br>
+&nbsp;<br>
+Returns:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;result&nbsp;(dict)</span></dd></dl>
+
+<dl><dt><a name="Axialwave-calculate_wave_structure"><strong>calculate_wave_structure</strong></a>(self, samples_x: int = 100) -&gt; dict</dt><dd><span class="code">Calculates&nbsp;group&nbsp;velocity&nbsp;and&nbsp;wave&nbsp;number&nbsp;and&nbsp;updates&nbsp;the&nbsp;dictionary<br>
+&nbsp;<br>
+Creates&nbsp;array&nbsp;between&nbsp;-thickness/2&nbsp;and&nbsp;thickness/2.&nbsp;<br>
+Uses&nbsp;the&nbsp;formula&nbsp;for&nbsp;wave&nbsp;structure&nbsp;to&nbsp;calculate&nbsp;u&nbsp;and&nbsp;w&nbsp;compontents.<br>
+Depending&nbsp;on&nbsp;the&nbsp;cases&nbsp;appends&nbsp;results&nbsp;to&nbsp;array.<br>
+&nbsp;<br>
+Parameters:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;samples_x&nbsp;(int,&nbsp;optional)&nbsp;:&nbsp;Number&nbsp;of&nbsp;samples&nbsp;for&nbsp;the&nbsp;thickness&nbsp;array.<br>
+&nbsp;<br>
+Returns:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;u_w_array&nbsp;(list)</span></dd></dl>
+
+<dl><dt><strong>get_converted_mode</strong> <em>lambda</em> _, key</dt></dl>
+
+<dl><dt><a name="Axialwave-interpolate_result"><strong>interpolate_result</strong></a>(self, result: dict) -&gt; dict</dt><dd><span class="code">Interpolate&nbsp;result&nbsp;and&nbsp;update&nbsp;the&nbsp;dictionary<br>
+&nbsp;<br>
+Performs&nbsp;interpolation&nbsp;using&nbsp;cubic&nbsp;spline,&nbsp;generates&nbsp;finer&nbsp;fd&nbsp;values&nbsp;for&nbsp;smoother&nbsp;plot&nbsp;<br>
+and&nbsp;stores&nbsp;interpolated&nbsp;data&nbsp;in&nbsp;the&nbsp;new&nbsp;dictionary.&nbsp;Additionaly&nbsp;cp&nbsp;is&nbsp;also&nbsp;stored<br>
+as&nbsp;function&nbsp;of&nbsp;frequency&nbsp;and&nbsp;thickness&nbsp;product&nbsp;for&nbsp;wave&nbsp;structure.<br>
+&nbsp;<br>
+Parameters:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;result&nbsp;(dict)&nbsp;:&nbsp;Dictionary&nbsp;with&nbsp;results&nbsp;to&nbsp;interpolate.<br>
+&nbsp;<br>
+Returns:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;interp_result&nbsp;(dict)</span></dd></dl>
+
+<dl><dt><strong>set_converted_mode</strong> <em>lambda</em> x</dt></dl>
+
+<hr>
+Data descriptors inherited from <a href="Wave.html#Wave">Wave</a>:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><span class="code">dictionary&nbsp;for&nbsp;instance&nbsp;variables&nbsp;(if&nbsp;defined)</span></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><span class="code">list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object&nbsp;(if&nbsp;defined)</span></dd>
+</dl>
+<hr>
+Data and other attributes inherited from <a href="Wave.html#Wave">Wave</a>:<br>
+<dl><dt><strong>kind</strong> = 3</dl>
+
+<dl><dt><strong>smoothen</strong> = 0</dl>
+
+<dl><dt><strong>structure_cp</strong> = {}</dl>
+
+<dl><dt><strong>structure_result</strong> = None</dl>
+
+<dl><dt><strong>tolerance</strong> = 0.001</dl>
+
+</td></tr></table> <p>
+<table class="section">
+<tr class="decor title-decor heading-text">
+<td class="section-title" colspan=3>&nbsp;<br><a name="Lambwave">class <strong>Lambwave</strong></a>(<a href="Wave.html#Wave">Wave</a>)</td></tr>
+    
+<tr><td class="decor title-decor" rowspan=2><span class="code">&nbsp;&nbsp;&nbsp;</span></td>
+<td class="decor title-decor" colspan=2><span class="code"><a href="#Lambwave">Lambwave</a>(material,&nbsp;modes_nums,&nbsp;freq_thickness_max,&nbsp;cp_max,&nbsp;structure_mode=None,&nbsp;structure_freq=None,&nbsp;rows=None,&nbsp;columns=None,&nbsp;freq_thickness_points=None,&nbsp;cp_step=None)<br>
+&nbsp;<br>
+A&nbsp;class&nbsp;representing&nbsp;a&nbsp;<a href="#Lambwave">Lambwave</a>&nbsp;type.<br>
+&nbsp;<br>
+Dataclass&nbsp;inheriting&nbsp;<a href="#Wave">Wave</a>&nbsp;class,&nbsp;providing&nbsp;results&nbsp;and&nbsp;parameters&nbsp;specific&nbsp;to&nbsp;Lambwaves.<br>
+Class&nbsp;has&nbsp;different&nbsp;methods&nbsp;for&nbsp;calculation&nbsp;of&nbsp;dispersion&nbsp;and&nbsp;wavestructure&nbsp;for&nbsp;Lambwaves.<br>
+&nbsp;<br>
+Methods:<br>
+<a href="#Lambwave-__init__">__init__</a>(material,&nbsp;modes_nums,&nbsp;freq_thickness_max,&nbsp;cp_max,&nbsp;structure_mode,&nbsp;structure_freq,&nbsp;rows,&nbsp;columns,&nbsp;freq_thickness_points,&nbsp;cp_step):<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Initialization&nbsp;method&nbsp;that&nbsp;calls&nbsp;function&nbsp;calculating&nbsp;results.<br>
+<a href="#Lambwave-__post_init__">__post_init__</a>():<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Post-initialization&nbsp;method&nbsp;that&nbsp;calls&nbsp;function&nbsp;calculating&nbsp;results.<br>
+<a href="#Lambwave-calculate_symmetric">calculate_symmetric</a>(phase_velocity,&nbsp;freq_thickness):<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Calcultes&nbsp;symmetric&nbsp;modes&nbsp;dispersion&nbsp;equation.<br>
+<a href="#Lambwave-calculate_antisymmetric">calculate_antisymmetric</a>(phase_velocity,&nbsp;freq_thickness):<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Calcultes&nbsp;antisymmetric&nbsp;modes&nbsp;dispersion&nbsp;equation.<br>
+<a href="#Lambwave-get_group_velocity_eq">get_group_velocity_eq</a>(cp,&nbsp;fd,&nbsp;cp_prime,&nbsp;key):<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Calculates&nbsp;group&nbsp;velocity&nbsp;from&nbsp;current&nbsp;phase&nbsp;velocity&nbsp;and&nbsp;fd.<br>
+<a href="#Lambwave-calculate_wavestructure_components">calculate_wavestructure_components</a>(x,&nbsp;cp,&nbsp;fd):<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Calculates&nbsp;wavestructure&nbsp;components&nbsp;u&nbsp;and&nbsp;w.<br>
+<a href="#Lambwave-solve_freq_equations">solve_freq_equations</a>(mode_type):<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Solves&nbsp;frequency&nbsp;equations&nbsp;and&nbsp;returns&nbsp;function&nbsp;of&nbsp;cp&nbsp;with&nbsp;respect&nbsp;to&nbsp;fd.<br>&nbsp;</span></td></tr>
+<tr><td>&nbsp;</td>
+<td class="singlecolumn"><dl><dt>Method resolution order:</dt>
+<dd><a href="Wave.html#Lambwave">Lambwave</a></dd>
+<dd><a href="Wave.html#Wave">Wave</a></dd>
+<dd><a href="builtins.html#object">builtins.object</a></dd>
+</dl>
+<hr>
+Methods defined here:<br>
+<dl><dt><a name="Lambwave-__eq__"><strong>__eq__</strong></a>(self, other)</dt><dd><span class="code">Return&nbsp;self==value.</span></dd></dl>
+
+<dl><dt><a name="Lambwave-__init__"><strong>__init__</strong></a>(self, material, modes_nums, freq_thickness_max, cp_max, structure_mode=None, structure_freq=None, rows=None, columns=None, freq_thickness_points=None, cp_step=None)</dt><dd><span class="code">Initialization&nbsp;method&nbsp;that&nbsp;calls&nbsp;function&nbsp;calculating&nbsp;results.<br>
+&nbsp;<br>
+This&nbsp;method&nbsp;is&nbsp;automatically&nbsp;called&nbsp;when&nbsp;the&nbsp;dataclass&nbsp;instance&nbsp;is&nbsp;initialized.&nbsp;<br>
+It&nbsp;calls&nbsp;init&nbsp;method&nbsp;of&nbsp;the&nbsp;base&nbsp;class&nbsp;<a href="#Wave">Wave</a>&nbsp;and&nbsp;sets&nbsp;additional&nbsp;parameters.</span></dd></dl>
+
+<dl><dt><a name="Lambwave-__post_init__"><strong>__post_init__</strong></a>(self)</dt><dd><span class="code">Post-initialization&nbsp;method&nbsp;that&nbsp;calls&nbsp;function&nbsp;calculating&nbsp;results.<br>
+&nbsp;<br>
+This&nbsp;method&nbsp;is&nbsp;automatically&nbsp;called&nbsp;after&nbsp;the&nbsp;dataclass&nbsp;instance&nbsp;is&nbsp;initialized.&nbsp;<br>
+It&nbsp;solves&nbsp;dispersion&nbsp;equation&nbsp;for&nbsp;symmetric&nbsp;and&nbsp;antisymmetric&nbsp;modes&nbsp;and&nbsp;calculates&nbsp;wavestructure.</span></dd></dl>
+
+<dl><dt><a name="Lambwave-__repr__"><strong>__repr__</strong></a>(self)</dt><dd><span class="code">Return&nbsp;repr(self).</span></dd></dl>
+
+<dl><dt><a name="Lambwave-calculate_antisymmetric"><strong>calculate_antisymmetric</strong></a>(self, phase_velocity: float, freq_thickness: float) -&gt; float</dt><dd><span class="code">Calcultes&nbsp;antisymmetric&nbsp;modes&nbsp;dispersion&nbsp;equation.<br>
+&nbsp;<br>
+Uses&nbsp;formula&nbsp;for&nbsp;antisymmetric&nbsp;modes&nbsp;dispersion&nbsp;equation&nbsp;and&nbsp;returns&nbsp;its&nbsp;real&nbsp;component.<br>
+&nbsp;<br>
+Parameters:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;phase_velocity&nbsp;(float):&nbsp;Current&nbsp;phase&nbsp;velocity&nbsp;value.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;freq_thickness&nbsp;(float):&nbsp;Current&nbsp;frequency&nbsp;and&nbsp;thickness&nbsp;product&nbsp;value.<br>
+&nbsp;<br>
+Returns:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;dispersion&nbsp;(float)</span></dd></dl>
+
+<dl><dt><a name="Lambwave-calculate_symmetric"><strong>calculate_symmetric</strong></a>(self, phase_velocity: float, freq_thickness: float) -&gt; float</dt><dd><span class="code">Calcultes&nbsp;symmetric&nbsp;modes&nbsp;dispersion&nbsp;equation.<br>
+&nbsp;<br>
+Uses&nbsp;formula&nbsp;for&nbsp;symmetric&nbsp;modes&nbsp;dispersion&nbsp;equation&nbsp;and&nbsp;returns&nbsp;its&nbsp;real&nbsp;component.<br>
+&nbsp;<br>
+Parameters:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;phase_velocity&nbsp;(float):&nbsp;Current&nbsp;phase&nbsp;velocity&nbsp;value.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;freq_thickness&nbsp;(float):&nbsp;Current&nbsp;frequency&nbsp;and&nbsp;thickness&nbsp;product&nbsp;value.<br>
+&nbsp;<br>
+Returns:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;dispersion&nbsp;(float)</span></dd></dl>
+
+<dl><dt><a name="Lambwave-calculate_wavestructure_components"><strong>calculate_wavestructure_components</strong></a>(self, x: numpy.ndarray, cp: float, fd: float) -&gt; float</dt><dd><span class="code">Calculates&nbsp;wavestructure&nbsp;components&nbsp;u&nbsp;and&nbsp;w.<br>
+&nbsp;<br>
+Uses&nbsp;formula&nbsp;for&nbsp;wavestructure&nbsp;to&nbsp;obtain&nbsp;in-plane&nbsp;and&nbsp;out-of-plane&nbsp;components.<br>
+&nbsp;<br>
+Parameters:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;x&nbsp;(np.ndarray)&nbsp;:&nbsp;Array&nbsp;of&nbsp;points&nbsp;between&nbsp;-thickness/2&nbsp;and&nbsp;thickness/2.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;phase_velocity&nbsp;(float):&nbsp;Current&nbsp;phase&nbsp;velocity&nbsp;value.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;freq_thickness&nbsp;(float):&nbsp;Current&nbsp;frequency&nbsp;and&nbsp;thickness&nbsp;product&nbsp;value.<br>
+&nbsp;<br>
+Returns:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;u&nbsp;(float)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;w&nbsp;(float)</span></dd></dl>
+
+<dl><dt><a name="Lambwave-get_group_velocity_eq"><strong>get_group_velocity_eq</strong></a>(self, cp: float, fd: float, cp_prime: float) -&gt; float</dt><dd><span class="code">Calculates&nbsp;group&nbsp;velocity&nbsp;from&nbsp;current&nbsp;phase&nbsp;velocity&nbsp;and&nbsp;fd.<br>
+&nbsp;<br>
+Parameters:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;phase_velocity&nbsp;(float):&nbsp;Current&nbsp;phase&nbsp;velocity&nbsp;value.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;freq_thickness&nbsp;(float):&nbsp;Current&nbsp;frequency&nbsp;and&nbsp;thickness&nbsp;product&nbsp;value.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;cp_prime&nbsp;(float):&nbsp;Current&nbsp;phase&nbsp;velocity&nbsp;derivative.<br>
+&nbsp;<br>
+Returns:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;cg&nbsp;(float):&nbsp;group&nbsp;velocity</span></dd></dl>
+
+<dl><dt><a name="Lambwave-solve_freq_equations"><strong>solve_freq_equations</strong></a>(self, mode_type: str) -&gt; dict</dt><dd><span class="code">Solves&nbsp;frequency&nbsp;equations&nbsp;and&nbsp;returns&nbsp;a&nbsp;function&nbsp;of&nbsp;cp&nbsp;with&nbsp;respect&nbsp;to&nbsp;fd.<br>
+&nbsp;<br>
+The&nbsp;algorithm&nbsp;is&nbsp;based&nbsp;on&nbsp;the&nbsp;one&nbsp;presented&nbsp;in&nbsp;J.L.&nbsp;Rose's&nbsp;"Ultrasonic&nbsp;Guided&nbsp;Waves&nbsp;in&nbsp;Solid&nbsp;Media,"&nbsp;<br>
+Chapter&nbsp;6.&nbsp;The&nbsp;algorithm&nbsp;proceeds&nbsp;as&nbsp;follows:<br>
+&nbsp;<br>
+1.&nbsp;Choose&nbsp;a&nbsp;frequency-thickness&nbsp;product&nbsp;fd_0.<br>
+2.&nbsp;Make&nbsp;an&nbsp;initial&nbsp;estimate&nbsp;of&nbsp;the&nbsp;phase&nbsp;velocity&nbsp;cp_0.<br>
+3.&nbsp;Evaluate&nbsp;the&nbsp;signs&nbsp;of&nbsp;the&nbsp;left-hand&nbsp;sides&nbsp;of&nbsp;the&nbsp;frequency&nbsp;equations.<br>
+4.&nbsp;Choose&nbsp;another&nbsp;phase&nbsp;velocity&nbsp;cp_1&nbsp;&gt;&nbsp;cp_0&nbsp;and&nbsp;re-evaluate&nbsp;the&nbsp;signs&nbsp;of&nbsp;the&nbsp;frequency&nbsp;equations.<br>
+5.&nbsp;Repeat&nbsp;steps&nbsp;(3)&nbsp;and&nbsp;(4)&nbsp;until&nbsp;a&nbsp;sign&nbsp;change&nbsp;occurs,&nbsp;assuming&nbsp;this&nbsp;happens&nbsp;between&nbsp;cp_n&nbsp;and&nbsp;cp_n+1.<br>
+6.&nbsp;Use&nbsp;bisection&nbsp;to&nbsp;precisely&nbsp;locate&nbsp;the&nbsp;phase&nbsp;velocity&nbsp;in&nbsp;the&nbsp;interval&nbsp;cp_n&nbsp;&lt;&nbsp;cp&nbsp;&lt;&nbsp;cp_n+1&nbsp;<br>
+&nbsp;&nbsp;&nbsp;where&nbsp;the&nbsp;left-hand&nbsp;side&nbsp;of&nbsp;the&nbsp;equation&nbsp;is&nbsp;close&nbsp;enough&nbsp;to&nbsp;zero.<br>
+7.&nbsp;After&nbsp;finding&nbsp;the&nbsp;root,&nbsp;continue&nbsp;searching&nbsp;at&nbsp;this&nbsp;fd&nbsp;for&nbsp;other&nbsp;roots&nbsp;according&nbsp;to&nbsp;steps&nbsp;(2)&nbsp;through&nbsp;(6).<br>
+8.&nbsp;Choose&nbsp;another&nbsp;fd&nbsp;product&nbsp;and&nbsp;repeat&nbsp;steps&nbsp;(2)&nbsp;through&nbsp;(7).<br>
+&nbsp;<br>
+Parameters:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;mode_type&nbsp;(str):&nbsp;The&nbsp;type&nbsp;of&nbsp;modes&nbsp;shown&nbsp;on&nbsp;the&nbsp;plot:&nbsp;'sym',&nbsp;'anti',&nbsp;or&nbsp;'both'.<br>
+&nbsp;<br>
+Returns:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;result&nbsp;(dict):&nbsp;The&nbsp;results&nbsp;of&nbsp;the&nbsp;frequency&nbsp;equation&nbsp;solutions,&nbsp;indexed&nbsp;by&nbsp;mode&nbsp;type.</span></dd></dl>
+
+<hr>
+Data and other attributes defined here:<br>
+<dl><dt><strong>__annotations__</strong> = {}</dl>
+
+<dl><dt><strong>__dataclass_fields__</strong> = {'columns': Field(name='columns',type=&lt;class 'int'&gt;,default=...appingproxy({}),kw_only=False,_field_type=_FIELD), 'cp_max': Field(name='cp_max',type=&lt;class 'int'&gt;,default=&lt;...appingproxy({}),kw_only=False,_field_type=_FIELD), 'cp_step': Field(name='cp_step',type=&lt;class 'int'&gt;,default=...appingproxy({}),kw_only=False,_field_type=_FIELD), 'freq_thickness_max': Field(name='freq_thickness_max',type=&lt;class 'int...appingproxy({}),kw_only=False,_field_type=_FIELD), 'freq_thickness_points': Field(name='freq_thickness_points',type=&lt;class '...appingproxy({}),kw_only=False,_field_type=_FIELD), 'increasing_mode': Field(name='increasing_mode',type=&lt;class 'str'&gt;,...appingproxy({}),kw_only=False,_field_type=_FIELD), 'material': Field(name='material',type=&lt;class 'Material.Mate...appingproxy({}),kw_only=False,_field_type=_FIELD), 'modes_functions': Field(name='modes_functions',type=&lt;class 'dict'&gt;...appingproxy({}),kw_only=False,_field_type=_FIELD), 'rows': Field(name='rows',type=&lt;class 'int'&gt;,default=&lt;da...appingproxy({}),kw_only=False,_field_type=_FIELD), 'structure_freq': Field(name='structure_freq',type=&lt;class 'array.a...appingproxy({}),kw_only=False,_field_type=_FIELD), ...}</dl>
+
+<dl><dt><strong>__dataclass_params__</strong> = _DataclassParams(init=True,repr=True,eq=True,order=False,unsafe_hash=False,frozen=False)</dl>
+
+<dl><dt><strong>__hash__</strong> = None</dl>
+
+<dl><dt><strong>__match_args__</strong> = ('material', 'freq_thickness_max', 'cp_max', 'structure_mode', 'structure_freq', 'rows', 'columns', 'freq_thickness_points', 'cp_step')</dl>
+
+<hr>
+Methods inherited from <a href="Wave.html#Wave">Wave</a>:<br>
+<dl><dt><a name="Lambwave-calculate_dispersion_components"><strong>calculate_dispersion_components</strong></a>(self, phase_velocity: float, freq_thickness: float) -&gt; float</dt><dd><span class="code">Calculates&nbsp;dispersion&nbsp;componetns&nbsp;k,&nbsp;p&nbsp;and&nbsp;q.<br>
+&nbsp;<br>
+Parameters:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;phase_velocity&nbsp;(float):&nbsp;Current&nbsp;phase&nbsp;velocity&nbsp;value.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;freq_thickness&nbsp;(float):&nbsp;Current&nbsp;frequency&nbsp;and&nbsp;thickness&nbsp;product&nbsp;value.<br>
+&nbsp;<br>
+Returns:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;k&nbsp;(float):&nbsp;wavenumber<br>
+&nbsp;&nbsp;&nbsp;&nbsp;p&nbsp;(float):&nbsp;p-component<br>
+&nbsp;&nbsp;&nbsp;&nbsp;q&nbsp;(float):&nbsp;q-component</span></dd></dl>
+
+<dl><dt><a name="Lambwave-calculate_group_wavenumber"><strong>calculate_group_wavenumber</strong></a>(self, result: dict) -&gt; dict</dt><dd><span class="code">Calculates&nbsp;group&nbsp;velocity&nbsp;and&nbsp;wave&nbsp;number&nbsp;and&nbsp;updates&nbsp;the&nbsp;dictionary<br>
+&nbsp;<br>
+Estimates&nbsp;the&nbsp;derivative&nbsp;of&nbsp;phase&nbsp;velocity&nbsp;with&nbsp;respect&nbsp;to&nbsp;fd&nbsp;using&nbsp;interpolation,<br>
+then&nbsp;calculates&nbsp;group_velocity&nbsp;using&nbsp;the&nbsp;estimated&nbsp;derivative.<br>
+Adds&nbsp;cg_val&nbsp;as&nbsp;the&nbsp;third&nbsp;value&nbsp;in&nbsp;each&nbsp;tuple&nbsp;and&nbsp;returns&nbsp;updated&nbsp;dict.<br>
+&nbsp;<br>
+Parameters:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;result&nbsp;(dict)&nbsp;:&nbsp;Dictionary&nbsp;with&nbsp;results&nbsp;to&nbsp;interpolate.<br>
+&nbsp;<br>
+Returns:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;result&nbsp;(dict)</span></dd></dl>
+
+<dl><dt><a name="Lambwave-calculate_wave_structure"><strong>calculate_wave_structure</strong></a>(self, samples_x: int = 100) -&gt; dict</dt><dd><span class="code">Calculates&nbsp;group&nbsp;velocity&nbsp;and&nbsp;wave&nbsp;number&nbsp;and&nbsp;updates&nbsp;the&nbsp;dictionary<br>
+&nbsp;<br>
+Creates&nbsp;array&nbsp;between&nbsp;-thickness/2&nbsp;and&nbsp;thickness/2.&nbsp;<br>
+Uses&nbsp;the&nbsp;formula&nbsp;for&nbsp;wave&nbsp;structure&nbsp;to&nbsp;calculate&nbsp;u&nbsp;and&nbsp;w&nbsp;compontents.<br>
+Depending&nbsp;on&nbsp;the&nbsp;cases&nbsp;appends&nbsp;results&nbsp;to&nbsp;array.<br>
+&nbsp;<br>
+Parameters:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;samples_x&nbsp;(int,&nbsp;optional)&nbsp;:&nbsp;Number&nbsp;of&nbsp;samples&nbsp;for&nbsp;the&nbsp;thickness&nbsp;array.<br>
+&nbsp;<br>
+Returns:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;u_w_array&nbsp;(list)</span></dd></dl>
+
+<dl><dt><strong>get_converted_mode</strong> <em>lambda</em> _, key</dt></dl>
+
+<dl><dt><a name="Lambwave-interpolate_result"><strong>interpolate_result</strong></a>(self, result: dict) -&gt; dict</dt><dd><span class="code">Interpolate&nbsp;result&nbsp;and&nbsp;update&nbsp;the&nbsp;dictionary<br>
+&nbsp;<br>
+Performs&nbsp;interpolation&nbsp;using&nbsp;cubic&nbsp;spline,&nbsp;generates&nbsp;finer&nbsp;fd&nbsp;values&nbsp;for&nbsp;smoother&nbsp;plot&nbsp;<br>
+and&nbsp;stores&nbsp;interpolated&nbsp;data&nbsp;in&nbsp;the&nbsp;new&nbsp;dictionary.&nbsp;Additionaly&nbsp;cp&nbsp;is&nbsp;also&nbsp;stored<br>
+as&nbsp;function&nbsp;of&nbsp;frequency&nbsp;and&nbsp;thickness&nbsp;product&nbsp;for&nbsp;wave&nbsp;structure.<br>
+&nbsp;<br>
+Parameters:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;result&nbsp;(dict)&nbsp;:&nbsp;Dictionary&nbsp;with&nbsp;results&nbsp;to&nbsp;interpolate.<br>
+&nbsp;<br>
+Returns:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;interp_result&nbsp;(dict)</span></dd></dl>
+
+<dl><dt><strong>set_converted_mode</strong> <em>lambda</em> x</dt></dl>
+
+<hr>
+Data descriptors inherited from <a href="Wave.html#Wave">Wave</a>:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><span class="code">dictionary&nbsp;for&nbsp;instance&nbsp;variables&nbsp;(if&nbsp;defined)</span></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><span class="code">list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object&nbsp;(if&nbsp;defined)</span></dd>
+</dl>
+<hr>
+Data and other attributes inherited from <a href="Wave.html#Wave">Wave</a>:<br>
+<dl><dt><strong>kind</strong> = 3</dl>
+
+<dl><dt><strong>modes_nums</strong> = {'antisymmetric': None, 'symmetric': None}</dl>
+
+<dl><dt><strong>smoothen</strong> = 0</dl>
+
+<dl><dt><strong>structure_cp</strong> = {}</dl>
+
+<dl><dt><strong>structure_result</strong> = None</dl>
+
+<dl><dt><strong>tolerance</strong> = 0.001</dl>
+
+</td></tr></table> <p>
+<table class="section">
+<tr class="decor title-decor heading-text">
+<td class="section-title" colspan=3>&nbsp;<br><a name="Shearwave">class <strong>Shearwave</strong></a>(<a href="Wave.html#Wave">Wave</a>)</td></tr>
+    
+<tr><td class="decor title-decor" rowspan=2><span class="code">&nbsp;&nbsp;&nbsp;</span></td>
+<td class="decor title-decor" colspan=2><span class="code"><a href="#Shearwave">Shearwave</a>(material,&nbsp;modes_nums,&nbsp;freq_thickness_max,&nbsp;cp_max,&nbsp;structure_mode=None,&nbsp;structure_freq=None,&nbsp;rows=None,&nbsp;columns=None,&nbsp;freq_thickness_points=None,&nbsp;cp_step=None)<br>
+&nbsp;<br>
+A&nbsp;class&nbsp;representing&nbsp;a&nbsp;<a href="#Shearwave">Shearwave</a>&nbsp;type.<br>
+&nbsp;<br>
+Dataclass&nbsp;inheriting&nbsp;<a href="#Wave">Wave</a>&nbsp;class,&nbsp;providing&nbsp;results&nbsp;and&nbsp;parameters&nbsp;specific&nbsp;to&nbsp;Shearwaves.<br>
+Class&nbsp;has&nbsp;different&nbsp;methods&nbsp;for&nbsp;calculation&nbsp;of&nbsp;dispersion&nbsp;and&nbsp;wavestructure&nbsp;for&nbsp;Shearwaves.<br>
+&nbsp;<br>
+Attributes:<br>
+set_converted_key&nbsp;(lambda)&nbsp;:&nbsp;sets&nbsp;key&nbsp;from&nbsp;<a href="#Shearwave">Shearwave</a>&nbsp;to&nbsp;<a href="#Lambwave">Lambwave</a>&nbsp;style&nbsp;key.<br>
+get_converted_mode&nbsp;(lambda)&nbsp;:&nbsp;gets&nbsp;mode&nbsp;number&nbsp;for&nbsp;<a href="#Shearwave">Shearwave</a>&nbsp;from&nbsp;<a href="#Lambwave">Lambwave</a>&nbsp;style&nbsp;key.<br>
+&nbsp;<br>
+Methods:<br>
+<a href="#Shearwave-__init__">__init__</a>(material,&nbsp;modes_nums,&nbsp;freq_thickness_max,&nbsp;cp_max,&nbsp;structure_mode,&nbsp;structure_freq,&nbsp;rows,&nbsp;columns,&nbsp;freq_thickness_points,&nbsp;cp_step):<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Initialization&nbsp;method&nbsp;that&nbsp;calls&nbsp;function&nbsp;calculating&nbsp;results.<br>
+<a href="#Shearwave-__post_init__">__post_init__</a>():<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Post-initialization&nbsp;method&nbsp;that&nbsp;calls&nbsp;function&nbsp;calculating&nbsp;results.<br>
+<a href="#Shearwave-calculate_symmetric">calculate_symmetric</a>(phase_velocity,&nbsp;freq_thickness):<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Calcultes&nbsp;symmetric&nbsp;modes&nbsp;dispersion&nbsp;equation.<br>
+<a href="#Shearwave-calculate_antisymmetric">calculate_antisymmetric</a>(phase_velocity,&nbsp;freq_thickness):<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Calcultes&nbsp;antisymmetric&nbsp;modes&nbsp;dispersion&nbsp;equation.<br>
+<a href="#Shearwave-get_group_velocity_eq">get_group_velocity_eq</a>(cp,&nbsp;fd,&nbsp;cp_prime,&nbsp;key):<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Calculates&nbsp;group&nbsp;velocity&nbsp;from&nbsp;current&nbsp;phase&nbsp;velocity&nbsp;and&nbsp;fd.<br>
+<a href="#Shearwave-calculate_wavestructure_components">calculate_wavestructure_components</a>(x,&nbsp;cp,&nbsp;fd):<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Calculates&nbsp;wavestructure&nbsp;components&nbsp;u&nbsp;and&nbsp;w.<br>
+<a href="#Shearwave-solve_freq_equations">solve_freq_equations</a>(mode_type):<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Solves&nbsp;frequency&nbsp;equations&nbsp;and&nbsp;returns&nbsp;function&nbsp;of&nbsp;cp&nbsp;with&nbsp;respect&nbsp;to&nbsp;fd.<br>&nbsp;</span></td></tr>
+<tr><td>&nbsp;</td>
+<td class="singlecolumn"><dl><dt>Method resolution order:</dt>
+<dd><a href="Wave.html#Shearwave">Shearwave</a></dd>
+<dd><a href="Wave.html#Wave">Wave</a></dd>
+<dd><a href="builtins.html#object">builtins.object</a></dd>
+</dl>
+<hr>
+Methods defined here:<br>
+<dl><dt><a name="Shearwave-__eq__"><strong>__eq__</strong></a>(self, other)</dt><dd><span class="code">Return&nbsp;self==value.</span></dd></dl>
+
+<dl><dt><a name="Shearwave-__init__"><strong>__init__</strong></a>(self, material, modes_nums, freq_thickness_max, cp_max, structure_mode=None, structure_freq=None, rows=None, columns=None, freq_thickness_points=None, cp_step=None)</dt><dd><span class="code">Initialization&nbsp;method&nbsp;that&nbsp;calls&nbsp;function&nbsp;calculating&nbsp;results.<br>
+&nbsp;<br>
+This&nbsp;method&nbsp;is&nbsp;automatically&nbsp;called&nbsp;when&nbsp;the&nbsp;dataclass&nbsp;instance&nbsp;is&nbsp;initialized.&nbsp;<br>
+It&nbsp;calls&nbsp;init&nbsp;method&nbsp;of&nbsp;the&nbsp;base&nbsp;class&nbsp;<a href="#Wave">Wave</a>&nbsp;and&nbsp;sets&nbsp;additional&nbsp;parameters.</span></dd></dl>
+
+<dl><dt><a name="Shearwave-__post_init__"><strong>__post_init__</strong></a>(self)</dt><dd><span class="code">Post-initialization&nbsp;method&nbsp;that&nbsp;calls&nbsp;function&nbsp;calculating&nbsp;results.<br>
+&nbsp;<br>
+This&nbsp;method&nbsp;is&nbsp;automatically&nbsp;called&nbsp;after&nbsp;the&nbsp;dataclass&nbsp;instance&nbsp;is&nbsp;initialized.&nbsp;<br>
+It&nbsp;solves&nbsp;dispersion&nbsp;equation&nbsp;for&nbsp;symmetric&nbsp;and&nbsp;antisymmetric&nbsp;modes&nbsp;and&nbsp;calculates&nbsp;wavestructure.</span></dd></dl>
+
+<dl><dt><a name="Shearwave-__repr__"><strong>__repr__</strong></a>(self)</dt><dd><span class="code">Return&nbsp;repr(self).</span></dd></dl>
+
+<dl><dt><a name="Shearwave-calculate_antisymmetric"><strong>calculate_antisymmetric</strong></a>(self, phase_velocity, freq_thickness)</dt><dd><span class="code">Calcultes&nbsp;antisymmetric&nbsp;modes&nbsp;dispersion&nbsp;equation.<br>
+&nbsp;<br>
+Uses&nbsp;formula&nbsp;for&nbsp;antisymmetric&nbsp;modes&nbsp;dispersion&nbsp;equation&nbsp;and&nbsp;returns&nbsp;its&nbsp;real&nbsp;component.<br>
+&nbsp;<br>
+Parameters:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;phase_velocity&nbsp;(float):&nbsp;Current&nbsp;phase&nbsp;velocity&nbsp;value.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;freq_thickness&nbsp;(float):&nbsp;Current&nbsp;frequency&nbsp;and&nbsp;thickness&nbsp;product&nbsp;value.<br>
+&nbsp;<br>
+Returns:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;dispersion&nbsp;(float)</span></dd></dl>
+
+<dl><dt><a name="Shearwave-calculate_symmetric"><strong>calculate_symmetric</strong></a>(self, phase_velocity, freq_thickness) -&gt; float</dt><dd><span class="code">Calcultes&nbsp;symmetric&nbsp;modes&nbsp;dispersion&nbsp;equation.<br>
+&nbsp;<br>
+Uses&nbsp;formula&nbsp;for&nbsp;symmetric&nbsp;modes&nbsp;dispersion&nbsp;equation&nbsp;and&nbsp;returns&nbsp;its&nbsp;real&nbsp;component.<br>
+&nbsp;<br>
+Parameters:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;phase_velocity&nbsp;(float):&nbsp;Current&nbsp;phase&nbsp;velocity&nbsp;value.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;freq_thickness&nbsp;(float):&nbsp;Current&nbsp;frequency&nbsp;and&nbsp;thickness&nbsp;product&nbsp;value.<br>
+&nbsp;<br>
+Returns:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;dispersion&nbsp;(float)</span></dd></dl>
+
+<dl><dt><a name="Shearwave-calculate_wavestructure_components"><strong>calculate_wavestructure_components</strong></a>(self, x: numpy.ndarray) -&gt; float</dt><dd><span class="code">Calculates&nbsp;wavestructure&nbsp;components&nbsp;u&nbsp;and&nbsp;w.<br>
+&nbsp;<br>
+Uses&nbsp;formula&nbsp;for&nbsp;wavestructure&nbsp;to&nbsp;obtain&nbsp;in-plane&nbsp;and&nbsp;out-of-plane&nbsp;components.<br>
+&nbsp;<br>
+Parameters:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;x&nbsp;(np.ndarray)&nbsp;:&nbsp;Array&nbsp;of&nbsp;points&nbsp;between&nbsp;-thickness/2&nbsp;and&nbsp;thickness/2.<br>
+&nbsp;<br>
+Returns:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;u&nbsp;(float)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;w&nbsp;(float)</span></dd></dl>
+
+<dl><dt><strong>get_converted_mode</strong> <em>lambda</em> _, key</dt></dl>
+
+<dl><dt><a name="Shearwave-get_group_velocity_eq"><strong>get_group_velocity_eq</strong></a>(self, fd: float, key: str) -&gt; float</dt><dd><span class="code">Calculates&nbsp;group&nbsp;velocity&nbsp;from&nbsp;current&nbsp;phase&nbsp;velocity&nbsp;and&nbsp;fd.<br>
+&nbsp;<br>
+Parameters:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;freq_thickness&nbsp;(float):&nbsp;Current&nbsp;frequency&nbsp;and&nbsp;thickness&nbsp;product&nbsp;value.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;key&nbsp;(str,&nbsp;not&nbsp;used):&nbsp;Full&nbsp;mode&nbsp;name<br>
+&nbsp;<br>
+Returns:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;cg&nbsp;(float):&nbsp;group&nbsp;velocity</span></dd></dl>
+
+<dl><dt><strong>set_converted_key</strong> <em>lambda</em> _, x</dt></dl>
+
+<dl><dt><a name="Shearwave-solve_freq_equations"><strong>solve_freq_equations</strong></a>(self, mode_type: str) -&gt; dict</dt><dd><span class="code">Solves&nbsp;frequency&nbsp;equations&nbsp;and&nbsp;returns&nbsp;function&nbsp;of&nbsp;cp&nbsp;with&nbsp;respect&nbsp;to&nbsp;fd.<br>
+The&nbsp;algorithm&nbsp;is&nbsp;based&nbsp;on&nbsp;the&nbsp;one&nbsp;presented&nbsp;in&nbsp;J.L.Roses&nbsp;Ultrasonic&nbsp;Guided&nbsp;Waves&nbsp;in&nbsp;Solid&nbsp;Media&nbsp;-&nbsp;chapter&nbsp;12.&nbsp;<br>
+Use&nbsp;relation&nbsp;between&nbsp;material's&nbsp;shear_wave_velocity&nbsp;and&nbsp;frequency&nbsp;x&nbsp;thickness&nbsp;to&nbsp;obtain&nbsp;the&nbsp;phase&nbsp;velocity&nbsp;<br>
+&nbsp;<br>
+Parameters:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;mode_type&nbsp;(str)&nbsp;:&nbsp;Types&nbsp;of&nbsp;the&nbsp;modes&nbsp;shown&nbsp;on&nbsp;the&nbsp;plot:&nbsp;sym,&nbsp;anti&nbsp;or&nbsp;both.<br>
+&nbsp;<br>
+Returns:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;result&nbsp;(dict)</span></dd></dl>
+
+<hr>
+Data and other attributes defined here:<br>
+<dl><dt><strong>__annotations__</strong> = {}</dl>
+
+<dl><dt><strong>__dataclass_fields__</strong> = {'columns': Field(name='columns',type=&lt;class 'int'&gt;,default=...appingproxy({}),kw_only=False,_field_type=_FIELD), 'cp_max': Field(name='cp_max',type=&lt;class 'int'&gt;,default=&lt;...appingproxy({}),kw_only=False,_field_type=_FIELD), 'cp_step': Field(name='cp_step',type=&lt;class 'int'&gt;,default=...appingproxy({}),kw_only=False,_field_type=_FIELD), 'freq_thickness_max': Field(name='freq_thickness_max',type=&lt;class 'int...appingproxy({}),kw_only=False,_field_type=_FIELD), 'freq_thickness_points': Field(name='freq_thickness_points',type=&lt;class '...appingproxy({}),kw_only=False,_field_type=_FIELD), 'increasing_mode': Field(name='increasing_mode',type=&lt;class 'str'&gt;,...appingproxy({}),kw_only=False,_field_type=_FIELD), 'material': Field(name='material',type=&lt;class 'Material.Mate...appingproxy({}),kw_only=False,_field_type=_FIELD), 'modes_functions': Field(name='modes_functions',type=&lt;class 'dict'&gt;...appingproxy({}),kw_only=False,_field_type=_FIELD), 'rows': Field(name='rows',type=&lt;class 'int'&gt;,default=&lt;da...appingproxy({}),kw_only=False,_field_type=_FIELD), 'structure_freq': Field(name='structure_freq',type=&lt;class 'array.a...appingproxy({}),kw_only=False,_field_type=_FIELD), ...}</dl>
+
+<dl><dt><strong>__dataclass_params__</strong> = _DataclassParams(init=True,repr=True,eq=True,order=False,unsafe_hash=False,frozen=False)</dl>
+
+<dl><dt><strong>__hash__</strong> = None</dl>
+
+<dl><dt><strong>__match_args__</strong> = ('material', 'freq_thickness_max', 'cp_max', 'structure_mode', 'structure_freq', 'rows', 'columns', 'freq_thickness_points', 'cp_step')</dl>
+
+<hr>
+Methods inherited from <a href="Wave.html#Wave">Wave</a>:<br>
+<dl><dt><a name="Shearwave-calculate_dispersion_components"><strong>calculate_dispersion_components</strong></a>(self, phase_velocity: float, freq_thickness: float) -&gt; float</dt><dd><span class="code">Calculates&nbsp;dispersion&nbsp;componetns&nbsp;k,&nbsp;p&nbsp;and&nbsp;q.<br>
+&nbsp;<br>
+Parameters:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;phase_velocity&nbsp;(float):&nbsp;Current&nbsp;phase&nbsp;velocity&nbsp;value.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;freq_thickness&nbsp;(float):&nbsp;Current&nbsp;frequency&nbsp;and&nbsp;thickness&nbsp;product&nbsp;value.<br>
+&nbsp;<br>
+Returns:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;k&nbsp;(float):&nbsp;wavenumber<br>
+&nbsp;&nbsp;&nbsp;&nbsp;p&nbsp;(float):&nbsp;p-component<br>
+&nbsp;&nbsp;&nbsp;&nbsp;q&nbsp;(float):&nbsp;q-component</span></dd></dl>
+
+<dl><dt><a name="Shearwave-calculate_group_wavenumber"><strong>calculate_group_wavenumber</strong></a>(self, result: dict) -&gt; dict</dt><dd><span class="code">Calculates&nbsp;group&nbsp;velocity&nbsp;and&nbsp;wave&nbsp;number&nbsp;and&nbsp;updates&nbsp;the&nbsp;dictionary<br>
+&nbsp;<br>
+Estimates&nbsp;the&nbsp;derivative&nbsp;of&nbsp;phase&nbsp;velocity&nbsp;with&nbsp;respect&nbsp;to&nbsp;fd&nbsp;using&nbsp;interpolation,<br>
+then&nbsp;calculates&nbsp;group_velocity&nbsp;using&nbsp;the&nbsp;estimated&nbsp;derivative.<br>
+Adds&nbsp;cg_val&nbsp;as&nbsp;the&nbsp;third&nbsp;value&nbsp;in&nbsp;each&nbsp;tuple&nbsp;and&nbsp;returns&nbsp;updated&nbsp;dict.<br>
+&nbsp;<br>
+Parameters:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;result&nbsp;(dict)&nbsp;:&nbsp;Dictionary&nbsp;with&nbsp;results&nbsp;to&nbsp;interpolate.<br>
+&nbsp;<br>
+Returns:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;result&nbsp;(dict)</span></dd></dl>
+
+<dl><dt><a name="Shearwave-calculate_wave_structure"><strong>calculate_wave_structure</strong></a>(self, samples_x: int = 100) -&gt; dict</dt><dd><span class="code">Calculates&nbsp;group&nbsp;velocity&nbsp;and&nbsp;wave&nbsp;number&nbsp;and&nbsp;updates&nbsp;the&nbsp;dictionary<br>
+&nbsp;<br>
+Creates&nbsp;array&nbsp;between&nbsp;-thickness/2&nbsp;and&nbsp;thickness/2.&nbsp;<br>
+Uses&nbsp;the&nbsp;formula&nbsp;for&nbsp;wave&nbsp;structure&nbsp;to&nbsp;calculate&nbsp;u&nbsp;and&nbsp;w&nbsp;compontents.<br>
+Depending&nbsp;on&nbsp;the&nbsp;cases&nbsp;appends&nbsp;results&nbsp;to&nbsp;array.<br>
+&nbsp;<br>
+Parameters:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;samples_x&nbsp;(int,&nbsp;optional)&nbsp;:&nbsp;Number&nbsp;of&nbsp;samples&nbsp;for&nbsp;the&nbsp;thickness&nbsp;array.<br>
+&nbsp;<br>
+Returns:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;u_w_array&nbsp;(list)</span></dd></dl>
+
+<dl><dt><a name="Shearwave-interpolate_result"><strong>interpolate_result</strong></a>(self, result: dict) -&gt; dict</dt><dd><span class="code">Interpolate&nbsp;result&nbsp;and&nbsp;update&nbsp;the&nbsp;dictionary<br>
+&nbsp;<br>
+Performs&nbsp;interpolation&nbsp;using&nbsp;cubic&nbsp;spline,&nbsp;generates&nbsp;finer&nbsp;fd&nbsp;values&nbsp;for&nbsp;smoother&nbsp;plot&nbsp;<br>
+and&nbsp;stores&nbsp;interpolated&nbsp;data&nbsp;in&nbsp;the&nbsp;new&nbsp;dictionary.&nbsp;Additionaly&nbsp;cp&nbsp;is&nbsp;also&nbsp;stored<br>
+as&nbsp;function&nbsp;of&nbsp;frequency&nbsp;and&nbsp;thickness&nbsp;product&nbsp;for&nbsp;wave&nbsp;structure.<br>
+&nbsp;<br>
+Parameters:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;result&nbsp;(dict)&nbsp;:&nbsp;Dictionary&nbsp;with&nbsp;results&nbsp;to&nbsp;interpolate.<br>
+&nbsp;<br>
+Returns:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;interp_result&nbsp;(dict)</span></dd></dl>
+
+<dl><dt><strong>set_converted_mode</strong> <em>lambda</em> x</dt></dl>
+
+<hr>
+Data descriptors inherited from <a href="Wave.html#Wave">Wave</a>:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><span class="code">dictionary&nbsp;for&nbsp;instance&nbsp;variables&nbsp;(if&nbsp;defined)</span></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><span class="code">list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object&nbsp;(if&nbsp;defined)</span></dd>
+</dl>
+<hr>
+Data and other attributes inherited from <a href="Wave.html#Wave">Wave</a>:<br>
+<dl><dt><strong>kind</strong> = 3</dl>
+
+<dl><dt><strong>modes_nums</strong> = {'antisymmetric': None, 'symmetric': None}</dl>
+
+<dl><dt><strong>smoothen</strong> = 0</dl>
+
+<dl><dt><strong>structure_cp</strong> = {}</dl>
+
+<dl><dt><strong>structure_result</strong> = None</dl>
+
+<dl><dt><strong>tolerance</strong> = 0.001</dl>
+
+</td></tr></table> <p>
+<table class="section">
+<tr class="decor title-decor heading-text">
+<td class="section-title" colspan=3>&nbsp;<br><a name="Wave">class <strong>Wave</strong></a>(<a href="builtins.html#object">builtins.object</a>)</td></tr>
+    
+<tr><td class="decor title-decor" rowspan=2><span class="code">&nbsp;&nbsp;&nbsp;</span></td>
+<td class="decor title-decor" colspan=2><span class="code"><a href="#Wave">Wave</a>(material:&nbsp;Material.Material,&nbsp;freq_thickness_max:&nbsp;int,&nbsp;cp_max:&nbsp;int,&nbsp;structure_mode:&nbsp;str,&nbsp;structure_freq:&nbsp;array.array,&nbsp;rows:&nbsp;int,&nbsp;columns:&nbsp;int,&nbsp;freq_thickness_points:&nbsp;int,&nbsp;cp_step:&nbsp;int)&nbsp;-&amp;gt;&nbsp;None<br>
+&nbsp;<br>
+A&nbsp;class&nbsp;representing&nbsp;a&nbsp;base&nbsp;wave&nbsp;type.<br>
+&nbsp;<br>
+Dataclass&nbsp;storing&nbsp;parameters&nbsp;connected&nbsp;to&nbsp;general&nbsp;dispersion&nbsp;of&nbsp;the&nbsp;waves,<br>
+like&nbsp;max&nbsp;value&nbsp;of&nbsp;phase&nbsp;velocity&nbsp;and&nbsp;frequency&nbsp;times&nbsp;thickness,step&nbsp;between&nbsp;the&nbsp;values&nbsp;and<br>
+mode&nbsp;amount&nbsp;for&nbsp;symmetric&nbsp;and&nbsp;antisymmetric&nbsp;modes.&nbsp;It&nbsp;also&nbsp;has&nbsp;all&nbsp;the&nbsp;dictionaries&nbsp;for<br>
+storing&nbsp;the&nbsp;results,&nbsp;for&nbsp;velocity&nbsp;and&nbsp;wave&nbsp;structure.<br>
+&nbsp;<br>
+&nbsp;<br>
+Attributes:<br>
+material&nbsp;(Material)&nbsp;:&nbsp;Material&nbsp;class&nbsp;<a href="builtins.html#object">object</a>&nbsp;providing&nbsp;the&nbsp;material&nbsp;information.<br>
+modes_nums&nbsp;(dict)&nbsp;:&nbsp;Number&nbsp;of&nbsp;symmetric&nbsp;and&nbsp;antisymmetric&nbsp;modes&nbsp;to&nbsp;find.<br>
+freq_thickness_max&nbsp;(int)&nbsp;:&nbsp;Max&nbsp;value&nbsp;of&nbsp;Frequency&nbsp;x&nbsp;Thickness&nbsp;[kHz&nbsp;x&nbsp;mm].<br>
+cp_max&nbsp;(int)&nbsp;:&nbsp;Max&nbsp;value&nbsp;of&nbsp;Frequency&nbsp;x&nbsp;Thickness&nbsp;[m/s].<br>
+structure_mode&nbsp;(str)&nbsp;:&nbsp;Which&nbsp;mode&nbsp;should&nbsp;be&nbsp;used&nbsp;for&nbsp;wavestructure&nbsp;plot&nbsp;for&nbsp;simplicity&nbsp;S_0,&nbsp;A_0&nbsp;...&nbsp;S_n,&nbsp;A_n&nbsp;for&nbsp;all&nbsp;Wavetypes.<br>
+structure_freq&nbsp;(array)&nbsp;:&nbsp;Frequencies&nbsp;at&nbsp;which&nbsp;to&nbsp;check&nbsp;Wavestructure.<br>
+rows&nbsp;(int)&nbsp;:&nbsp;Number&nbsp;of&nbsp;rows&nbsp;for&nbsp;Wavestructure&nbsp;plot.<br>
+colsumns&nbsp;(int)&nbsp;:&nbsp;Number&nbsp;of&nbsp;columns&nbsp;for&nbsp;Wavestructure&nbsp;plot.<br>
+freq_thickness_points&nbsp;(int)&nbsp;:&nbsp;Number&nbsp;of&nbsp;frequency&nbsp;x&nbsp;thickness&nbsp;points&nbsp;to&nbsp;find.<br>
+cp_step&nbsp;(int)&nbsp;:&nbsp;Step&nbsp;between&nbsp;phase&nbsp;velocity&nbsp;points&nbsp;checked.<br>
+kind&nbsp;(int)&nbsp;:&nbsp;Kind&nbsp;of&nbsp;interpolation,&nbsp;3&nbsp;is&nbsp;used&nbsp;for&nbsp;cubic.<br>
+smoothen&nbsp;(int)&nbsp;:&nbsp;Order&nbsp;of&nbsp;smoothening&nbsp;used&nbsp;for&nbsp;interpolation.<br>
+tolerance&nbsp;(float)&nbsp;:&nbsp;Tolerance&nbsp;for&nbsp;the&nbsp;root-finding.<br>
+modes_functions&nbsp;(dict)&nbsp;:&nbsp;Maps&nbsp;mode_type&nbsp;with&nbsp;functions&nbsp;calculating&nbsp;symmetric&nbsp;and&nbsp;antisymmetric&nbsp;modes.<br>
+velocities_dict&nbsp;(dict)&nbsp;:&nbsp;Maps&nbsp;material&nbsp;bulk&nbsp;velocities.<br>
+increasing_mode&nbsp;(str)&nbsp;:&nbsp;Unique&nbsp;mode&nbsp;that&nbsp;increases&nbsp;instead&nbsp;of&nbsp;decreasing&nbsp;with&nbsp;frequency&nbsp;x&nbsp;thickness.<br>
+structure_cp&nbsp;(dict)&nbsp;:&nbsp;Phase&nbsp;velocity&nbsp;used&nbsp;for&nbsp;wavestructure&nbsp;calculation.<br>
+structure_result&nbsp;(dict)&nbsp;:&nbsp;Result&nbsp;obtained&nbsp;for&nbsp;wavestructure.<br>
+&nbsp;<br>
+Methods:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#Wave-__post_init__">__post_init__</a>():<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Post-initialization&nbsp;method&nbsp;that&nbsp;sets&nbsp;default&nbsp;step&nbsp;values&nbsp;and&nbsp;plate&nbsp;velocites&nbsp;values.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#Wave-calculate_dispersion_components">calculate_dispersion_components</a>(phase_velocity,&nbsp;freq_thickness):<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Calculates&nbsp;dispersion&nbsp;componetns&nbsp;k,&nbsp;p&nbsp;and&nbsp;q.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#Wave-interpolate_result">interpolate_result</a>(result):<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Interpolate&nbsp;result&nbsp;and&nbsp;update&nbsp;the&nbsp;dictionary<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#Wave-calculate_group_wavenumber">calculate_group_wavenumber</a>(result):<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Calculates&nbsp;group&nbsp;velocity&nbsp;and&nbsp;wave&nbsp;number&nbsp;and&nbsp;updates&nbsp;the&nbsp;dictionary<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#Wave-calculate_wave_structure">calculate_wave_structure</a>(samples_x):<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Calculates&nbsp;wavestructure&nbsp;components&nbsp;u&nbsp;and&nbsp;w.<br>&nbsp;</span></td></tr>
+<tr><td>&nbsp;</td>
+<td class="singlecolumn">Methods defined here:<br>
+<dl><dt><a name="Wave-__eq__"><strong>__eq__</strong></a>(self, other)</dt><dd><span class="code">Return&nbsp;self==value.</span></dd></dl>
+
+<dl><dt><a name="Wave-__init__"><strong>__init__</strong></a>(self, material: Material.Material, freq_thickness_max: int, cp_max: int, structure_mode: str, structure_freq: array.array, rows: int, columns: int, freq_thickness_points: int, cp_step: int) -&gt; None</dt><dd><span class="code">Initialize&nbsp;self.&nbsp;&nbsp;See&nbsp;help(type(self))&nbsp;for&nbsp;accurate&nbsp;signature.</span></dd></dl>
+
+<dl><dt><a name="Wave-__post_init__"><strong>__post_init__</strong></a>(self)</dt><dd><span class="code">Post-initialization&nbsp;method&nbsp;that&nbsp;sets&nbsp;default&nbsp;step&nbsp;values&nbsp;and&nbsp;plate&nbsp;velocites&nbsp;values.<br>
+&nbsp;<br>
+This&nbsp;method&nbsp;is&nbsp;automatically&nbsp;called&nbsp;after&nbsp;the&nbsp;dataclass&nbsp;instance&nbsp;is&nbsp;initialized.&nbsp;<br>
+It&nbsp;sets&nbsp;default&nbsp;step&nbsp;values&nbsp;and&nbsp;plate&nbsp;velocites&nbsp;values.</span></dd></dl>
+
+<dl><dt><a name="Wave-__repr__"><strong>__repr__</strong></a>(self)</dt><dd><span class="code">Return&nbsp;repr(self).</span></dd></dl>
+
+<dl><dt><a name="Wave-calculate_dispersion_components"><strong>calculate_dispersion_components</strong></a>(self, phase_velocity: float, freq_thickness: float) -&gt; float</dt><dd><span class="code">Calculates&nbsp;dispersion&nbsp;componetns&nbsp;k,&nbsp;p&nbsp;and&nbsp;q.<br>
+&nbsp;<br>
+Parameters:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;phase_velocity&nbsp;(float):&nbsp;Current&nbsp;phase&nbsp;velocity&nbsp;value.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;freq_thickness&nbsp;(float):&nbsp;Current&nbsp;frequency&nbsp;and&nbsp;thickness&nbsp;product&nbsp;value.<br>
+&nbsp;<br>
+Returns:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;k&nbsp;(float):&nbsp;wavenumber<br>
+&nbsp;&nbsp;&nbsp;&nbsp;p&nbsp;(float):&nbsp;p-component<br>
+&nbsp;&nbsp;&nbsp;&nbsp;q&nbsp;(float):&nbsp;q-component</span></dd></dl>
+
+<dl><dt><a name="Wave-calculate_group_wavenumber"><strong>calculate_group_wavenumber</strong></a>(self, result: dict) -&gt; dict</dt><dd><span class="code">Calculates&nbsp;group&nbsp;velocity&nbsp;and&nbsp;wave&nbsp;number&nbsp;and&nbsp;updates&nbsp;the&nbsp;dictionary<br>
+&nbsp;<br>
+Estimates&nbsp;the&nbsp;derivative&nbsp;of&nbsp;phase&nbsp;velocity&nbsp;with&nbsp;respect&nbsp;to&nbsp;fd&nbsp;using&nbsp;interpolation,<br>
+then&nbsp;calculates&nbsp;group_velocity&nbsp;using&nbsp;the&nbsp;estimated&nbsp;derivative.<br>
+Adds&nbsp;cg_val&nbsp;as&nbsp;the&nbsp;third&nbsp;value&nbsp;in&nbsp;each&nbsp;tuple&nbsp;and&nbsp;returns&nbsp;updated&nbsp;dict.<br>
+&nbsp;<br>
+Parameters:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;result&nbsp;(dict)&nbsp;:&nbsp;Dictionary&nbsp;with&nbsp;results&nbsp;to&nbsp;interpolate.<br>
+&nbsp;<br>
+Returns:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;result&nbsp;(dict)</span></dd></dl>
+
+<dl><dt><a name="Wave-calculate_wave_structure"><strong>calculate_wave_structure</strong></a>(self, samples_x: int = 100) -&gt; dict</dt><dd><span class="code">Calculates&nbsp;group&nbsp;velocity&nbsp;and&nbsp;wave&nbsp;number&nbsp;and&nbsp;updates&nbsp;the&nbsp;dictionary<br>
+&nbsp;<br>
+Creates&nbsp;array&nbsp;between&nbsp;-thickness/2&nbsp;and&nbsp;thickness/2.&nbsp;<br>
+Uses&nbsp;the&nbsp;formula&nbsp;for&nbsp;wave&nbsp;structure&nbsp;to&nbsp;calculate&nbsp;u&nbsp;and&nbsp;w&nbsp;compontents.<br>
+Depending&nbsp;on&nbsp;the&nbsp;cases&nbsp;appends&nbsp;results&nbsp;to&nbsp;array.<br>
+&nbsp;<br>
+Parameters:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;samples_x&nbsp;(int,&nbsp;optional)&nbsp;:&nbsp;Number&nbsp;of&nbsp;samples&nbsp;for&nbsp;the&nbsp;thickness&nbsp;array.<br>
+&nbsp;<br>
+Returns:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;u_w_array&nbsp;(list)</span></dd></dl>
+
+<dl><dt><strong>get_converted_mode</strong> <em>lambda</em> _, key</dt></dl>
+
+<dl><dt><a name="Wave-interpolate_result"><strong>interpolate_result</strong></a>(self, result: dict) -&gt; dict</dt><dd><span class="code">Interpolate&nbsp;result&nbsp;and&nbsp;update&nbsp;the&nbsp;dictionary<br>
+&nbsp;<br>
+Performs&nbsp;interpolation&nbsp;using&nbsp;cubic&nbsp;spline,&nbsp;generates&nbsp;finer&nbsp;fd&nbsp;values&nbsp;for&nbsp;smoother&nbsp;plot&nbsp;<br>
+and&nbsp;stores&nbsp;interpolated&nbsp;data&nbsp;in&nbsp;the&nbsp;new&nbsp;dictionary.&nbsp;Additionaly&nbsp;cp&nbsp;is&nbsp;also&nbsp;stored<br>
+as&nbsp;function&nbsp;of&nbsp;frequency&nbsp;and&nbsp;thickness&nbsp;product&nbsp;for&nbsp;wave&nbsp;structure.<br>
+&nbsp;<br>
+Parameters:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;result&nbsp;(dict)&nbsp;:&nbsp;Dictionary&nbsp;with&nbsp;results&nbsp;to&nbsp;interpolate.<br>
+&nbsp;<br>
+Returns:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;interp_result&nbsp;(dict)</span></dd></dl>
+
+<dl><dt><strong>set_converted_mode</strong> <em>lambda</em> x</dt></dl>
+
+<hr>
+Data descriptors defined here:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><span class="code">dictionary&nbsp;for&nbsp;instance&nbsp;variables&nbsp;(if&nbsp;defined)</span></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><span class="code">list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object&nbsp;(if&nbsp;defined)</span></dd>
+</dl>
+<hr>
+Data and other attributes defined here:<br>
+<dl><dt><strong>__annotations__</strong> = {'columns': &lt;class 'int'&gt;, 'cp_max': &lt;class 'int'&gt;, 'cp_step': &lt;class 'int'&gt;, 'freq_thickness_max': &lt;class 'int'&gt;, 'freq_thickness_points': &lt;class 'int'&gt;, 'increasing_mode': &lt;class 'str'&gt;, 'material': &lt;class 'Material.Material'&gt;, 'modes_functions': &lt;class 'dict'&gt;, 'rows': &lt;class 'int'&gt;, 'structure_freq': &lt;class 'array.array'&gt;, ...}</dl>
+
+<dl><dt><strong>__dataclass_fields__</strong> = {'columns': Field(name='columns',type=&lt;class 'int'&gt;,default=...appingproxy({}),kw_only=False,_field_type=_FIELD), 'cp_max': Field(name='cp_max',type=&lt;class 'int'&gt;,default=&lt;...appingproxy({}),kw_only=False,_field_type=_FIELD), 'cp_step': Field(name='cp_step',type=&lt;class 'int'&gt;,default=...appingproxy({}),kw_only=False,_field_type=_FIELD), 'freq_thickness_max': Field(name='freq_thickness_max',type=&lt;class 'int...appingproxy({}),kw_only=False,_field_type=_FIELD), 'freq_thickness_points': Field(name='freq_thickness_points',type=&lt;class '...appingproxy({}),kw_only=False,_field_type=_FIELD), 'increasing_mode': Field(name='increasing_mode',type=&lt;class 'str'&gt;,...appingproxy({}),kw_only=False,_field_type=_FIELD), 'material': Field(name='material',type=&lt;class 'Material.Mate...appingproxy({}),kw_only=False,_field_type=_FIELD), 'modes_functions': Field(name='modes_functions',type=&lt;class 'dict'&gt;...appingproxy({}),kw_only=False,_field_type=_FIELD), 'rows': Field(name='rows',type=&lt;class 'int'&gt;,default=&lt;da...appingproxy({}),kw_only=False,_field_type=_FIELD), 'structure_freq': Field(name='structure_freq',type=&lt;class 'array.a...appingproxy({}),kw_only=False,_field_type=_FIELD), ...}</dl>
+
+<dl><dt><strong>__dataclass_params__</strong> = _DataclassParams(init=True,repr=True,eq=True,order=False,unsafe_hash=False,frozen=False)</dl>
+
+<dl><dt><strong>__hash__</strong> = None</dl>
+
+<dl><dt><strong>__match_args__</strong> = ('material', 'freq_thickness_max', 'cp_max', 'structure_mode', 'structure_freq', 'rows', 'columns', 'freq_thickness_points', 'cp_step')</dl>
+
+<dl><dt><strong>kind</strong> = 3</dl>
+
+<dl><dt><strong>modes_nums</strong> = {'antisymmetric': None, 'symmetric': None}</dl>
+
+<dl><dt><strong>smoothen</strong> = 0</dl>
+
+<dl><dt><strong>structure_cp</strong> = {}</dl>
+
+<dl><dt><strong>structure_result</strong> = None</dl>
+
+<dl><dt><strong>tolerance</strong> = 0.001</dl>
+
+</td></tr></table></td></tr></table><p>
+<table class="section">
+<tr class="decor data-decor heading-text">
+<td class="section-title" colspan=3>&nbsp;<br><strong class="bigsection">Data</strong></td></tr>
+    
+<tr><td class="decor data-decor"><span class="code">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></td><td>&nbsp;</td>
+<td class="singlecolumn"><strong>iv</strong> = &lt;ufunc 'iv'&gt;<br>
+<strong>jv</strong> = &lt;ufunc 'jv'&gt;<br>
+<strong>kv</strong> = &lt;ufunc 'kv'&gt;<br>
+<strong>yv</strong> = &lt;ufunc 'yv'&gt;</td></tr></table>
+</body></html>
