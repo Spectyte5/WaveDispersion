@@ -36,7 +36,6 @@ class Wave:
     increasing_mode (str) : Unique mode that increases instead of decreasing with frequency x thickness.
     structure_cp (dict) : Phase velocity used for wavestructure calculation.
     structure_result (dict) : Result obtained for wavestructure.
-    get_converted_mode (lambda) : generates key for Shearwave from Lambwave style one.
 
     Methods:
         __post_init__():
@@ -71,6 +70,7 @@ class Wave:
     increasing_mode : str = field(init=False)
     structure_cp = {}
     structure_result = None 
+    set_converted_mode = lambda x: f"{'S_' if int(x.split('_')[1]) % 2 == 0 else 'A_'}{int(x.split('_')[1]) // 2}"
     get_converted_mode = lambda _, key: int(key[2:]) * 2 if key.startswith('S') else int(key[2:]) * 2 + 1
 
     def __post_init__(self):
@@ -208,6 +208,10 @@ class Shearwave(Wave):
     Dataclass inheriting Wave class, providing results and parameters specific to Shearwaves.
     Class has different methods for calculation of dispersion and wavestructure for Shearwaves.
 
+    Attributes:
+    set_converted_key (lambda) : sets key from Shearwave to Lambwave style key.
+    get_converted_mode (lambda) : gets mode number for Shearwave from Lambwave style key.
+
     Methods:
     __init__(material, modes_nums, freq_thickness_max, cp_max, structure_mode, structure_freq, rows, columns, freq_thickness_points, cp_step):
         Initialization method that calls function calculating results.
@@ -224,6 +228,9 @@ class Shearwave(Wave):
     solve_freq_equations(mode_type):
         Solves frequency equations and returns function of cp with respect to fd.
     """
+    set_converted_key = lambda _, x: f"{'S_' if int(x.split('_')[1]) % 2 == 0 else 'A_'}{int(x.split('_')[1]) // 2}"
+    get_converted_mode = lambda _, key: int(key[2:]) * 2 if key.startswith('S') else int(key[2:]) * 2 + 1
+    
     def __init__(self, material, modes_nums, freq_thickness_max, cp_max, structure_mode=None, structure_freq=None, rows=None, columns=None, freq_thickness_points=None, cp_step=None):
         """
         Initialization method that calls function calculating results.
@@ -250,6 +257,7 @@ class Shearwave(Wave):
         self.velocites_symmetric = self.solve_freq_equations('symmetric')
         self.velocites_antisymmetric = self.solve_freq_equations('antisymmetric')
         if self.structure_freq and self.structure_mode:
+            self.structure_mode=self.set_converted_key(self.structure_mode)
             self.structure_result = self.calculate_wave_structure()
 
     def calculate_symmetric(self, phase_velocity, freq_thickness) -> float:

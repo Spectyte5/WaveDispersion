@@ -37,23 +37,23 @@ class Plot:
         get_figures (lambda) : Gets all plots in an array
 
     Methods:
-        generate_latex(string):
+        _generate_latex(string):
             Converts a string into LaTeX format for displaying mathematical expressions.
         switch_backend():
             Switches Matplotlib's backend to 'agg' for non-interactive use.
         close_all_plots():
             Closes all open Matplotlib plot windows.
-        find_max_value(index): 
+        _find_max_value(index): 
             Find max value for the given wave parameter.
-        draw_arrow(arrow): 
+        _draw_arrow(arrow): 
             Draws the arrow on the plot.
-        add_cutoff_frequencies(mode, max_value, plot_type): 
+        _add_cutoff_frequencies(mode, max_value, plot_type): 
             Add cutoff frequencies to the plot.
-        add_plate_velocities(plot_type): 
+        _add_plate_velocities(plot_type): 
             Add plate velocities to the plot. 
-        plot_velocity(plot_type):
+        _plot_velocity(plot_type):
             Plot the given velocity or wavenumber.
-        plot_wave_structure(title): 
+        _plot_wave_structure(title): 
             Plot the given velocity or wavenumber.
         add_plot(plot_type): 
             Add plot velocity.
@@ -83,7 +83,7 @@ class Plot:
     axial_factor : float = field(default=300)
     get_figures = lambda _: [plt.figure(n) for n in plt.get_fignums()]
 
-    def generate_latex(self, string: str) -> str:
+    def _generate_latex(self, string: str) -> str:
         """
         Converts a string into LaTeX format for displaying mathematical expressions.
 
@@ -141,7 +141,7 @@ class Plot:
         """
         plt.close('all')
 
-    def find_max_value(self, index: int) -> float:
+    def _find_max_value(self, index: int) -> float:
         """
         Find max value for the given wave parameter.
 
@@ -166,7 +166,7 @@ class Plot:
         max_value_anti = max(max([point[index] for point in values]) for values in self.wave.velocites_antisymmetric.values())
         return max(max_value_sym, max_value_anti)
 
-    def draw_arrow(self, arrow: dict):
+    def _draw_arrow(self, arrow: dict):
         """
         Closes all open Matplotlib plots.
 
@@ -184,7 +184,7 @@ class Plot:
         plt.axvline(x=arrow['x'], **self.dashed_line_style)
         plt.text(x=arrow['x'],y=arrow['y'], s=arrow['s'], va=arrow['dir'], ha='center', clip_on=True)
 
-    def add_cutoff_frequencies(self, mode: str, max_value: float, plot_type : str):
+    def _add_cutoff_frequencies(self, mode: str, max_value: float, plot_type : str):
         """
         Add cutoff frequencies to the plot.
 
@@ -205,18 +205,18 @@ class Plot:
         if isinstance(self.wave, Shearwave):
             n = self.wave.get_converted_mode(mode)
             arrow_x = n*self.wave.velocities_dict['C_S']/2          
-            self.draw_arrow({'x' : arrow_x, 'y' : arrow_y, 'dir': arrow_dir, 's' : arrow_s})
+            self._draw_arrow({'x' : arrow_x, 'y' : arrow_y, 'dir': arrow_dir, 's' : arrow_s})
 
         else: 
             n = int(mode[2:]) + 1
             arrow_x = n*self.wave.velocities_dict['C_S'] if mode.startswith('S') else n*self.wave.velocities_dict['C_L']
-            self.draw_arrow({'x' : arrow_x, 'y' : arrow_y, 'dir': arrow_dir, 's' : arrow_s})
+            self._draw_arrow({'x' : arrow_x, 'y' : arrow_y, 'dir': arrow_dir, 's' : arrow_s})
         
             if n % 2 != 0:
                 arrow_x = n*self.wave.velocities_dict['C_L']/2 if mode.startswith('S') else n*self.wave.velocities_dict['C_S']/2
-                self.draw_arrow({'x' : arrow_x, 'y' : arrow_y, 'dir': arrow_dir, 's' : arrow_s})  
+                self._draw_arrow({'x' : arrow_x, 'y' : arrow_y, 'dir': arrow_dir, 's' : arrow_s})  
 
-    def add_plate_velocities(self, plot_type: str):
+    def _add_plate_velocities(self, plot_type: str):
         """
         Add plate velocities to the plot.
 
@@ -240,9 +240,9 @@ class Plot:
                 else: 
                     ha = 'left'
                     cord = self.wave.freq_thickness_max
-                plt.text(cord, value, self.generate_latex(name), ha=ha, **self.velocity_style)  
+                plt.text(cord, value, self._generate_latex(name), ha=ha, **self.velocity_style)  
 
-    def plot_velocity(self, plot_type : str):
+    def _plot_velocity(self, plot_type : str):
         """
         Plot the given velocity or wavenumber.
 
@@ -263,7 +263,7 @@ class Plot:
         symmetric_lines, antisymmetric_lines = [], []
         torsional_lines, longitudinal_lines, flexural_lines = [], [], []
         index_map = {'Phase': 1,'Group': 2,'Wavenumber': 3 }
-        max_value = self.find_max_value(index_map.get(plot_type))
+        max_value = self._find_max_value(index_map.get(plot_type))
 
         mode_mapping = {
             'torsional': [(self.wave.velocites_torsional, torsional_lines, self.torsional_style)],
@@ -286,15 +286,15 @@ class Plot:
                     x = [point[0] for point in values]
                     y = [point[index_map.get(plot_type)] for point in values]
                     if plot_type in ('Phase', 'Group') and self.cutoff_frequencies:
-                        self.add_cutoff_frequencies(mode, max_value, plot_type)
+                        self._add_cutoff_frequencies(mode, max_value, plot_type)
                     line, = plt.plot(x, y, **style)
                     if isinstance(self.wave, Shearwave):
                         mode = 'SH_' + str(self.wave.get_converted_mode(mode))
-                    plt.text(x[0], y[0], self.generate_latex(mode), ha='right', va='bottom', color=style['color']) 
+                    plt.text(x[0], y[0], self._generate_latex(mode), ha='right', va='bottom', color=style['color']) 
                     lines.append(line) 
         
 
-        self.add_plate_velocities(plot_type)
+        self._add_plate_velocities(plot_type)
         
         # Create custom legend entries
         if isinstance(self.wave, Axialwave):
@@ -312,7 +312,7 @@ class Plot:
         plt.xlabel('$\mathregular{f_d}$ (KHz x mm)')
         plt.ylabel('$\mathregular{c_p}$ (m/sec)') if plot_type != 'Wavenumber' else plt.ylabel('Wavenumber (1/m)') 
         
-    def plot_wave_structure(self, title : str):
+    def _plot_wave_structure(self, title : str):
         """
         Plot the given velocity or wavenumber.
 
@@ -368,7 +368,7 @@ class Plot:
             plt.tight_layout
             mode = 'SH_' + str(self.wave.get_converted_mode(self.wave.structure_mode)) if isinstance(self.wave, Shearwave) \
                else self.wave.structure_mode
-            fig.suptitle('Wave structure for mode ' + self.generate_latex(mode))
+            fig.suptitle('Wave structure for mode ' + self._generate_latex(mode))
 
             handles, labels = ax.get_legend_handles_labels()
             fig.legend(handles, labels, loc='lower center', ncol=2)
@@ -388,9 +388,9 @@ class Plot:
             None
         """
         if plot_type == 'Wavestructure':
-            self.plot_wave_structure(plot_type)
+            self._plot_wave_structure(plot_type)
         elif plot_type in ['Phase', 'Group', 'Wavenumber']:
-            self.plot_velocity(plot_type)
+            self._plot_velocity(plot_type)
 
     def save_plots(self, format: str='png', transparent: bool=False, **kwargs) -> list[str]:
         """
@@ -466,6 +466,8 @@ class Plot:
         with open(filepath, 'w') as file:
             for data in selected_modes:
                 for mode, values in data.items():
+                    if isinstance(self.wave, Shearwave):
+                        mode = 'SH_' + str(self.wave.get_converted_mode(mode))
                     header = "\t\t".join(["fd", "cp", "cg", "k"])
                     file.write(f"{mode}:\n")
                     file.write(f"\t{header}\t\n")

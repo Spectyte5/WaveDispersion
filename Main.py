@@ -25,7 +25,7 @@ lamb_plotter.save_txt_results()
 ### Shearwave
 # Initialize wave
 shear = Shearwave(plate, (5, 5), 10000, 12000, \
-           'A_0', [2000, 3500, 5000, 7500, 9000, 10000], 3, 2)
+           'SH_1', [2000, 3500, 5000, 7500, 9000, 10000], 3, 2)
 
 # Initialize Plot 
 shear_plotter = Plot(shear, 'both', True, True)
