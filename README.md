@@ -238,7 +238,8 @@ lamb_plotter.save_txt_results()
   None
 
 ## References
-This repository was created as master thesis made by Mechatronic Engineering student at Faculty of Mechanical Engineering and Robotics. 
-Project was done at AGH University of Science and Technology in Cracow under the supervision of Dr hab. inż. Wiesław Staszewski. 
-The equations and algorithms were obtained from the great book: Rose, J. L., Ultrasonic Guided Waves in Solid Media, Cambridge University Press, 1999. 
-The results were validated using [Disperse Software](http://www.disperse.software).
+1. This repository was created as master thesis made by Mechatronic Engineering student at Faculty of Mechanical Engineering and Robotics. 
+2. Project was done at AGH University of Science and Technology in Cracow under the supervision of Dr hab. inż. Wiesław Staszewski. 
+3. The equations and algorithms were obtained from the great book: Rose, J. L., Ultrasonic Guided Waves in Solid Media, Cambridge University Press, 1999.
+4. The algorithm was based on the one from [LambWaveDispersion](https://github.com/franciscorotea/Lamb-Wave-Dispersion/tree/master).
+5. The results were validated using [Disperse Software](http://www.disperse.software).
