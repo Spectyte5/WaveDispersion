@@ -210,7 +210,7 @@ lamb_plotter.save_txt_results()
   - `**kwargs`: Additional keyword arguments to pass to the `savefig` method.
 
   **Returns**:  
-  - `plots` (`list[str]`): List of paths to the saved plot files.
+  - `list[str]`: List of paths to the saved plot files.
 
 - **`save_txt_results(date)`**:  
   Saves results to a text file.
@@ -224,7 +224,7 @@ lamb_plotter.save_txt_results()
   - `date` (`bool`): Whether to include the current date in the filename to prevent overriding.
 
   **Returns**:  
-  - `filepath` (`str`): Path to the saved text file.
+  - `str`: Path to the saved text file.
 
 - **`show_plots()`**:  
   Displays all currently active Matplotlib plots.
