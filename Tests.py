@@ -1,6 +1,6 @@
 import matplotlib.pyplot as plt
-from Material import Plate, Cylinder
-from Wave import Axialwave, Lambwave, Shearwave
+from Material import Plate
+from Wave import Lambwave, Shearwave
 
 def load_data(file_path: str, thickness: float) -> dict:
     """
@@ -77,26 +77,6 @@ def setup_lamb_wave(file_path) -> dict | Lambwave:
     lamb = Lambwave(plate_lamb, (5, 5), 10000, 10000, cp_step=50)
     return data_lamb, lamb
 
-def setup_axial_wave(file_path) -> dict | Axialwave:
-    """
-    Setups axial wave with parameters for testing.
-
-    This function is used for quick setup for the axial wave with parameters 
-    for testing and validation.
-
-    Parameters:
-        file_path (str) = Path to the disperse software results file
-
-    Returns:
-        data_axial (dict)
-        axial (Axialwave)
-    """
-    thickness = 1
-    data_axial = load_data(file_path, thickness)
-    cylinder = Cylinder(thickness, 6060, 3230, 10, rayleigh_wave_velocity=None, name="Titanium")
-    axial = Axialwave(cylinder, (7, 1), 10000, 10000, cp_step=50)
-    return data_axial, axial
-
 def plot_data(data, wave_model, type, title, save_path, background=False):
     """
     Plot validation results from both softwares.
@@ -120,8 +100,7 @@ def plot_data(data, wave_model, type, title, save_path, background=False):
     color_wave_dispersion_software = 'green'
     legend_added = {'wave_dispersion_software': False, 'disperse_software': False}
     #(wave_model.velocites_torsional, wave_model.velocites_longitudinal, wave_model.velocites_flexural)
-    velocites = [wave_model.velocites_torsional] \
-       if isinstance(wave_model, Axialwave) else (wave_model.velocites_symmetric, wave_model.velocites_antisymmetric) 
+    velocites = (wave_model.velocites_symmetric, wave_model.velocites_antisymmetric) 
 
     for mode, (freqs, vels) in data.items():
         if not legend_added['disperse_software']:
@@ -189,10 +168,6 @@ if __name__ == "__main__":
     plot_data(data_lamb, lamb_wave, 'Phase', 'Lamb Wave Phase Velocity Test', 'validation/Magnesium_Lamb_Phase.png')
     plot_show()
 
-    data_axial, axial_wave = setup_axial_wave('validation/Titanium_Axial_Phase.txt')
-    plot_data(data_axial, axial_wave, 'Phase', 'Axial Wave Phase Velocity Test', 'validation/Titanium_Axial_Phase.png')
-    plot_show()
-
     # Group velocity
     data_shear, shear_wave = setup_shear_wave('validation/Titanium_Shear_Group.txt')
     plot_data(data_shear, shear_wave, 'Group', 'Shear Wave Group Velocity Test', 'validation/Titanium_Shear_Group.png')
@@ -200,8 +175,4 @@ if __name__ == "__main__":
 
     data_lamb, lamb_wave = setup_lamb_wave('validation/Magnesium_Lamb_Group.txt')
     plot_data(data_lamb, lamb_wave, 'Group', 'Lamb Wave Group Velocity Test', 'validation/Magnesium_Lamb_Group.png')
-    plot_show()
-
-    data_axial, axial_wave = setup_axial_wave('validation/Titanium_Axial_Group.txt')
-    plot_data(data_axial, axial_wave, 'Group', 'Axial Wave Group Velocity Test', 'validation/Titanium_Axial_Group.png')
     plot_show()

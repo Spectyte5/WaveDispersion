@@ -51,30 +51,3 @@ class Plate(Material):
         """
         self.thickness = self.thickness / 1e3
         self.half_thickness = self.thickness / 2
-
-@dataclass
-class Cylinder(Material):
-    """
-    Represents a cylinder used in dispersion simulations.
-
-    This class defines the physical properties of a cylinder.
-    It is inheriting all material properties from the Material class.
-
-    Attributes:
-        inner_radius (float) : Inner radius of the cylinder, in mm.
-
-    Methods:
-        __post_init__ : changes units of thickness mm -> m, initializes inner and outer radiuses.
-    """
-    inner_radius : float
-   
-    def __post_init__(self):
-        """
-        Post-initialization method that converts the thickness from millimeters to meters and calculates the
-        the outer radius of the cylinder.
-
-        This method is automatically called after the dataclass instance is initialized. It converts the 
-        thickness and inner_ radius attributes from millimeters to meters and computes the outer radius.
-        """
-        self.inner_radius, self.thickness = self.inner_radius / 1e3, self.thickness / 1e3 
-        self.outer_radius = self.inner_radius + self.thickness

@@ -1,6 +1,6 @@
-from Material import Plate, Cylinder
+from Material import Plate
 from Plot import Plot
-from Wave import Lambwave, Shearwave, Axialwave
+from Wave import Lambwave, Shearwave
 
 # Initialize plate
 plate = Plate(10, 6130, 3130, rayleigh_wave_velocity = 2881.6, name="Aluminium")
@@ -36,18 +36,3 @@ shear_plotter.add_plot('Group')
 shear_plotter.add_plot('Wavenumber')
 shear_plotter.add_plot('Wavestructure')
 shear_plotter.show_plots()
-
-# Initialize cyllinder
-cylinder = Cylinder(1.22, 6290, 3230, 15.24, name="Steel")
-
-# Initialize wave
-axial = Axialwave(cylinder, (8, 1), 15000, 10000)
-
-# Initialize Plot 
-axial_plotter = Plot(axial, 'torsional', False, False)
-
-# Add plots and show
-axial_plotter.add_plot('Phase')
-axial_plotter.add_plot('Group')
-axial_plotter.add_plot('Wavenumber')
-axial_plotter.show_plots()
