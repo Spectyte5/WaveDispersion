@@ -1,12 +1,13 @@
 from dataclasses import dataclass, field
 
+
 @dataclass()
 class Material:
     """
     Represents a material used in dispersion simulations.
 
-    This class defines the physical properties of a material, including its wave velocities 
-    and optional attributes. It is used to characterize materials in simulations where 
+    This class defines the physical properties of a material, including its wave velocities
+    and optional attributes. It is used to characterize materials in simulations where
     wave propagation through different media is analyzed.
 
     Attributes:
@@ -19,11 +20,13 @@ class Material:
     Methods:
         None
     """
-    thickness : float
-    longitudinal_wave_velocity : float
-    shear_wave_velocity : float
-    rayleigh_wave_velocity : float = field(default=None, kw_only=True)
-    name : str = field(default="no_material", kw_only=True)
+
+    thickness: float
+    longitudinal_wave_velocity: float
+    shear_wave_velocity: float
+    rayleigh_wave_velocity: float = field(default=None, kw_only=True)
+    name: str = field(default="no_material", kw_only=True)
+
 
 @dataclass
 class Plate(Material):
@@ -39,14 +42,15 @@ class Plate(Material):
     Methods:
         __post_init__ : changes units of thickness mm -> mm, initializes half_thickness
     """
-    half_thickness : float = field(init=False) # Half thickness, in mm
+
+    half_thickness: float = field(init=False)  # Half thickness, in mm
 
     def __post_init__(self):
         """
         Post-initialization method that converts the thickness from millimeters to meters and calculates the
         half-thickness of the plate.
 
-        This method is automatically called after the dataclass instance is initialized. It converts the 
+        This method is automatically called after the dataclass instance is initialized. It converts the
         thickness attribute from millimeters to meters and computes the half-thickness of the plate.
         """
         self.thickness = self.thickness / 1e3
