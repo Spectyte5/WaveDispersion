@@ -22,7 +22,7 @@ class Wave:
     modes_nums (dict) : Number of symmetric and antisymmetric modes to find.
     freq_thickness_max (int) : Max value of Frequency x Thickness [kHz x mm].
     cp_max (int) : Max value of Frequency x Thickness [m/s].
-    structure_mode (str) : Which mode should be used for wavestructure plot for simplicity S_0, A_0 ... S_n, A_n for all Wavetypes.
+    structure_mode (str) : Which mode should be used for wavestructure plot.
     structure_freq (array) : Frequencies at which to check Wavestructure.
     rows (int) : Number of rows for Wavestructure plot.
     colsumns (int) : Number of columns for Wavestructure plot.
@@ -98,9 +98,9 @@ class Wave:
             freq_thickness (float): Current frequency and thickness product value.
 
         Returns:
-            k (float): wavenumber
-            p (float): p-component
-            q (float): q-component
+            float: wavenumber
+            float: p-component
+            float: q-component
         """
         angular_freq = 2 * np.pi * (freq_thickness / self.material.thickness) 
         k = angular_freq / phase_velocity
@@ -120,7 +120,7 @@ class Wave:
             result (dict) : Dictionary with results to interpolate.
 
         Returns:
-            interp_result (dict)
+            dict: interpolated result
         """
         interp_result = {}
         for key, values in result.items():
@@ -144,10 +144,10 @@ class Wave:
         Adds cg_val as the third value in each tuple and returns updated dict.
 
         Parameters:
-            result (dict) : Dictionary with results to interpolate.
+            result (dict) : Dictionary with dispersion results.
 
         Returns:
-            result (dict)
+            dict: Dictionary with extended results
         """
         for key, values in result.items():
             fd_val = [point[0] for point in values]
@@ -167,7 +167,7 @@ class Wave:
 
     def calculate_wave_structure(self, samples_x: int=100) -> dict:
         """
-        Calculates group velocity and wave number and updates the dictionary
+        Calculates wave_structure in and out of plane components.
 
         Creates array between -thickness/2 and thickness/2. 
         Uses the formula for wave structure to calculate u and w compontents.
@@ -177,7 +177,7 @@ class Wave:
             samples_x (int, optional) : Number of samples for the thickness array.
 
         Returns:
-            u_w_array (list)
+            list: List of in and out of plane components
         """
         fd_values, cp_values,  u_w_array = [], [], {}
 
@@ -271,7 +271,7 @@ class Shearwave(Wave):
             freq_thickness (float): Current frequency and thickness product value.
 
         Returns:
-            dispersion (float)
+            float: Dispersion result.
         """
         _,_,q = self.calculate_dispersion_components(phase_velocity, freq_thickness)
         return np.real(np.sin(q*self.material.half_thickness))
@@ -287,7 +287,7 @@ class Shearwave(Wave):
             freq_thickness (float): Current frequency and thickness product value.
 
         Returns:
-            dispersion (float)
+            float: Dispersion result.
         """
         _,_,q = self.calculate_dispersion_components(phase_velocity, freq_thickness)
         return  np.real(np.cos(q*self.material.half_thickness))
@@ -301,7 +301,7 @@ class Shearwave(Wave):
             key (str, not used): Full mode name
 
         Returns:
-            cg (float): group velocity
+            float: group velocity
         """
         n = self.get_converted_mode(key)
         cg = self.material.shear_wave_velocity * np.sqrt(1 - ((n/2)**2) / ((fd/self.material.shear_wave_velocity)**2))
@@ -317,8 +317,8 @@ class Shearwave(Wave):
             x (np.ndarray) : Array of points between -thickness/2 and thickness/2.
 
         Returns:
-            u (float)
-            w (float)
+            float: u-component
+            float: w-component
         """
         n = self.get_converted_mode(self.structure_mode)
 
@@ -343,7 +343,7 @@ class Shearwave(Wave):
             mode_type (str) : Types of the modes shown on the plot: sym, anti or both.
 
         Returns:
-            result (dict)
+            dict: Dictionary with dispersion results.
         """
         fd_range = np.linspace(0, self.freq_thickness_max, self.freq_thickness_points)
         result = {}
@@ -427,7 +427,7 @@ class Lambwave(Wave):
             freq_thickness (float): Current frequency and thickness product value.
 
         Returns:
-            dispersion (float)
+            float: Dispersion result.
         """
         k,p,q = self.calculate_dispersion_components(phase_velocity, freq_thickness)
         return np.real(np.tan(q*self.material.half_thickness)/q + (4*(k**2)*p*np.tan(p*self.material.half_thickness))/(q**2 - k**2)**2)
@@ -443,7 +443,7 @@ class Lambwave(Wave):
             freq_thickness (float): Current frequency and thickness product value.
 
         Returns:
-            dispersion (float)
+            float: Dispersion result.
         """
         k,p,q = self.calculate_dispersion_components(phase_velocity, freq_thickness)
         return np.real(q * np.tan(q*self.material.half_thickness) + (((q**2 - k**2)**2)*np.tan(p*self.material.half_thickness))/(4*(k**2)*p))
@@ -458,7 +458,7 @@ class Lambwave(Wave):
             cp_prime (float): Current phase velocity derivative.
 
         Returns:
-            cg (float): group velocity
+            float: Group velocity
         """
         cg = cp**2 * (cp - fd * cp_prime(fd))**-1
         return cg
@@ -475,8 +475,8 @@ class Lambwave(Wave):
             freq_thickness (float): Current frequency and thickness product value.
 
         Returns:
-            u (float)
-            w (float)
+            float: u-component
+            float: w-component
         """
         k,p,q = self.calculate_dispersion_components(cp, fd)
 
@@ -512,7 +512,7 @@ class Lambwave(Wave):
             mode_type (str): The type of modes shown on the plot: 'sym', 'anti', or 'both'.
 
         Returns:
-            result (dict): The results of the frequency equation solutions, indexed by mode type.
+            dict: The results of the frequency equation solutions, indexed by mode type.
         """
         fd_range = np.linspace(0, self.freq_thickness_max, self.freq_thickness_points)
         result = {}
@@ -624,9 +624,9 @@ class Axialwave(Wave):
             freq_thickness (float): Current frequency and thickness product value.
 
         Returns:
-            k (float): wavenumber
-            alpha_sq (float): alpha_sq component
-            beta_sq (float): beta_sq component
+            float: wavenumber
+            float: alpha_sq component
+            float: beta_sq component
         """
         omega = 2 * np.pi * (freq_thickness / self.material.thickness) 
         k = omega / phase_velocity
@@ -644,7 +644,7 @@ class Axialwave(Wave):
             cp_prime (float): Current phase velocity derivative.
 
         Returns:
-            cg (float): group velocity
+            float: Group velocity
         """
         cg = cp**2 * (cp - fd * cp_prime(fd))**-1
         return cg
@@ -660,7 +660,7 @@ class Axialwave(Wave):
             beta_sq (float) : Dispersion beta_sq component
 
         Returns:
-            bessel_functions (dict)
+            dict: Dictionary of Bessel functions
         """
         alpha_r = np.sqrt(np.abs(alpha_sq)) * r
         beta_r = np.sqrt(np.abs(beta_sq)) * r
@@ -688,7 +688,7 @@ class Axialwave(Wave):
             n (int) : Current circumfential order
 
         Returns:
-            np.linalg.det(D) (np.ndarray)
+            np.ndarray: Matrix determinant.
         """
         k, alpha_sq, beta_sq = self.calculate_dispersion_components(phase_velocity, freq_thickness)
 
@@ -737,7 +737,7 @@ class Axialwave(Wave):
             mode_type (str): The type of modes shown on the plot: 'sym', 'anti', or 'both'.
 
         Returns:
-            result (dict): The results of the frequency equation solutions, indexed by mode type.
+            dict: The results of the frequency equation solutions, indexed by mode type.
         """
         fd_range = np.linspace(0, self.freq_thickness_max, self.freq_thickness_points)
         result = {}

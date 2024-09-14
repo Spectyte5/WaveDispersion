@@ -424,7 +424,7 @@ class Plot:
         The name of the file is generated automatically.
         
         Example:
-             filename = f"Shear_in_10_mm_Aluminium_plate.txt" 
+             filename = f"Shearwaves_in_10_mm_Aluminium_plate.txt" 
 
         Parameters:
             date (bool): Whether to save the plots with a date to prevent overriding.
