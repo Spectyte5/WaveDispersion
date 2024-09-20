@@ -60,7 +60,7 @@ shear = Shearwave(plate, (5, 5), 10000, 12000, \
   Material class object providing the material information.
 
 - **modes_nums** (`tuple`):  
-  Number of symmetric and antisymmetric modes (*Plate*), circumferencial order and number of wavenumber modes (*Cylinder*).
+  Number of symmetric and antisymmetric modes.
 
 - **freq_thickness_max** (`int`):  
   Maximum value of Frequency x Thickness [kHz x mm].
