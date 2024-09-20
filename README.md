@@ -8,7 +8,7 @@ solution optimization and generally representing the behavior of waves in given 
 
 ## Description
 This application, allows user to visualize dispersion curves for different wave types (Lamb waves, Shear-Horizontal waves, etc.) 
-and in different mediums (such traction-free isotropic plates, hollow cyllinders from different materials, etc.).
+and in different mediums (traction-free isotropic plates from different materials, etc.).
 User has many options and parameters that allow checking wave behavior under desired condition and also changing visual side of plots.
 
 ## Prerequisites
@@ -23,11 +23,11 @@ pip3 install ./WaveDispersion
 ## Usage
 Import modules:
 ```Python
-from Material import Plate, Cylinder
+from Material import Plate
 from Plot import Plot
-from Wave import Lambwave, Shearwave, Axialwave
+from Wave import Lambwave, Shearwave
 ```
-Initialize plate or cylinder object:
+Initialize plate object:
 
 ### Common parameters
 - **thickness** (`float`):  
@@ -46,14 +46,6 @@ Initialize plate or cylinder object:
 plate = Plate(10, 6130, 3130, rayleigh_wave_velocity = 2881.6, name="Aluminium")
 ```
 
-### Cylinder
-```Python
-cylinder = Cylinder(1.22, 6290, 3230, 15.24, name="Steel")
-```
-#### Parameters
-- **inner_radius** (`float`):
-  Inner radius of the cylinder, in mm.
-
 Create wave object:
 ```Python
 # Lambwave
@@ -62,8 +54,6 @@ lamb = Lambwave(plate, (5, 5), 15000, 12000, \
 # Shearwave
 shear = Shearwave(plate, (5, 5), 10000, 12000, \
            'SH_1', [2000, 3500, 5000, 7500, 9000, 10000], 3, 2)
-# Axialwave
-axial = Axialwave(cylinder, (8, 1), 15000, 10000)
 ```
 ### Parameters
 - **material** (`Material`):  
@@ -152,9 +142,6 @@ lamb_plotter = Plot(lamb, 'both', True, True)
 
 - **padding_factor** (`float`, optional):  
   Padding thickness for plots.
-
-- **axial_factor** (`float`, optional):  
-  Axial wave factor for scaling the distance from the y-axis.
 
 Call one of possible plot methods:
 ```Python
