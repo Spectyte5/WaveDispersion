@@ -4,7 +4,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>e629e7e5-35d3-48c5-9598-c20c5c60b114</ProjectGuid>
     <ProjectHome>.</ProjectHome>
-    <StartupFile>Main.py</StartupFile>
+    <StartupFile>wavedispersion\Main.py</StartupFile>
     <SearchPath>
     </SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
@@ -23,15 +23,14 @@
     <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="Main.py" />
-    <Compile Include="Material.py" />
-    <Compile Include="Plot.py" />
-    <Compile Include="Tests.py" />
-    <Compile Include="Wave.py" />
+    <Compile Include="wavedispersion\Main.py" />
+    <Compile Include="wavedispersion\Material.py" />
+    <Compile Include="wavedispersion\Plot.py" />
+    <Compile Include="wavedispersion\Tests.py" />
+    <Compile Include="wavedispersion\Wave.py" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="requirements.txt" />
-    <Content Include="pyproject.toml" />
   </ItemGroup>
   <ItemGroup>
     <Interpreter Include="env\">
@@ -43,6 +42,9 @@
       <PathEnvironmentVariable>PYTHONPATH</PathEnvironmentVariable>
       <Architecture>X64</Architecture>
     </Interpreter>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="wavedispersion\" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets" />
   <!-- Uncomment the CoreCompile target to enable the Build command in
