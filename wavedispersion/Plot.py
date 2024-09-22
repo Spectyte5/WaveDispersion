@@ -1,9 +1,9 @@
 ﻿from dataclasses import dataclass, field
 import matplotlib.pyplot as plt
 import numpy as np
-from Wave import Wave, Lambwave, Shearwave
 import os
 from datetime import datetime
+from wavedispersion.Wave import Wave, Lambwave, Shearwave
 
 
 @dataclass

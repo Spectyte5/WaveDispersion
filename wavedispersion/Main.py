@@ -1,6 +1,6 @@
-from Material import Plate
-from Plot import Plot
-from Wave import Lambwave, Shearwave
+from wavedispersion.Material import Plate
+from wavedispersion.Plot import Plot
+from wavedispersion.Wave import Lambwave, Shearwave
 
 # Initialize plate
 plate = Plate(10, 6130, 3130, rayleigh_wave_velocity=2881.6, name="Aluminium")

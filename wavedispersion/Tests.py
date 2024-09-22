@@ -1,6 +1,6 @@
 import matplotlib.pyplot as plt
-from Material import Plate
-from Wave import Lambwave, Shearwave
+from wavedispersion.Material import Plate
+from wavedispersion.Wave import Lambwave, Shearwave
 
 
 def load_data(file_path: str, thickness: float) -> dict:

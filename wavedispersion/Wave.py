@@ -3,7 +3,7 @@ import numpy as np
 from dataclasses import dataclass, field
 from scipy.optimize import bisect
 from scipy.interpolate import UnivariateSpline, InterpolatedUnivariateSpline
-from Material import Material
+from wavedispersion.Material import Material
 
 
 @dataclass
