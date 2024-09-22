@@ -8,6 +8,8 @@
 <table class="heading">
 <tr class="heading-text decor">
 <td class="title">&nbsp;<br><strong class="title">Plot</strong></td>
+</tr></table>
+    <p></p>
 <p>
 <table class="section">
 <tr class="decor pkg-content-decor heading-text">
@@ -37,14 +39,14 @@
 <td class="section-title" colspan=3>&nbsp;<br><a name="Plot">class <strong>Plot</strong></a>(<a href="builtins.html#object">builtins.object</a>)</td></tr>
     
 <tr><td class="decor title-decor" rowspan=2><span class="code">&nbsp;&nbsp;&nbsp;</span></td>
-<td class="decor title-decor" colspan=2><span class="code"><a href="#Plot">Plot</a>(wave:&nbsp;Wave.Wave,&nbsp;mode_type:&nbsp;str,&nbsp;cutoff_frequencies:&nbsp;bool&nbsp;=&nbsp;True,&nbsp;add_velocities:&nbsp;bool&nbsp;=&nbsp;True,&nbsp;path:&nbsp;str&nbsp;=&nbsp;'results',&nbsp;symmetric_style:&nbsp;dict&nbsp;=&nbsp;&amp;lt;factory&amp;gt;,&nbsp;antisymmetric_style:&nbsp;dict&nbsp;=&nbsp;&amp;lt;factory&amp;gt;,&nbsp;torsional_style:&nbsp;dict&nbsp;=&nbsp;&amp;lt;factory&amp;gt;,&nbsp;longitudinal_style:&nbsp;dict&nbsp;=&nbsp;&amp;lt;factory&amp;gt;,&nbsp;flexural_style:&nbsp;dict&nbsp;=&nbsp;&amp;lt;factory&amp;gt;,&nbsp;dashed_line_style:&nbsp;dict&nbsp;=&nbsp;&amp;lt;factory&amp;gt;,&nbsp;continuous_line_style:&nbsp;dict&nbsp;=&nbsp;&amp;lt;factory&amp;gt;,&nbsp;in_plane_style:&nbsp;dict&nbsp;=&nbsp;&amp;lt;factory&amp;gt;,&nbsp;out_of_plane_style:&nbsp;dict&nbsp;=&nbsp;&amp;lt;factory&amp;gt;,&nbsp;velocity_style:&nbsp;dict&nbsp;=&nbsp;&amp;lt;factory&amp;gt;,&nbsp;padding_factor:&nbsp;dict&nbsp;=&nbsp;&amp;lt;factory&amp;gt;,&nbsp;axial_factor:&nbsp;float&nbsp;=&nbsp;300)&nbsp;-&amp;gt;&nbsp;None<br>
+<td class="decor title-decor" colspan=2><span class="code"><a href="#Plot">Plot</a>(wave:&nbsp;wavedispersion.Wave.Wave,&nbsp;mode_type:&nbsp;str,&nbsp;cutoff_frequencies:&nbsp;bool&nbsp;=&nbsp;True,&nbsp;add_velocities:&nbsp;bool&nbsp;=&nbsp;True,&nbsp;path:&nbsp;str&nbsp;=&nbsp;'results',&nbsp;symmetric_style:&nbsp;dict&nbsp;=&nbsp;&amp;lt;factory&amp;gt;,&nbsp;antisymmetric_style:&nbsp;dict&nbsp;=&nbsp;&amp;lt;factory&amp;gt;,&nbsp;torsional_style:&nbsp;dict&nbsp;=&nbsp;&amp;lt;factory&amp;gt;,&nbsp;longitudinal_style:&nbsp;dict&nbsp;=&nbsp;&amp;lt;factory&amp;gt;,&nbsp;flexural_style:&nbsp;dict&nbsp;=&nbsp;&amp;lt;factory&amp;gt;,&nbsp;dashed_line_style:&nbsp;dict&nbsp;=&nbsp;&amp;lt;factory&amp;gt;,&nbsp;continuous_line_style:&nbsp;dict&nbsp;=&nbsp;&amp;lt;factory&amp;gt;,&nbsp;in_plane_style:&nbsp;dict&nbsp;=&nbsp;&amp;lt;factory&amp;gt;,&nbsp;out_of_plane_style:&nbsp;dict&nbsp;=&nbsp;&amp;lt;factory&amp;gt;,&nbsp;velocity_style:&nbsp;dict&nbsp;=&nbsp;&amp;lt;factory&amp;gt;,&nbsp;padding_factor:&nbsp;dict&nbsp;=&nbsp;&amp;lt;factory&amp;gt;)&nbsp;-&amp;gt;&nbsp;None<br>
 &nbsp;<br>
 A&nbsp;class&nbsp;to&nbsp;manage&nbsp;and&nbsp;manipulate&nbsp;Matplotlib&nbsp;plots.<br>
 &nbsp;<br>
-This&nbsp;class&nbsp;is&nbsp;used&nbsp;for&nbsp;managing&nbsp;result&nbsp;display&nbsp;in&nbsp;both&nbsp;text&nbsp;and&nbsp;plot&nbsp;forms.&nbsp;<br>
+This&nbsp;class&nbsp;is&nbsp;used&nbsp;for&nbsp;managing&nbsp;result&nbsp;display&nbsp;in&nbsp;both&nbsp;text&nbsp;and&nbsp;plot&nbsp;forms.<br>
 Supports&nbsp;creating,&nbsp;displaying,&nbsp;and&nbsp;managing&nbsp;plots&nbsp;in&nbsp;a&nbsp;variety&nbsp;of&nbsp;scenarios.<br>
 Provides&nbsp;methods&nbsp;for&nbsp;generating&nbsp;LaTeX&nbsp;formatted&nbsp;strings&nbsp;for&nbsp;mathematical<br>
-expressions,&nbsp;switching&nbsp;the&nbsp;Matplotlib&nbsp;backend&nbsp;to&nbsp;a&nbsp;non-interactive&nbsp;mode&nbsp;and&nbsp;saving,&nbsp;<br>
+expressions,&nbsp;switching&nbsp;the&nbsp;Matplotlib&nbsp;backend&nbsp;to&nbsp;a&nbsp;non-interactive&nbsp;mode&nbsp;and&nbsp;saving,<br>
 showing&nbsp;and&nbsp;closing&nbsp;all&nbsp;open&nbsp;plot&nbsp;windows.<br>
 &nbsp;<br>
 Attributes:<br>
@@ -64,7 +66,6 @@ Attributes:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;out_of_plane_style&nbsp;(dict,&nbsp;optional)&nbsp;:&nbsp;Dict&nbsp;with&nbsp;style&nbsp;kwargs&nbsp;for&nbsp;the&nbsp;out_of_plane&nbsp;component&nbsp;on&nbsp;wavestructure&nbsp;plots.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;velocity_style&nbsp;(dict,&nbsp;optional)&nbsp;:&nbsp;Dict&nbsp;with&nbsp;style&nbsp;kwargs&nbsp;for&nbsp;plate&nbsp;velocity&nbsp;option.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;padding_factor&nbsp;(float,&nbsp;optional)&nbsp;:&nbsp;Padding&nbsp;thickness&nbsp;for&nbsp;plots.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;axial_factor&nbsp;(float,&nbsp;optional)&nbsp;:&nbsp;Axial&nbsp;wave&nbsp;factor&nbsp;for&nbsp;scaling&nbsp;the&nbsp;distance&nbsp;from&nbsp;y-axis.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;get_figures&nbsp;(lambda)&nbsp;:&nbsp;Gets&nbsp;all&nbsp;plots&nbsp;in&nbsp;an&nbsp;array<br>
 &nbsp;<br>
 Methods:<br>
@@ -74,38 +75,38 @@ Methods:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Switches&nbsp;Matplotlib's&nbsp;backend&nbsp;to&nbsp;'agg'&nbsp;for&nbsp;non-interactive&nbsp;use.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;<a href="#Plot-close_all_plots">close_all_plots</a>():<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Closes&nbsp;all&nbsp;open&nbsp;Matplotlib&nbsp;plot&nbsp;windows.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;_find_max_value(index):&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;_find_max_value(index):<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Find&nbsp;max&nbsp;value&nbsp;for&nbsp;the&nbsp;given&nbsp;wave&nbsp;parameter.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;_draw_arrow(arrow):&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;_draw_arrow(arrow):<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Draws&nbsp;the&nbsp;arrow&nbsp;on&nbsp;the&nbsp;plot.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;_add_cutoff_frequencies(mode,&nbsp;max_value,&nbsp;plot_type):&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;_add_cutoff_frequencies(mode,&nbsp;max_value,&nbsp;plot_type):<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Add&nbsp;cutoff&nbsp;frequencies&nbsp;to&nbsp;the&nbsp;plot.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;_add_plate_velocities(plot_type):&nbsp;<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Add&nbsp;plate&nbsp;velocities&nbsp;to&nbsp;the&nbsp;plot.&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;_add_plate_velocities(plot_type):<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Add&nbsp;plate&nbsp;velocities&nbsp;to&nbsp;the&nbsp;plot.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;_plot_velocity(plot_type):<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#Plot">Plot</a>&nbsp;the&nbsp;given&nbsp;velocity&nbsp;or&nbsp;wavenumber.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;_plot_wave_structure(title):&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;_plot_wave_structure(title):<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#Plot">Plot</a>&nbsp;the&nbsp;given&nbsp;velocity&nbsp;or&nbsp;wavenumber.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;<a href="#Plot-add_plot">add_plot</a>(plot_type):&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#Plot-add_plot">add_plot</a>(plot_type):<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Add&nbsp;plot&nbsp;velocity.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;<a href="#Plot-save_plots">save_plots</a>(format,&nbsp;transparent,&nbsp;**kwargs):<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Save&nbsp;plots&nbsp;in&nbsp;specified&nbsp;format.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;<a href="#Plot-save_txt_results">save_txt_results</a>(date):<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Save&nbsp;results&nbsp;in&nbsp;text&nbsp;file.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;<a href="#Plot-show_plots">show_plots</a>():&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#Plot-show_plots">show_plots</a>():<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Displays&nbsp;all&nbsp;currently&nbsp;active&nbsp;Matplotlib&nbsp;plots.<br>&nbsp;</span></td></tr>
 <tr><td>&nbsp;</td>
 <td class="singlecolumn">Methods defined here:<br>
 <dl><dt><a name="Plot-__eq__"><strong>__eq__</strong></a>(self, other)</dt><dd><span class="code">Return&nbsp;self==value.</span></dd></dl>
 
-<dl><dt><a name="Plot-__init__"><strong>__init__</strong></a>(self, wave: Wave.Wave, mode_type: str, cutoff_frequencies: bool = True, add_velocities: bool = True, path: str = 'results', symmetric_style: dict = &lt;factory&gt;, antisymmetric_style: dict = &lt;factory&gt;, torsional_style: dict = &lt;factory&gt;, longitudinal_style: dict = &lt;factory&gt;, flexural_style: dict = &lt;factory&gt;, dashed_line_style: dict = &lt;factory&gt;, continuous_line_style: dict = &lt;factory&gt;, in_plane_style: dict = &lt;factory&gt;, out_of_plane_style: dict = &lt;factory&gt;, velocity_style: dict = &lt;factory&gt;, padding_factor: dict = &lt;factory&gt;, axial_factor: float = 300) -&gt; None</dt><dd><span class="code">Initialize&nbsp;self.&nbsp;&nbsp;See&nbsp;help(type(self))&nbsp;for&nbsp;accurate&nbsp;signature.</span></dd></dl>
+<dl><dt><a name="Plot-__init__"><strong>__init__</strong></a>(self, wave: wavedispersion.Wave.Wave, mode_type: str, cutoff_frequencies: bool = True, add_velocities: bool = True, path: str = 'results', symmetric_style: dict = &lt;factory&gt;, antisymmetric_style: dict = &lt;factory&gt;, torsional_style: dict = &lt;factory&gt;, longitudinal_style: dict = &lt;factory&gt;, flexural_style: dict = &lt;factory&gt;, dashed_line_style: dict = &lt;factory&gt;, continuous_line_style: dict = &lt;factory&gt;, in_plane_style: dict = &lt;factory&gt;, out_of_plane_style: dict = &lt;factory&gt;, velocity_style: dict = &lt;factory&gt;, padding_factor: dict = &lt;factory&gt;) -&gt; None</dt><dd><span class="code">Initialize&nbsp;self.&nbsp;&nbsp;See&nbsp;help(type(self))&nbsp;for&nbsp;accurate&nbsp;signature.</span></dd></dl>
 
 <dl><dt><a name="Plot-__repr__"><strong>__repr__</strong></a>(self)</dt><dd><span class="code">Return&nbsp;repr(self).</span></dd></dl>
 
 <dl><dt><a name="Plot-add_plot"><strong>add_plot</strong></a>(self, plot_type: str)</dt><dd><span class="code">Add&nbsp;plot&nbsp;velocity.<br>
 &nbsp;<br>
 This&nbsp;method&nbsp;is&nbsp;used&nbsp;for&nbsp;adding&nbsp;desired&nbsp;plots&nbsp;to&nbsp;simulation.<br>
-It&nbsp;checks&nbsp;the&nbsp;plot_type&nbsp;parameter&nbsp;and&nbsp;calls&nbsp;the&nbsp;appropriate&nbsp;method&nbsp;that&nbsp;<br>
+It&nbsp;checks&nbsp;the&nbsp;plot_type&nbsp;parameter&nbsp;and&nbsp;calls&nbsp;the&nbsp;appropriate&nbsp;method&nbsp;that<br>
 generates&nbsp;the&nbsp;plot.<br>
 &nbsp;<br>
 Parameters:<br>
@@ -116,8 +117,8 @@ Returns:<br>
 
 <dl><dt><a name="Plot-close_all_plots"><strong>close_all_plots</strong></a>(self)</dt><dd><span class="code">Closes&nbsp;all&nbsp;open&nbsp;Matplotlib&nbsp;plots.<br>
 &nbsp;<br>
-This&nbsp;method&nbsp;calls&nbsp;`plt.close('all')`&nbsp;to&nbsp;close&nbsp;all&nbsp;figure&nbsp;windows.&nbsp;It&nbsp;is&nbsp;useful&nbsp;<br>
-for&nbsp;cleaning&nbsp;up&nbsp;after&nbsp;generating&nbsp;plots&nbsp;to&nbsp;free&nbsp;up&nbsp;resources&nbsp;or&nbsp;to&nbsp;start&nbsp;a&nbsp;new&nbsp;<br>
+This&nbsp;method&nbsp;calls&nbsp;`plt.close('all')`&nbsp;to&nbsp;close&nbsp;all&nbsp;figure&nbsp;windows.&nbsp;It&nbsp;is&nbsp;useful<br>
+for&nbsp;cleaning&nbsp;up&nbsp;after&nbsp;generating&nbsp;plots&nbsp;to&nbsp;free&nbsp;up&nbsp;resources&nbsp;or&nbsp;to&nbsp;start&nbsp;a&nbsp;new<br>
 plotting&nbsp;session&nbsp;without&nbsp;interference&nbsp;from&nbsp;previous&nbsp;figures.<br>
 &nbsp;<br>
 Parameters:<br>
@@ -143,7 +144,7 @@ Returns:<br>
 The&nbsp;name&nbsp;of&nbsp;the&nbsp;file&nbsp;is&nbsp;generated&nbsp;automatically.<br>
 &nbsp;<br>
 Example:<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;filename&nbsp;=&nbsp;f"Shear_in_10_mm_Aluminium_plate.txt"&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;filename&nbsp;=&nbsp;f"Shearwaves_in_10_mm_Aluminium_plate.txt"<br>
 &nbsp;<br>
 Parameters:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;date&nbsp;(bool):&nbsp;Whether&nbsp;to&nbsp;save&nbsp;the&nbsp;plots&nbsp;with&nbsp;a&nbsp;date&nbsp;to&nbsp;prevent&nbsp;overriding.<br>
@@ -164,9 +165,9 @@ Returns:<br>
 
 <dl><dt><a name="Plot-switch_backend"><strong>switch_backend</strong></a>(self)</dt><dd><span class="code">Switches&nbsp;Matplotlib's&nbsp;backend&nbsp;to&nbsp;'agg'.<br>
 &nbsp;<br>
-The&nbsp;'agg'&nbsp;backend&nbsp;is&nbsp;a&nbsp;non-interactive&nbsp;backend&nbsp;that&nbsp;can&nbsp;be&nbsp;used&nbsp;for&nbsp;<br>
-generating&nbsp;plot&nbsp;images&nbsp;without&nbsp;displaying&nbsp;them.&nbsp;This&nbsp;is&nbsp;useful&nbsp;for&nbsp;<br>
-saving&nbsp;plots&nbsp;to&nbsp;files&nbsp;in&nbsp;a&nbsp;script&nbsp;or&nbsp;when&nbsp;working&nbsp;in&nbsp;environments&nbsp;where&nbsp;<br>
+The&nbsp;'agg'&nbsp;backend&nbsp;is&nbsp;a&nbsp;non-interactive&nbsp;backend&nbsp;that&nbsp;can&nbsp;be&nbsp;used&nbsp;for<br>
+generating&nbsp;plot&nbsp;images&nbsp;without&nbsp;displaying&nbsp;them.&nbsp;This&nbsp;is&nbsp;useful&nbsp;for<br>
+saving&nbsp;plots&nbsp;to&nbsp;files&nbsp;in&nbsp;a&nbsp;script&nbsp;or&nbsp;when&nbsp;working&nbsp;in&nbsp;environments&nbsp;where<br>
 graphical&nbsp;display&nbsp;is&nbsp;not&nbsp;available.<br>
 &nbsp;<br>
 Parameters:<br>
@@ -185,19 +186,17 @@ Data descriptors defined here:<br>
 </dl>
 <hr>
 Data and other attributes defined here:<br>
-<dl><dt><strong>__annotations__</strong> = {'add_velocities': &lt;class 'bool'&gt;, 'antisymmetric_style': &lt;class 'dict'&gt;, 'axial_factor': &lt;class 'float'&gt;, 'continuous_line_style': &lt;class 'dict'&gt;, 'cutoff_frequencies': &lt;class 'bool'&gt;, 'dashed_line_style': &lt;class 'dict'&gt;, 'flexural_style': &lt;class 'dict'&gt;, 'in_plane_style': &lt;class 'dict'&gt;, 'longitudinal_style': &lt;class 'dict'&gt;, 'mode_type': &lt;class 'str'&gt;, ...}</dl>
+<dl><dt><strong>__annotations__</strong> = {'add_velocities': &lt;class 'bool'&gt;, 'antisymmetric_style': &lt;class 'dict'&gt;, 'continuous_line_style': &lt;class 'dict'&gt;, 'cutoff_frequencies': &lt;class 'bool'&gt;, 'dashed_line_style': &lt;class 'dict'&gt;, 'flexural_style': &lt;class 'dict'&gt;, 'in_plane_style': &lt;class 'dict'&gt;, 'longitudinal_style': &lt;class 'dict'&gt;, 'mode_type': &lt;class 'str'&gt;, 'out_of_plane_style': &lt;class 'dict'&gt;, ...}</dl>
 
-<dl><dt><strong>__dataclass_fields__</strong> = {'add_velocities': Field(name='add_velocities',type=&lt;class 'bool'&gt;,...appingproxy({}),kw_only=False,_field_type=_FIELD), 'antisymmetric_style': Field(name='antisymmetric_style',type=&lt;class 'di...appingproxy({}),kw_only=False,_field_type=_FIELD), 'axial_factor': Field(name='axial_factor',type=&lt;class 'float'&gt;,d...appingproxy({}),kw_only=False,_field_type=_FIELD), 'continuous_line_style': Field(name='continuous_line_style',type=&lt;class '...appingproxy({}),kw_only=False,_field_type=_FIELD), 'cutoff_frequencies': Field(name='cutoff_frequencies',type=&lt;class 'boo...appingproxy({}),kw_only=False,_field_type=_FIELD), 'dashed_line_style': Field(name='dashed_line_style',type=&lt;class 'dict...appingproxy({}),kw_only=False,_field_type=_FIELD), 'flexural_style': Field(name='flexural_style',type=&lt;class 'dict'&gt;,...appingproxy({}),kw_only=False,_field_type=_FIELD), 'in_plane_style': Field(name='in_plane_style',type=&lt;class 'dict'&gt;,...appingproxy({}),kw_only=False,_field_type=_FIELD), 'longitudinal_style': Field(name='longitudinal_style',type=&lt;class 'dic...appingproxy({}),kw_only=False,_field_type=_FIELD), 'mode_type': Field(name='mode_type',type=&lt;class 'str'&gt;,defaul...appingproxy({}),kw_only=False,_field_type=_FIELD), ...}</dl>
+<dl><dt><strong>__dataclass_fields__</strong> = {'add_velocities': Field(name='add_velocities',type=&lt;class 'bool'&gt;,...appingproxy({}),kw_only=False,_field_type=_FIELD), 'antisymmetric_style': Field(name='antisymmetric_style',type=&lt;class 'di...appingproxy({}),kw_only=False,_field_type=_FIELD), 'continuous_line_style': Field(name='continuous_line_style',type=&lt;class '...appingproxy({}),kw_only=False,_field_type=_FIELD), 'cutoff_frequencies': Field(name='cutoff_frequencies',type=&lt;class 'boo...appingproxy({}),kw_only=False,_field_type=_FIELD), 'dashed_line_style': Field(name='dashed_line_style',type=&lt;class 'dict...appingproxy({}),kw_only=False,_field_type=_FIELD), 'flexural_style': Field(name='flexural_style',type=&lt;class 'dict'&gt;,...appingproxy({}),kw_only=False,_field_type=_FIELD), 'in_plane_style': Field(name='in_plane_style',type=&lt;class 'dict'&gt;,...appingproxy({}),kw_only=False,_field_type=_FIELD), 'longitudinal_style': Field(name='longitudinal_style',type=&lt;class 'dic...appingproxy({}),kw_only=False,_field_type=_FIELD), 'mode_type': Field(name='mode_type',type=&lt;class 'str'&gt;,defaul...appingproxy({}),kw_only=False,_field_type=_FIELD), 'out_of_plane_style': Field(name='out_of_plane_style',type=&lt;class 'dic...appingproxy({}),kw_only=False,_field_type=_FIELD), ...}</dl>
 
 <dl><dt><strong>__dataclass_params__</strong> = _DataclassParams(init=True,repr=True,eq=True,order=False,unsafe_hash=False,frozen=False)</dl>
 
 <dl><dt><strong>__hash__</strong> = None</dl>
 
-<dl><dt><strong>__match_args__</strong> = ('wave', 'mode_type', 'cutoff_frequencies', 'add_velocities', 'path', 'symmetric_style', 'antisymmetric_style', 'torsional_style', 'longitudinal_style', 'flexural_style', 'dashed_line_style', 'continuous_line_style', 'in_plane_style', 'out_of_plane_style', 'velocity_style', 'padding_factor', 'axial_factor')</dl>
+<dl><dt><strong>__match_args__</strong> = ('wave', 'mode_type', 'cutoff_frequencies', 'add_velocities', 'path', 'symmetric_style', 'antisymmetric_style', 'torsional_style', 'longitudinal_style', 'flexural_style', 'dashed_line_style', 'continuous_line_style', 'in_plane_style', 'out_of_plane_style', 'velocity_style', 'padding_factor')</dl>
 
 <dl><dt><strong>add_velocities</strong> = True</dl>
-
-<dl><dt><strong>axial_factor</strong> = 300</dl>
 
 <dl><dt><strong>cutoff_frequencies</strong> = True</dl>
 
